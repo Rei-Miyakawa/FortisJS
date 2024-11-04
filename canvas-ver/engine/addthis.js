@@ -22,7 +22,7 @@ let loadFiles = async function (paths) {
                 resolve("[Info] [" + new Date().toUTCString() + "] - " + paths[i] + ".jsがロードされました。");
             }
             script.onerror = function () {
-                resolve("[Error] [" + new Date().toUTCString() + "] - " + paths[i] + ".jsはロードできませんでした。")
+                reject("[Error] [" + new Date().toUTCString() + "] - " + paths[i] + ".jsはロードできませんでした。")
             }
         });
         let result = await loadFile;
@@ -31,4 +31,3 @@ let loadFiles = async function (paths) {
     }
     Fortis.setup();
 }
-

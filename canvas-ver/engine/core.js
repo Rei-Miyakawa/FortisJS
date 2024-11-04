@@ -21,9 +21,9 @@ let Fortis = {
     Vector2: null,//二次元配列(x,y)の形-vector.js
     Scene: null,//シーン-scene.js
     ColorBG: null,//色のみ-bg.js
-    ImageBG: null,//画像-bg.js
+    //ImageBG: null,//画像-bg.js
     Color: null,//色-color.js
-    Gradation: null,//グラデーション-color.js
+    //Gradation: null,//グラデーション-color.js
 }
 
 Fortis.setup = function () {
