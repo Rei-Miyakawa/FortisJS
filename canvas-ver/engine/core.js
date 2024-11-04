@@ -36,7 +36,6 @@ Fortis.setup = function () {
         Fortis.info.StartGameLoop();
         Fortis.Game.loop();//ゲームループスタート
     }
-
 }
 
 Fortis.Game = {
@@ -78,7 +77,7 @@ Fortis.Game = {
     loop() {
         Update();//更新
         this.draw();
-        requestAnimationFrame(this.loop.bind(this))//アニメーションループ
+        requestAnimationFrame(this.loop.bind(this));//アニメーションループ
     },
     
     //描画

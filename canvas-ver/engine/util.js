@@ -32,7 +32,6 @@ Fortis.info = {
 }
 
 Fortis.util.console = function (type, content) {
-    //console.log(this.Game.config.debug,content)
     if (Fortis.Game.config.debug) {
         //「[Fortis] [タイプ] [日付(UTC)] - 内容」のフォーマット
         //タイプは「Info」「Error」
