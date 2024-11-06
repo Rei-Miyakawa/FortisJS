@@ -55,7 +55,7 @@ Fortis.Game = {
     //関数
     init() {//初期化
         //オフスクリーンキャンバス
-        this.canvas = new OffscreenCanvas(100, 100);
+        this.canvas = new OffscreenCanvas();
         this.context = this.canvas.getContext("2d");
 
         //最終的な描画キャンバス
