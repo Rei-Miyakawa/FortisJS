@@ -3,7 +3,9 @@ let files = [
     "vector",
     "scene",
     "color",
-    "bg",
+    "material",
+    "shape",
+    "entity",
     "draw",
     "util",
 ];

@@ -9,33 +9,46 @@ let Fortis = {
         //関数
         console: null,//コンソール(ゲームの設定のデバッグがtrueでないと機能しない)
         checkType: null,//変数の型やタイプなどについてチェックする
+        randomID: null,//UUIDを作成
+        //色
+        hexToRGB: null,//カラーコードをRGBに
+        HSVToRGB: null,//HSVをRGBに
+        RGBToHex: null,//RGBをカラーコードに
+        RGBToHSV: null,//RGBをHSVに
     },
 
     //関数
     setup: null,//ファイルの読み込みが終わったときの処理
-    
+
     error: null,//エラーをまとめたもの-util.js
     info: null,//処理完了などのお知らせをまとめたもの-util.js
 
     //クラス
     Vector2: null,//二次元配列(x,y)の形-vector.js
+
+    //シーン関係
     Scene: null,//シーン-scene.js
-    ColorBG: null,//色のみ-bg.js
-    //ImageBG: null,//画像-bg.js
+    Layer: null,//レイヤー-scene.js
+
+    //色
     Color: null,//色-color.js
     //Gradation: null,//グラデーション-color.js
+    
+    Entity: null,//エンティティ-entity.js
+    
+    //マテリアル
+    ColorMaterial: null,//カラーマテリアル-material.js
+
+    //シェイプ
+    LineShape: null,//線-shape.js
 }
 
 Fortis.setup = function () {
     Init();//ゲーム設定を想定
     Fortis.Game.init();//ゲームシステムの初期化
     Ready();//ゲームが初期化された後に実行。素材の読み込みなどを想定
-    if (Fortis.Game.scene == null) {
-        Fortis.error.SceneNotSet();
-    } else {
-        Fortis.info.StartGameLoop();
-        Fortis.Game.loop();//ゲームループスタート
-    }
+    Fortis.info.StartGameLoop();
+    Fortis.Game.loop();//ゲームループスタート
 }
 
 Fortis.Game = {
@@ -48,14 +61,13 @@ Fortis.Game = {
     winSize: null,//ウィンドウのサイズ
     config: {//設定
         debug: false,//デバッグモード
-        KeepCanvasAspect: false,//キャンバスのアスペクト比のキープ
     },
     scene: null,//シーン
 
     //関数
     init() {//初期化
         //オフスクリーンキャンバス
-        this.canvas = new OffscreenCanvas();
+        this.canvas = new OffscreenCanvas(100, 100);
         this.context = this.canvas.getContext("2d");
 
         //最終的な描画キャンバス
@@ -79,7 +91,7 @@ Fortis.Game = {
         this.draw();
         requestAnimationFrame(this.loop.bind(this));//アニメーションループ
     },
-    
+
     //描画
     draw: null,
 }

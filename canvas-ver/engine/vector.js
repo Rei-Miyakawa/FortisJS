@@ -1,26 +1,26 @@
 Fortis.Vector2 = class {
     constructor(x, y) {
         this.type = "Vector2";//タイプ
-        
+
         //x要素の判定
-        if(x == null){
+        if (x == null) {
             this.x = 0;
-        }else{
-            if(Fortis.util.checkType(x,"number")){
+        } else {
+            if (Fortis.util.checkType(x, "number")) {
                 this.x = x;
-            }else{
-                Fortis.error.ArgTypeWrong();
+            } else {
+                return Fortis.error.ArgTypeWrong();
             }
         }
-        
+
         //y要素の判定
-        if(y == null){
+        if (y == null) {
             this.y = 0;
-        }else{
-            if(Fortis.util.checkType(y,"number")){
+        } else {
+            if (Fortis.util.checkType(y, "number")) {
                 this.y = y;
-            }else{
-                Fortis.error.ArgTypeWrong();
+            } else {
+                return Fortis.error.ArgTypeWrong();
             }
         }
     }
@@ -28,47 +28,57 @@ Fortis.Vector2 = class {
         return this.type;
     }
     delete() {//削除
-        this.x = null;
-        this.y = null;
-        this.type = null;
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
     }
     add(vec) {//足し算
+        if (vec == null) return Fortis.error.ArgNotExists();
         if (Fortis.util.checkType(vec, "object", "Vector2")) {
             this.x += vec.x;
             this.y += vec.y;
-        } else {
-            Fortis.error.ArgTypeWrong();
+            return this;
         }
+        return Fortis.error.ArgTypeWrong();
     }
     sub(vec) {//引き算
+        if (vec == null) return Fortis.error.ArgNotExists();
         if (Fortis.util.checkType(vec, "object", "Vector2")) {
             this.x -= vec.x;
             this.y -= vec.y;
-        } else {
-            Fortis.error.ArgTypeWrong();
+            return this;
         }
+        return Fortis.error.ArgTypeWrong();
     }
-    rotation(deg, rad) {//円周上を回転
-        let degree = 0;
-        if(deg != null){
-            if(Fortis.util.checkType(deg,"number")){
-                degree = deg;
-            }else{
-                Fortis.error.ArgTypeWrong();
-            }
+    mul(scale) {//掛け算
+        if (scale == null) return Fortis.error.ArgNotExists();
+        if (Fortis.util.checkType(scale, "number")) {
+            this.x *= scale;
+            this.y *= scale;
+            return this;
         }
+        return Fortis.error.ArgTypeWrong();
+    }
+    mag() {//大きさ、原点(左上)からの距離
+        return Math.sqrt(this.x ** 2 + this.y ** 2);
+    }
+    normalize() {//単位ベクトルにする
+        let mag = this.mag();
+        let vec = this.copy();
+        return vec.mul(1 / mag);
 
-        let radius = 1;
-        if(rad != null){
-            if(Fortis.util.checkType(rad,"number")){
-                raidus = rad;
-            }else{
-                Fortis.error.ArgTypeWrong();
-            }
+    }
+    distance(vec) {//2点間の距離
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (Fortis.util.checkType(vec, "object", "Vector2")) {
+            vec.sub(this);
+            return Math.sqrt(vec.x ** 2 + vec.y ** 2);
         }
-        return new Vector2(this.x + Math.cos(degree) * radius, this.y + Math.sin(degree) * radius);
+        return Fortis.error.ArgTypeWrong();
     }
     copy() {//コピー
-        return new Vector2(this.x, this.y);
+        return new Fortis.Vector2(this.x, this.y);
     }
 }

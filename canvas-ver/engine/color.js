@@ -1,72 +1,90 @@
 Fortis.Color = class {
-    constructor(colorOrR, g, b, a) {
+    constructor(hexOrR, g, b, a) {
         this.type = "Color";
         this.r, this.g, this.b, this.a = 1;
-        this.id = new Date();
-        if (colorOrR == null) {//colorOrRが空なら、引数はなしで白にする判定
+        if (hexOrR == null) {//hexOrRが空なら、引数はなしで白にする判定
             this.r = 255, this.g = 255, this.b = 255;
+            return true;
         } else if (g == null && b == null) {//カラーコード判定
-            if (Fortis.util.checkType(colorOrR, "string", "#")) {//＃がついていたらかつ7文字ならカラーコードだとみなす
-                if (colorOrR.length == 7) {
-                    this.r = parseInt(colorOrR.slice(1, 3), 16);
-                    this.g = parseInt(colorOrR.slice(3, 5), 16);
-                    this.b = parseInt(colorOrR.slice(5, 7), 16);
+            if (Fortis.util.checkType(hexOrR, "string", "#")) {//＃がついていたらかつ7文字ならカラーコードだとみなす
+                if (hexOrR.length == 7) {
+                    if (parseInt(hexOrR, 16)) return Fortis.error.NotColorCode();
+                    let RGB = Fortis.util.hexToRGB(hexOrR);
+                    this.r = RGB.r;
+                    this.g = RGB.g;
+                    this.b = RGB.b;
+                    return true;
                 } else {
-                    Fortis.error.NotColorCode();
+                    return Fortis.error.NotColorCode();
                 }
-            } else if (Fortis.util.checkType(colorOrR, "string")) {//名前付き色判定
-                if (Fortis.util.namedColors[colorOrR] == undefined) {
-                    Fortis.error.KeyNotExistsInObject();
+            } else if (Fortis.util.checkType(hexOrR, "string")) {//名前付き色判定
+                if (Fortis.util.namedColors[hexOrR] == undefined) {
+                    return Fortis.error.KeyNotExistsInObject();
                 } else {
-                    this.r = Fortis.util.namedColors[colorOrR].r;
-                    this.g = Fortis.util.namedColors[colorOrR].g;
-                    this.b = Fortis.util.namedColors[colorOrR].b;
+                    this.r = Fortis.util.namedColors[hexOrR].r;
+                    this.g = Fortis.util.namedColors[hexOrR].g;
+                    this.b = Fortis.util.namedColors[hexOrR].b;
+                    return true;
                 }
             } else {
-                Fortis.error.NotColorCode();
+                return Fortis.error.NotColorCode();
             }
-        } else if (Fortis.util.checkType(g, "number") && Fortis.util.checkType(b, "number")) {//RGBもしくはRGBAの形
-            this.r = colorOrR;
-            this.g = g;
-            this.b = b;
+        } else if (Fortis.util.checkType(g, "number") && Fortis.util.checkType(b, "number")) {//RGBもしくはHSVもしくはRGBAの形
+            if (hexOrR >= 0 && hexOrR <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {//RGB
+                this.r = hexOrR;
+                this.g = g;
+                this.b = b;
+            } else if (hexOrR >= 0 && hexOrR <= 360 && g >= 0 && g <= 1 && b >= 0 && b <= 1) {//HSV
+                let RGB = Fortis.util.HSVToRGB({ h: hexOrR, s: g, v: b });
+                this.r = RGB.r;
+                this.g = RGB.g;
+                this.b = RGB.b;
+            }
 
             //aの処理
             if (a != null) {//RGBA
                 if (Fortis.util.checkType(a, "number")) {
-                    this.a = a;
+                    this.a = Math.max(0, Math.min(1, a));
+                    return true;
                 } else {
-                    Fortis.error.ArgTypeWrong();
+                    return Fortis.error.ArgTypeWrong();
                 }
             }
         } else {
-            Fortis.error.ArgTypeWrong();
+            return Fortis.error.ArgTypeWrong();
         }
     }
     getType() {//タイプを取得
         return this.type;
     }
     delete() {//削除
-        this.type = null;
-        this.r = null;
-        this.g = null;
-        this.b = null;
-        this.a = null;
-        this.id = null;
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
     }
-    getId() {//IDを取得
-        return this.id;
+    invert() {//反転
+        this.r = 255 - this, r;
+        this.g = 255 - this, g;
+        this.b = 255 - this, b;
+        return this;
+    }
+    getComplementaryColor() {//補色を取得
+        return new Fortis.Color(255 - this, r, 255 - this, g, 255 - this, b);
+    }
+    adjustBrightness(variable) {//明るさ調節
+        if (!Fortis.util.checkType(variable, "number")) return Fortis.error.ArgTypeWrong();
+        this.r = Math.max(0, Math.min(255, this.r + variable));
+        this.g = Math.max(0, Math.min(255, this.g + variable));
+        this.b = Math.max(0, Math.min(255, this.b + variable));
+        return this;
     }
     toHex() {//16進数変換
-        let code_text = "#";
-        let rgb = { r: this.r, g: this.g, b: this.b }
-        for (let element in rgb) {
-            let parsed = rgb[element].toString(16);
-            if (parsed.length == 1) {
-                code_text += "0";
-            }
-            code_text += parsed;
-        }
-        return code_text;
+        return Fortis.util.RGBToHex({ r: this.r, g: this.g, b: this.b });
+    }
+    toHSV() {//HSV変換
+        return Fortis.util.RGBToHSV({ r: this.r, g: this.g, b: this.b });
     }
     toRGB() {//RGB変換
         return "rgb(" + this.r + "," + this.g + "," + this.b + ")";
