@@ -3,7 +3,7 @@ Fortis.Entity = class {
         this.type = "Entity";
         this.id = Fortis.util.randomID();
         if (shape == null || shape == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(shape, "object", "shape") || !Fortis.util.checkType(material, "object", "Material")) return Fortis.error.ArgTypeWrong();
+        if (!Fortis.util.checkType(shape, "object", "Shape") || !Fortis.util.checkType(material, "object", "Material")) return Fortis.error.ArgTypeWrong();
         this.shape = shape;
         this.material = material;
         this.pos = new Fortis.Vector2();

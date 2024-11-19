@@ -5,7 +5,7 @@ Fortis.LineShape = class {
             if (length < 0) return Fortis.error.ArgIncorrectVarRange();
             this.length = length;
         } else {
-            this.length = 30;
+            this.length = 50;
         }
         if (thick != null) {
             if (!Fortis.util.checkType(thick, "number")) return Fortis.error.ArgTypeWrong();

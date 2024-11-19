@@ -9,7 +9,10 @@ let Fortis = {
         //関数
         console: null,//コンソール(ゲームの設定のデバッグがtrueでないと機能しない)
         checkType: null,//変数の型やタイプなどについてチェックする
-        randomID: null,//UUIDを作成
+        randomID: null,//ランダムにIDを作成
+        degreeToRadian: null,//度数法から弧度法
+        radianToDegree: null,//弧度法から度数法
+        getPointOnCircle: null,//任意の座標を中心として任意の半径の円周上の任意の角度の点の座標を取得
         //色
         hexToRGB: null,//カラーコードをRGBに
         HSVToRGB: null,//HSVをRGBに
@@ -23,6 +26,11 @@ let Fortis = {
     error: null,//エラーをまとめたもの-util.js
     info: null,//処理完了などのお知らせをまとめたもの-util.js
 
+    //描画系の関数
+    draw: {
+        line: null,//線
+    },
+
     //クラス
     Vector2: null,//二次元配列(x,y)の形-vector.js
 
@@ -33,9 +41,9 @@ let Fortis = {
     //色
     Color: null,//色-color.js
     //Gradation: null,//グラデーション-color.js
-    
+
     Entity: null,//エンティティ-entity.js
-    
+
     //マテリアル
     ColorMaterial: null,//カラーマテリアル-material.js
 
@@ -47,8 +55,12 @@ Fortis.setup = function () {
     Init();//ゲーム設定を想定
     Fortis.Game.init();//ゲームシステムの初期化
     Ready();//ゲームが初期化された後に実行。素材の読み込みなどを想定
-    Fortis.info.StartGameLoop();
-    Fortis.Game.loop();//ゲームループスタート
+    if (Fortis.Game.config.loop) {//ゲームループをするか
+        Fortis.info.StartGameLoop();
+        Fortis.Game.loop();//ゲームループスタート
+    }else{
+        EngineLoaded();//エンジンが読み込まれた
+    }
 }
 
 Fortis.Game = {
@@ -61,6 +73,7 @@ Fortis.Game = {
     winSize: null,//ウィンドウのサイズ
     config: {//設定
         debug: false,//デバッグモード
+        loop: true,//ゲームループをするか
     },
     scene: null,//シーン
 
