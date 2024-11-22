@@ -1,5 +1,5 @@
 let scene, bg, color, color2, material;
-let e1, e2;
+let e1;
 let layer;
 
 function Init() {
@@ -17,7 +17,6 @@ function Ready() {
     material = new Fortis.ColorMaterial(color, color2);
     layer = new Fortis.Layer();
     e1 = new Fortis.Entity(new Fortis.LineShape(), new Fortis.ColorMaterial(null,color));
-    e2 = new Fortis.Entity(new Fortis.LineShape(), new Fortis.ColorMaterial(null,color2));
     e1.pos = new Fortis.Vector2(100,100);
     console.log(e1)
     layer.add(e1);
@@ -26,7 +25,7 @@ function Ready() {
 }
 
 function Update() {
-    //console.log("aa")
+    e1.angle ++;
 }
 
 function EngineLoaded(){}
