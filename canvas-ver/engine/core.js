@@ -29,6 +29,9 @@ let Fortis = {
     //描画系の関数
     draw: {
         line: null,//線
+        rect: null,//矩形
+        circle: null,//円(弧)
+        ellipse: null,//楕円
     },
 
     //クラス
@@ -49,6 +52,9 @@ let Fortis = {
 
     //シェイプ
     LineShape: null,//線-shape.js
+    RectShape: null,//矩形-shape.js
+    CircleShape: null,//円(弧)-shape.js
+    EllipseShape: null,//楕円-shape.js
 }
 
 Fortis.setup = function () {

@@ -1,7 +1,8 @@
 Fortis.Vector2 = class {
+    get type(){
+        return "Vector2";
+    }
     constructor(x, y) {
-        this.type = "Vector2";//タイプ
-
         //x要素の判定
         if (x == null) {
             this.x = 0;

@@ -1,6 +1,8 @@
 Fortis.Scene = class {
+    get type(){
+        return "Scene";
+    }
     constructor() {
-        this.type = "Scene";
         this.layer = [];
         this.ids = {};
         this.namedLayer = {
@@ -85,8 +87,10 @@ Fortis.Scene = class {
 }
 
 Fortis.Layer = class {
+    get type(){
+        return "Layer";
+    }
     constructor() {
-        this.type = "Layer";
         this.entity = [];
         this.ids = {};
         this.id = Fortis.util.randomID();

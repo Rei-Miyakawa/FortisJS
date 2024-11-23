@@ -1,6 +1,8 @@
 Fortis.Color = class {
+    get type(){
+        return "Color";
+    }
     constructor(hexOrR, g, b, a) {
-        this.type = "Color";
         this.r, this.g, this.b, this.a = 1;
         if (hexOrR == null) {//hexOrRが空なら、引数はなしで白にする判定
             this.r = 255, this.g = 255, this.b = 255;

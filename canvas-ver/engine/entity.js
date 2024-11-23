@@ -1,6 +1,8 @@
 Fortis.Entity = class {
+    get type(){
+        return "Entity";
+    }
     constructor(shape, material) {
-        this.type = "Entity";
         this.id = Fortis.util.randomID();
         if (shape == null || shape == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(shape, "object", "Shape") || !Fortis.util.checkType(material, "object", "Material")) return Fortis.error.ArgTypeWrong();

@@ -8,7 +8,6 @@ function Init() {
 }
 
 function Ready() {
-    
     scene = new Fortis.Scene();
     color = new Fortis.Color("orange");
     color2 = new Fortis.Color("red");
@@ -16,16 +15,16 @@ function Ready() {
     Fortis.Game.scene = scene;
     material = new Fortis.ColorMaterial(color, color2);
     layer = new Fortis.Layer();
-    e1 = new Fortis.Entity(new Fortis.LineShape(), new Fortis.ColorMaterial(null,color));
+    e1 = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(color2,color));
     e1.pos = new Fortis.Vector2(100,100);
+    e1.shape.setDegree(180);
     console.log(e1)
     layer.add(e1);
     scene.add(layer)
-    
 }
 
 function Update() {
-    e1.angle ++;
+    //e1.angle ++;
 }
 
 function EngineLoaded(){}

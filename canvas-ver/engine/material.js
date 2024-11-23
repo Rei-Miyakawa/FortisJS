@@ -1,6 +1,8 @@
 Fortis.ColorMaterial = class {
+    get type(){
+        return "ColorMaterial";
+    }
     constructor(fillColor, strokeColor) {
-        this.type = "ColorMaterial";
         if (fillColor != null) {
             if (!Fortis.util.checkType(fillColor, "object", "Color")) return Fortis.error.ArgTypeWrong();
             this.fill = fillColor;
@@ -13,6 +15,7 @@ Fortis.ColorMaterial = class {
         } else {
             this.stroke = false;
         }
+        this.thick = 5;
     }
     getType() {//タイプ取得
         return this.type;
@@ -41,5 +44,15 @@ Fortis.ColorMaterial = class {
         if (!Fortis.util.checkType(color, "object", "Color")) return Fortis.error.ArgTypeWrong();
         this.stroke = color;
         return this.stroke;
+    }
+    getThick() {//線の太さ取得
+        return this.thick;
+    }
+    setThick(thick) {//線の太さ指定
+        if (thick == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(thick, "number")) return Fortis.error.ArgTypeWrong();
+        if (thick < 0) return Fortis.error.ArgIncorrectVarRange();
+        this.thick = thick;
+        return this.thick;
     }
 }
