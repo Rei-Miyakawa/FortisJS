@@ -189,5 +189,7 @@ Fortis.util.radianToDegree = function(radian){
 Fortis.util.getPointOnCircle = function(pos,radius,degree){
     if(pos == null || radius == null || degree == null)return Fortis.error.ArgNotExists();
     if(!Fortis.util.checkType(pos,"object","Vector2")||!Fortis.util.checkType(radius,"number")||!Fortis.util.checkType(degree,"number"))return Fortis.error.ArgTypeWrong();
-    return new Fortis.Vector2(pos.x+radius*Math.cos(Fortis.util.degreeToRadian(degree)),pos.y+radius*Math.sin(Fortis.util.degreeToRadian(degree)));
+    let x = Math.round((pos.x+radius*Math.cos(Fortis.util.degreeToRadian(degree)))*100)/100
+    let y = Math.round((pos.y+radius*Math.sin(Fortis.util.degreeToRadian(degree)))*100)/100
+    return new Fortis.Vector2(x,y);
 }

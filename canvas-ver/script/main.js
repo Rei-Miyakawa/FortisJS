@@ -15,9 +15,9 @@ function Ready() {
     Fortis.Game.scene = scene;
     material = new Fortis.ColorMaterial(color, color2);
     layer = new Fortis.Layer();
-    e1 = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(color2,color));
+    e1 = new Fortis.Entity(new Fortis.RegPolygonShape(), new Fortis.ColorMaterial(color2,color));
     e1.pos = new Fortis.Vector2(100,100);
-    e1.shape.setDegree(180);
+    //e1.shape.setDegree(180);
     console.log(e1)
     layer.add(e1);
     scene.add(layer)

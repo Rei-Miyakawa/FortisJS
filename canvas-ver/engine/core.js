@@ -32,6 +32,8 @@ let Fortis = {
         rect: null,//矩形
         circle: null,//円(弧)
         ellipse: null,//楕円
+        regPolygon: null,//正多角形
+        polygon: null,//多角形
     },
 
     //クラス
@@ -55,6 +57,8 @@ let Fortis = {
     RectShape: null,//矩形-shape.js
     CircleShape: null,//円(弧)-shape.js
     EllipseShape: null,//楕円-shape.js
+    RegPolygonShape: null,//正多角形-shape.js
+    PolygonShape: null,//多角形-shape.js
 }
 
 Fortis.setup = function () {
@@ -64,7 +68,7 @@ Fortis.setup = function () {
     if (Fortis.Game.config.loop) {//ゲームループをするか
         Fortis.info.StartGameLoop();
         Fortis.Game.loop();//ゲームループスタート
-    }else{
+    } else {
         EngineLoaded();//エンジンが読み込まれた
     }
 }

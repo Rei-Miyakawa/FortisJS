@@ -84,16 +84,16 @@ Fortis.RectShape = class {
     }
 }
 
-Fortis.CircleShape = class{
+Fortis.CircleShape = class {
     get type() {
         return "CircleShape";
     }
     constructor(radius) {
-        if(radius == null){
+        if (radius == null) {
             this.radius = 20;
-        }else{
-            if(!Fortis.util.checkType(radius,"number"))return Fortis.error.ArgTypeWrong();
-            if(radius <= 0)return Fortis.error.ArgIncorrectVarRange();
+        } else {
+            if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
+            if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
             this.radius = radius;
         }
         this.degree = 360;
@@ -108,44 +108,46 @@ Fortis.CircleShape = class{
             }
         }
     }
-    getRadius(){//半径取得
-        return this.radius;    
+    getRadius() {//半径取得
+        return this.radius;
     }
-    setRadius(radius){//半径変更
-        if(radius == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(radius,"number"))return Fortis.error.ArgTypeWrong();
-        if(radius <= 0)return Fortis.error.ArgIncorrectVarRange();
-        this.radius = radius; 
+    setRadius(radius) {//半径変更
+        if (radius == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
+        if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
+        this.radius = radius;
+        return radius;
     }
-    getDegree(){//弧の角度取得
-        return this.degree;    
+    getDegree() {//弧の角度取得
+        return this.degree;
     }
-    setDegree(degree){//弧の角度変更
-        if(degree == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(degree,"number"))return Fortis.error.ArgTypeWrong();
-        if(degree <= 0)return Fortis.error.ArgIncorrectVarRange();
-        this.degree = degree; 
+    setDegree(degree) {//弧の角度変更
+        if (degree == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(degree, "number")) return Fortis.error.ArgTypeWrong();
+        if (degree <= 0) return Fortis.error.ArgIncorrectVarRange();
+        this.degree = degree;
+        return degree;
     }
 }
 
-Fortis.EllipseShape = class{
+Fortis.EllipseShape = class {
     get type() {
         return "EllipseShape";
     }
-    constructor(radiusX,radiusY) {
+    constructor(radiusX, radiusY) {
         let radX = 40;
         let radY = 20;
-        if(radiusX != null){
-            if(!Fortis.util.checkType(radiusX,"number"))return Fortis.error.ArgTypeWrong();
-            if(radiusX <= 0)return Fortis.error.ArgIncorrectVarRange();
+        if (radiusX != null) {
+            if (!Fortis.util.checkType(radiusX, "number")) return Fortis.error.ArgTypeWrong();
+            if (radiusX <= 0) return Fortis.error.ArgIncorrectVarRange();
             radX = radiusX;
         }
-        if(radiusY != null){
-            if(!Fortis.util.checkType(radiusY,"number"))return Fortis.error.ArgTypeWrong();
-            if(radiusY <= 0)return Fortis.error.ArgIncorrectVarRange();
+        if (radiusY != null) {
+            if (!Fortis.util.checkType(radiusY, "number")) return Fortis.error.ArgTypeWrong();
+            if (radiusY <= 0) return Fortis.error.ArgIncorrectVarRange();
             radY = radiusY;
         }
-        this.radSize = new Fortis.Vector2(radX,radY);
+        this.radSize = new Fortis.Vector2(radX, radY);
         this.degree = 360;
     }
     getType() {//タイプ取得
@@ -158,39 +160,165 @@ Fortis.EllipseShape = class{
             }
         }
     }
-    getRadius(){//半径取得
-        return this.radSize;    
+    getRadius() {//半径取得
+        return this.radSize;
     }
-    setRadius(radius){//半径変更
-        if(radius == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(radius,"object","Vector2"))return Fortis.error.ArgTypeWrong();
-        this.radSize = radius; 
+    setRadius(radius) {//半径変更
+        if (radius == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(radius, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.radSize = radius;
+        return radius;
     }
-    getRadiusX(){//長辺の半径取得
-        return this.radSize.x;    
+    getRadiusX() {//長辺の半径取得
+        return this.radSize.x;
     }
-    setRadiusX(radius){//長辺の半径変更
-        if(radius == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(radius,"number"))return Fortis.error.ArgTypeWrong();
-        if(radius <= 0)return Fortis.error.ArgIncorrectVarRange();
-        this.radSize.x = radius; 
+    setRadiusX(radius) {//長辺の半径変更
+        if (radius == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
+        if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
+        this.radSize.x = radius;
+        return this.radSize.x;
     }
-    getRadiusY(){//短辺の半径取得
-        return this.radSize.y;    
+    getRadiusY() {//短辺の半径取得
+        return this.radSize.y;
     }
-    setRadiusY(radius){//短辺の半径変更
-        if(radius == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(radius,"number"))return Fortis.error.ArgTypeWrong();
-        if(radius <= 0)return Fortis.error.ArgIncorrectVarRange();
-        this.radSize.y = radius; 
+    setRadiusY(radius) {//短辺の半径変更
+        if (radius == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
+        if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
+        this.radSize.y = radius;
+        return this.radSize.y;
     }
-    getDegree(){//弧の角度取得
-        return this.degree;    
+    getDegree() {//弧の角度取得
+        return this.degree;
     }
-    setDegree(degree){//弧の角度変更
-        if(degree == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(degree,"number"))return Fortis.error.ArgTypeWrong();
-        if(degree <= 0)return Fortis.error.ArgIncorrectVarRange();
-        this.degree = degree; 
+    setDegree(degree) {//弧の角度変更
+        if (degree == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(degree, "number")) return Fortis.error.ArgTypeWrong();
+        if (degree <= 0) return Fortis.error.ArgIncorrectVarRange();
+        this.degree = degree;
+        return this.degree;
+    }
+}
+
+Fortis.RegPolygonShape = class {
+    get type() {
+        return "RegPolygonShape";
+    }
+    constructor(type, radius, sides) {
+        this.radius = 25;
+        this.sides = 3;
+        this.vertices;
+
+        if (radius != null) {
+            if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
+            if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
+            this.radius = radius;
+        }
+        if (sides != null) {
+            if (!Fortis.util.checkType(sides, "number")) return Fortis.error.ArgTypeWrong();
+            if (sides <= 2) return Fortis.error.ArgIncorrectVarRange();
+            this.sides = sides;
+        }
+        if (type == null) {//先に頂点を計算するか(trueならする、falseならしない、指定なしはtrue判定)
+            this.vertices = this.getPolyVertices();
+        } else if (type) {
+            this.vertices = this.getPolyVertices();
+        } else if (!type) {
+            this.vertices = false;
+        } else {
+            Fortis.error.ArgTypeWrong();
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    getPolyVertices() {//正多角形の頂点の相対的な座標を出力
+        let vertices = [];
+        let angle_increment = 360 / this.sides;
+        let a = angle_increment;
+        let b = 360;
+        while (b !== 0) {
+            let temp = b;
+            b = a % b;
+            a = temp;
+        }
+        let gcd = a;
+        let lcm = (angle_increment * 360) / gcd;
+        let points = lcm / angle_increment;
+        console.log(lcm)
+        let angle = 270;
+        vertices.push(Fortis.util.getPointOnCircle(new Fortis.Vector2(), this.radius, angle));
+        for (let i = 1; i < points; i++) {
+            angle += angle_increment;
+            vertices.push(Fortis.util.getPointOnCircle(new Fortis.Vector2(), this.radius, angle));
+        }
+        return vertices;
+    }
+    getVertices() {//頂点取得
+        return this.vertices;
+    }
+    getRadius() {//中心からの距離を取得
+        return this.radius;
+    }
+    setRadius(raidus) {//中心からの距離を変更
+        if (raidus == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(raidus, "number")) return Fortis.error.ArgTypeWrong();
+        if (raidus <= 0) return Fortis.error.ArgIncorrectVarRange();
+        this.radius = raidus;
+        if (this.vertices != false) {
+            this.vertices = this.getPolyVertices();
+        }
+        return raidus;
+    }
+    getSides() {//頂点の数を取得
+        return this.sides;
+    }
+    setSides(sides) {//頂点の数を変更
+        if (sides == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(sides, "number")) return Fortis.error.ArgTypeWrong();
+        if (sides <= 2) return Fortis.error.ArgIncorrectVarRange();
+        this.sides = sides;
+        if (this.vertices != false) {
+            this.vertices = this.getPolyVertices();
+        }
+        return sides;
+    }
+}
+
+Fortis.PolygonShape = class {
+    get type() {
+        return "PolygonShape";
+    }
+    constructor(vertices) {
+        if (vertices == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vertices, "object")) return Fortis.error.ArgTypeWrong();
+        this.vertices = vertices;
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    getVertices() {//頂点を取得
+        return this.vertices;
+    }
+    setVertices(vertices) {//頂点を変更
+        if (vertices == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vertices, "object")) return Fortis.error.ArgTypeWrong();
+        this.vertices = vertices;
+        return vertices;
     }
 }
