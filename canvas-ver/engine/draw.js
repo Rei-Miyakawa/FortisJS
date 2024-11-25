@@ -23,6 +23,9 @@ Fortis.Game.draw = function () {
                         case "RegPolygonShape":
                             Fortis.draw.regPolygon(entity);
                             break
+                        case "PolygonShape":
+                            Fortis.draw.polygon(entity);
+                            break
                     }
                     Fortis.Game.context.restore();
                 }
@@ -107,30 +110,42 @@ Fortis.draw.regPolygon = function (entity) {
     });
     if (entity.material.fill != false) {
         Fortis.Game.context.fillStyle = entity.material.fill.toRGBA();
+        Fortis.Game.context.closePath();
         Fortis.Game.context.fill();
     }
     if (entity.material.stroke != false) {
         Fortis.Game.context.lineTo(vertices[0].x, vertices[0].y);
         Fortis.Game.context.strokeStyle = entity.material.stroke.toRGBA();
         Fortis.Game.context.lineWidth = entity.material.thick;
+        Fortis.Game.context.closePath();
         Fortis.Game.context.stroke();
     }
-    Fortis.Game.context.closePath();
 }
 
-Fortis.draw.polygon = function (entity) { 
+Fortis.draw.polygon = function (entity) {
     Fortis.Game.context.beginPath();
 
-    //頂点をなぞる
-    
+    let vertices = entity.shape.vertices
+    let vertice_count = 0;
+    vertices.forEach(vertice => {
+        if (vertice_count == 0) {
+            Fortis.Game.context.moveTo(vertice.x, vertice.y);
+        } else {
+            Fortis.Game.context.lineTo(vertice.x, vertice.y);
+        }
+        vertice_count++;
+    });
+
     if (entity.material.fill != false) {
         Fortis.Game.context.fillStyle = entity.material.fill.toRGBA();
+        Fortis.Game.context.closePath();
         Fortis.Game.context.fill();
     }
     if (entity.material.stroke != false) {
+        Fortis.Game.context.lineTo(vertices[0].x, vertices[0].y);
         Fortis.Game.context.strokeStyle = entity.material.stroke.toRGBA();
         Fortis.Game.context.lineWidth = entity.material.thick;
+        Fortis.Game.context.closePath();
         Fortis.Game.context.stroke();
     }
-    Fortis.Game.context.closePath();
 }

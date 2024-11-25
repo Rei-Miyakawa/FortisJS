@@ -15,6 +15,13 @@ function Ready() {
     Fortis.Game.scene = scene;
     material = new Fortis.ColorMaterial(color, color2);
     layer = new Fortis.Layer();
+
+    let vertices = [
+        new Fortis.Vector2(50,50),
+        new Fortis.Vector2(40,-50),
+        new Fortis.Vector2(-40,-40)
+    ]
+
     e1 = new Fortis.Entity(new Fortis.RegPolygonShape(), new Fortis.ColorMaterial(color2,color));
     e1.pos = new Fortis.Vector2(100,100);
     //e1.shape.setDegree(180);
