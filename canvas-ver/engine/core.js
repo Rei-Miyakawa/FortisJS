@@ -45,7 +45,7 @@ let Fortis = {
 
     //色
     Color: null,//色-color.js
-    //Gradation: null,//グラデーション-color.js
+    Gradation: null,//グラデーション-color.js
 
     Entity: null,//エンティティ-entity.js
 

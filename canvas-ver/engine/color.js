@@ -95,3 +95,37 @@ Fortis.Color = class {
         return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + ")";
     }
 }
+
+Fortis.Gradation = class{
+    constructor() {
+        this.color = [];
+        this.gradation = null;
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    add(color,value){//色追加、valueは追加したい色の相対的な位置(0~1)
+        if(color == null || value == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(color,"object","Color") || !Fortis.util.checkType(value,"number"))return Fortis.error.ArgTypeWrong();
+        if(value>1 || value<0)return Fortis.error.ArgIncorrectVarRange();
+        this.color.push({"value":value,"color":color});
+        return this.color;
+    }
+    addColors(array){//色を複数追加
+        if(array == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(array,"object"))return Fortis.error.ArgTypeWrong();
+        array.forEach(obj => {
+            this.add(obj.color,obj.value);
+        });
+    }
+    getColor(){//色取得
+        return this.color;    
+    }
+}
