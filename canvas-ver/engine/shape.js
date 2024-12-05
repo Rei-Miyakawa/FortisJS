@@ -253,7 +253,6 @@ Fortis.RegPolygonShape = class {
         let gcd = a;
         let lcm = (angle_increment * 360) / gcd;
         let points = lcm / angle_increment;
-        console.log(lcm)
         let angle = 270;
         vertices.push(Fortis.util.getPointOnCircle(new Fortis.Vector2(), this.radius, angle));
         for (let i = 1; i < points; i++) {
