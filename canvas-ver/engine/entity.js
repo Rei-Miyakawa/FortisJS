@@ -1,5 +1,5 @@
 Fortis.Entity = class {
-    get type(){
+    get type() {
         return "Entity";
     }
     constructor(shape, material) {

@@ -1,5 +1,5 @@
 Fortis.Scene = class {
-    get type(){
+    get type() {
         return "Scene";
     }
     constructor() {
@@ -87,7 +87,7 @@ Fortis.Scene = class {
 }
 
 Fortis.Layer = class {
-    get type(){
+    get type() {
         return "Layer";
     }
     constructor() {

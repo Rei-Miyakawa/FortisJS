@@ -26,7 +26,7 @@ let Fortis = {
     error: null,//エラーをまとめたもの-util.js
     info: null,//処理完了などのお知らせをまとめたもの-util.js
 
-    //描画系の関数
+    //描画系の関数-draw.js
     draw: {
         line: null,//線
         rect: null,//矩形
@@ -34,6 +34,8 @@ let Fortis = {
         ellipse: null,//楕円
         regPolygon: null,//正多角形
         polygon: null,//多角形
+        setFillColor: null,//塗りつぶしの色をセット
+        setStrokeColor: null,//枠塗りの色をセット
     },
 
     //クラス
@@ -45,7 +47,10 @@ let Fortis = {
 
     //色
     Color: null,//色-color.js
-    Gradation: null,//グラデーション-color.js
+    GradationCore: null,//グラデーションのコア-color.js
+    LinearGradation: null,//線形グラデーション-color.js
+    RadialGradation: null,//円形グラデーション-color.js
+    ConicGradation: null,//扇形グラデーション-color.js
 
     Entity: null,//エンティティ-entity.js
 

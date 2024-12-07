@@ -1,16 +1,16 @@
 Fortis.ColorMaterial = class {
-    get type(){
+    get type() {
         return "ColorMaterial";
     }
     constructor(fillColor, strokeColor) {
         if (fillColor != null) {
-            if (!Fortis.util.checkType(fillColor, "object", "Color")) return Fortis.error.ArgTypeWrong();
+            if (!Fortis.util.checkType(fillColor, "object", "Color"))if(!fillColor.type.indexOf("Gradation")) return Fortis.error.ArgTypeWrong();
             this.fill = fillColor;
         } else {
             this.fill = false;
         }
         if (strokeColor != null) {
-            if (!Fortis.util.checkType(strokeColor, "object", "Color")) return Fortis.error.ArgTypeWrong();
+            if (!Fortis.util.checkType(strokeColor, "object", "Color"))if(!strokeColor.type.indexOf("Gradation")) return Fortis.error.ArgTypeWrong();
             this.stroke = strokeColor;
         } else {
             this.stroke = false;

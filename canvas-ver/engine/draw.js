@@ -42,7 +42,7 @@ Fortis.draw.line = function (entity) {
     if (entity.material.stroke != false) {
         Fortis.Game.context.moveTo(0, 0);
         Fortis.Game.context.lineTo(entity.shape.length, 0);
-        Fortis.Game.context.strokeStyle = entity.material.stroke.toRGBA();
+        Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick;
         Fortis.Game.context.stroke();
     }
@@ -50,11 +50,11 @@ Fortis.draw.line = function (entity) {
 
 Fortis.draw.rect = function (entity) {
     if (entity.material.fill != false) {
-        Fortis.Game.context.fillStyle = entity.material.fill.toRGBA();
+        Fortis.draw.setFillColor(entity.material.fill);
         Fortis.Game.context.fillRect(-entity.shape.size.x / 2, -entity.shape.size.y / 2, entity.shape.size.x, entity.shape.size.y);
     }
     if (entity.material.stroke != false) {
-        Fortis.Game.context.strokeStyle = entity.material.stroke.toRGBA();
+        Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick;
         Fortis.Game.context.strokeRect(-entity.shape.size.x / 2, -entity.shape.size.y / 2, entity.shape.size.x, entity.shape.size.y);
     }
@@ -64,11 +64,11 @@ Fortis.draw.circle = function (entity) {
     Fortis.Game.context.beginPath();
     Fortis.Game.context.arc(0, 0, entity.shape.radius, 0, Fortis.util.degreeToRadian(entity.shape.degree));
     if (entity.material.fill != false) {
-        Fortis.Game.context.fillStyle = entity.material.fill.toRGBA();
+        Fortis.draw.setFillColor(entity.material.fill);
         Fortis.Game.context.fill();
     }
     if (entity.material.stroke != false) {
-        Fortis.Game.context.strokeStyle = entity.material.stroke.toRGBA();
+        Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick;
         Fortis.Game.context.stroke();
     }
@@ -79,11 +79,11 @@ Fortis.draw.ellipse = function (entity) {
     Fortis.Game.context.beginPath();
     Fortis.Game.context.ellipse(0, 0, entity.shape.radSize.x, entity.shape.radSize.y, 0, 0, Fortis.util.degreeToRadian(entity.shape.degree));
     if (entity.material.fill != false) {
-        Fortis.Game.context.fillStyle = entity.material.fill.toRGBA();
+        Fortis.draw.setFillColor(entity.material.fill);
         Fortis.Game.context.fill();
     }
     if (entity.material.stroke != false) {
-        Fortis.Game.context.strokeStyle = entity.material.stroke.toRGBA();
+        Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick;
         Fortis.Game.context.stroke();
     }
@@ -109,13 +109,13 @@ Fortis.draw.regPolygon = function (entity) {
         vertice_count++;
     });
     if (entity.material.fill != false) {
-        Fortis.Game.context.fillStyle = entity.material.fill.toRGBA();
+        Fortis.draw.setFillColor(entity.material.fill);
         Fortis.Game.context.closePath();
         Fortis.Game.context.fill();
     }
     if (entity.material.stroke != false) {
         Fortis.Game.context.lineTo(vertices[0].x, vertices[0].y);
-        Fortis.Game.context.strokeStyle = entity.material.stroke.toRGBA();
+        Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick;
         Fortis.Game.context.closePath();
         Fortis.Game.context.stroke();
@@ -137,15 +137,32 @@ Fortis.draw.polygon = function (entity) {
     });
 
     if (entity.material.fill != false) {
-        Fortis.Game.context.fillStyle = entity.material.fill.toRGBA();
+        Fortis.draw.setFillColor(entity.material.fill);
         Fortis.Game.context.closePath();
         Fortis.Game.context.fill();
     }
     if (entity.material.stroke != false) {
         Fortis.Game.context.lineTo(vertices[0].x, vertices[0].y);
-        Fortis.Game.context.strokeStyle = entity.material.stroke.toRGBA();
+        Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick;
         Fortis.Game.context.closePath();
         Fortis.Game.context.stroke();
+    }
+}
+
+Fortis.draw.setFillColor = function (color) {
+    if (color.type.indexOf("Gradation") == -1) {
+        Fortis.Game.context.fillStyle = color.toRGBA();
+    } else {
+        Fortis.Game.context.fillStyle = color.gradation;
+    }
+}
+
+Fortis.draw.setStrokeColor = function (color) {
+    if (color.type.indexOf("Gradation") == -1) {
+        Fortis.Game.context.strokeStyle = color.toRGBA();
+    } else {
+        Fortis.Game.context.strokeStyle = color.gradation;
+
     }
 }

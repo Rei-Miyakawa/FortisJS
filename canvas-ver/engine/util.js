@@ -23,6 +23,8 @@ Fortis.error = {
     LayerAlreadyExists() { Fortis.util.console("Error", "そのレイヤーは既に存在しています。") },
     LayerNotExists() { Fortis.util.console("Error", "そのレイヤーは存在していません。") },
     CantDeleteNamedLayer() { Fortis.util.console("Error", "名前付きのレイヤーは削除できません。") },
+    ColorAlreadyExists() { Fortis.util.console("Error", "そのColorは既に存在しています。") },
+    ColorNotExists() { Fortis.util.console("Error", "そのColorは存在していません。") },
 }
 
 Fortis.info = {
@@ -174,22 +176,22 @@ Fortis.util.randomID = function (numOfDigit, decimal_system) {//digit=桁数、d
     return id;
 }
 
-Fortis.util.degreeToRadian = function(degree){
+Fortis.util.degreeToRadian = function (degree) {
     if (degree == null) return Fortis.error.ArgNotExists();
     if (!Fortis.util.checkType(degree, "number")) return Fortis.error.ArgTypeWrong();
     return degree * (Math.PI / 180);
 }
 
-Fortis.util.radianToDegree = function(radian){
+Fortis.util.radianToDegree = function (radian) {
     if (radian == null) return Fortis.error.ArgNotExists();
     if (!Fortis.util.checkType(radian, "number")) return Fortis.error.ArgTypeWrong();
     return radian * (180 / Math.PI);
 }
 
-Fortis.util.getPointOnCircle = function(pos,radius,degree){
-    if(pos == null || radius == null || degree == null)return Fortis.error.ArgNotExists();
-    if(!Fortis.util.checkType(pos,"object","Vector2")||!Fortis.util.checkType(radius,"number")||!Fortis.util.checkType(degree,"number"))return Fortis.error.ArgTypeWrong();
-    let x = Math.round((pos.x+radius*Math.cos(Fortis.util.degreeToRadian(degree)))*100)/100
-    let y = Math.round((pos.y+radius*Math.sin(Fortis.util.degreeToRadian(degree)))*100)/100
-    return new Fortis.Vector2(x,y);
+Fortis.util.getPointOnCircle = function (pos, radius, degree) {
+    if (pos == null || radius == null || degree == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.util.checkType(pos, "object", "Vector2") || !Fortis.util.checkType(radius, "number") || !Fortis.util.checkType(degree, "number")) return Fortis.error.ArgTypeWrong();
+    let x = Math.round((pos.x + radius * Math.cos(Fortis.util.degreeToRadian(degree))) * 100) / 100
+    let y = Math.round((pos.y + radius * Math.sin(Fortis.util.degreeToRadian(degree))) * 100) / 100
+    return new Fortis.Vector2(x, y);
 }
