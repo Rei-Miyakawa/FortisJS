@@ -64,6 +64,9 @@ let Fortis = {
     EllipseShape: null,//楕円-shape.js
     RegPolygonShape: null,//正多角形-shape.js
     PolygonShape: null,//多角形-shape.js
+
+    //コンテナ(画像合成も可能)
+    EntityContainer: null,//コンテナ-entity.js
 }
 
 Fortis.setup = function () {

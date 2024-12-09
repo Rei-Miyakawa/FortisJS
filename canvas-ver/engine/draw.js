@@ -26,6 +26,10 @@ Fortis.Game.draw = function () {
                         case "PolygonShape":
                             Fortis.draw.polygon(entity);
                             break
+                        case "EntityContainer":
+                            entity.entity.forEach(Entity => {
+                                //コンテナの描画処理について書く
+                            });
                     }
                     Fortis.Game.context.restore();
                 }
