@@ -90,7 +90,7 @@ Fortis.EntityContainer = class {
         return "EntityContainer";
     }
     constructor() {
-        this.entitiy = [];
+        this.entity = [];
         this.ids = {};
         this.id = Fortis.util.randomID();
     }
@@ -107,11 +107,17 @@ Fortis.EntityContainer = class {
     getEntity() {//エンティティ取得
         return this.entity;
     }
-    add(entity, composite) {//エンティティ追加
+    add(entity, tmpComposite) {//エンティティ追加
         if (entity == null) return Fortis.error.ArgNotExists();
+        let composite;
+        if(tmpComposite == null){
+            composite = "source-over";
+        }else{
+            if(!Fortis.util.checkType(composite,"string"))return Fortis.error.ArgTypeWrong();
+            composite = tmpComposite;
+        }
         if (!Fortis.util.checkType(entity, "object", "Entity")) return Fortis.error.ArgTypeWrong();
         if (this.ids[entity.id] != undefined) return Fortis.error.EntityAlreadyExists();
-        if (entity.type == "EntityContainer") return Fortis.error.ArgTypeWrong();
         this.entity.push({ "entity": entity, "composite": composite });
         this.ids[entity.id] = this.entity.length - 1;
         return this.entity;
@@ -130,12 +136,11 @@ Fortis.EntityContainer = class {
     remove(entity) {//エンティティ削除
         if (entity == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(entity, "object", "Entity")) return Fortis.error.ArgTypeWrong();
-        if (entity.type == "EntityContainer") return Fortis.error.ArgTypeWrong();
         if (this.ids[entity.id] == undefined) return Fortis.error.EntityNotExists();
         let repeat_count = this.entity.length - this.ids[entity.id] - 1;
         let start_index = this.ids[entity.id] + 1;
         for (let i = 0; i < repeat_count; i++) {
-            this.ids[this.entity[start_index + i].id]++;
+            this.ids[this.entity[start_index + i]["entity"].id]++;
         }
         this.entity.splice(this.ids[entity.id], 1);
         delete this.ids[entity.id];
@@ -151,13 +156,13 @@ Fortis.EntityContainer = class {
     reorder(entity, index) {//順番を変える
         if (entity == null || index == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(entity, "object", "Entity") || !Fortis.util.checkType(index, "number")) return Fortis.error.ArgTypeWrong();
-        if (entity.type == "EntityContainer") return Fortis.error.ArgTypeWrong();
         if (this.ids[entity.id] == undefined) return Fortis.error.EntityNotExists();
         if (index < 0 || index > this.entity - 1) return Fortis.error.ArgIncorrectVarRange();
         if (index == this.ids[entity.id]) return this.entity;
-        let index_id = this.entity[index][0].id
+        let index_id = this.entity[index]["entity"].id
+        let entityInfo = this.entity[this.ids[entity.id]]
         this.entity[this.ids[entity.id]] = this.entity[index];
-        this.entity[this.ids[index_id]] = entity;
+        this.entity[this.ids[index_id]] = entityInfo;
         this.ids[index_id] = this.ids[entity.id];
         this.ids[entity.id] = index;
         return this.entity;

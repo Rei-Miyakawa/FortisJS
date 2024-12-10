@@ -2,44 +2,49 @@ Fortis.Game.draw = function () {
     Fortis.Game.context.clearRect(0, 0, Fortis.Game.size.x, Fortis.Game.size.y);//オフスクリーンキャンバスの初期化
     if (Fortis.Game.scene != null) {//シーンが設定されているか
         Fortis.Game.scene.layer.forEach(layer => {
-            layer.entity.forEach(entity => {
-                if (!entity.invisibility) {
-                    Fortis.Game.context.save();
-                    Fortis.Game.context.translate(entity.pos.x, entity.pos.y);
-                    Fortis.Game.context.rotate(Fortis.util.degreeToRadian(entity.angle));
-                    switch (entity.shape.type) {
-                        case "LineShape":
-                            Fortis.draw.line(entity);
-                            break
-                        case "RectShape":
-                            Fortis.draw.rect(entity);
-                            break
-                        case "CircleShape":
-                            Fortis.draw.circle(entity);
-                            break
-                        case "EllipseShape":
-                            Fortis.draw.ellipse(entity);
-                            break
-                        case "RegPolygonShape":
-                            Fortis.draw.regPolygon(entity);
-                            break
-                        case "PolygonShape":
-                            Fortis.draw.polygon(entity);
-                            break
-                        case "EntityContainer":
-                            entity.entity.forEach(Entity => {
-                                //コンテナの描画処理について書く
-                            });
-                    }
-                    Fortis.Game.context.restore();
-                }
-            });
+            repeatIdentifyingEntity(layer, false);
         });
     }
 
     //実際に表示されるキャンバスの処理
     Fortis.Game.finalContext.clearRect(0, 0, Fortis.Game.size.x, Fortis.Game.size.y);
     Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0);
+
+    function repeatIdentifyingEntity(array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
+        array.entity.forEach(tmpEntity => {
+            let entity = tmpEntity;
+            if (mode) entity = tmpEntity["entity"];
+            if (!entity.invisibility) {
+                Fortis.Game.context.save();
+                if (mode) Fortis.Game.context.globalCompositeOperation = entity["composite"];
+                Fortis.Game.context.translate(entity.pos.x, entity.pos.y);
+                Fortis.Game.context.rotate(Fortis.util.degreeToRadian(entity.angle));
+                switch (entity.shape.type) {
+                    case "LineShape":
+                        Fortis.draw.line(entity);
+                        break
+                    case "RectShape":
+                        Fortis.draw.rect(entity);
+                        break
+                    case "CircleShape":
+                        Fortis.draw.circle(entity);
+                        break
+                    case "EllipseShape":
+                        Fortis.draw.ellipse(entity);
+                        break
+                    case "RegPolygonShape":
+                        Fortis.draw.regPolygon(entity);
+                        break
+                    case "PolygonShape":
+                        Fortis.draw.polygon(entity);
+                        break
+                    case "EntityContainer":
+                        repeatIdentifyingEntity(entity, true);
+                }
+                Fortis.Game.context.restore();
+            }
+        });
+    }
 }
 
 Fortis.draw.line = function (entity) {
