@@ -113,7 +113,7 @@ Fortis.EntityContainer = class {
         if(tmpComposite == null){
             composite = "source-over";
         }else{
-            if(!Fortis.util.checkType(composite,"string"))return Fortis.error.ArgTypeWrong();
+            if(!Fortis.util.checkType(tmpComposite,"string"))return Fortis.error.ArgTypeWrong();
             composite = tmpComposite;
         }
         if (!Fortis.util.checkType(entity, "object", "Entity")) return Fortis.error.ArgTypeWrong();

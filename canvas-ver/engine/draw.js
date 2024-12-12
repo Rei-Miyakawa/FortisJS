@@ -13,35 +13,41 @@ Fortis.Game.draw = function () {
     function repeatIdentifyingEntity(array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
         array.entity.forEach(tmpEntity => {
             let entity = tmpEntity;
-            if (mode) entity = tmpEntity["entity"];
             if (!entity.invisibility) {
                 Fortis.Game.context.save();
-                if (mode) Fortis.Game.context.globalCompositeOperation = entity["composite"];
-                Fortis.Game.context.translate(entity.pos.x, entity.pos.y);
-                Fortis.Game.context.rotate(Fortis.util.degreeToRadian(entity.angle));
-                switch (entity.shape.type) {
-                    case "LineShape":
-                        Fortis.draw.line(entity);
-                        break
-                    case "RectShape":
-                        Fortis.draw.rect(entity);
-                        break
-                    case "CircleShape":
-                        Fortis.draw.circle(entity);
-                        break
-                    case "EllipseShape":
-                        Fortis.draw.ellipse(entity);
-                        break
-                    case "RegPolygonShape":
-                        Fortis.draw.regPolygon(entity);
-                        break
-                    case "PolygonShape":
-                        Fortis.draw.polygon(entity);
-                        break
-                    case "EntityContainer":
-                        repeatIdentifyingEntity(entity, true);
+                if (mode) {
+                    entity = tmpEntity["entity"];
+                    Fortis.Game.context.globalCompositeOperation = tmpEntity["composite"];
+                } else {
+                    Fortis.Game.context.globalCompositeOperation = "source-over";
                 }
-                Fortis.Game.context.restore();
+                if (entity.type == "EntityContainer") {
+                    repeatIdentifyingEntity(entity, true);
+                } else {
+                    Fortis.Game.context.translate(entity.pos.x, entity.pos.y);
+                    Fortis.Game.context.rotate(Fortis.util.degreeToRadian(entity.angle));
+                    switch (entity.shape.type) {
+                        case "LineShape":
+                            Fortis.draw.line(entity);
+                            break
+                        case "RectShape":
+                            Fortis.draw.rect(entity);
+                            break
+                        case "CircleShape":
+                            Fortis.draw.circle(entity);
+                            break
+                        case "EllipseShape":
+                            Fortis.draw.ellipse(entity);
+                            break
+                        case "RegPolygonShape":
+                            Fortis.draw.regPolygon(entity);
+                            break
+                        case "PolygonShape":
+                            Fortis.draw.polygon(entity);
+                            break
+                    }
+                    Fortis.Game.context.restore();
+                }
             }
         });
     }

@@ -1,5 +1,6 @@
-let scene, bg, color, color2, material, grad;
-let e1;
+let scene, bg, color, color2, material, mateiral2;
+let e1, e2;
+let container;
 let layer;
 
 function Init() {
@@ -11,28 +12,22 @@ function Ready() {
     scene = new Fortis.Scene();
     color = new Fortis.Color("blue");
     color2 = new Fortis.Color("red");
-    grad = new Fortis.ConicGradation(new Fortis.Vector2(0, 0), 0);
-    grad.addColors([
-        { "value": 0, "color": color },
-        { "value": 1, "color": color2 }
-    ]);
     scene.bg = bg;
     Fortis.Game.scene = scene;
-    material = new Fortis.ColorMaterial(color, color2);
+    material = new Fortis.ColorMaterial(color);
+    mateiral2 = new Fortis.ColorMaterial(color2);
     layer = new Fortis.Layer();
-
-    let vertices = [
-        new Fortis.Vector2(50, 50),
-        new Fortis.Vector2(40, -50),
-        new Fortis.Vector2(-40, -40)
-    ]
-
-    e1 = new Fortis.Entity(new Fortis.RectShape(300, 300), new Fortis.ColorMaterial(grad));
+    e2 = new Fortis.Entity(new Fortis.CircleShape(200),material);
+    e2.pos = new Fortis.Vector2(150,150)
+    e1 = new Fortis.Entity(new Fortis.RectShape(300, 300), mateiral2);
     e1.pos = new Fortis.Vector2(200, 200);
+    container = new Fortis.EntityContainer();
+    container.add(e1);
+    container.add(e2,"source-in");
     //e1.shape.setDegree(180);
-    console.log(e1)
-    layer.add(e1);
-    scene.add(layer)
+    //console.log(e1)
+    layer.add(container);
+    scene.add(layer);
 }
 
 function Update() {
