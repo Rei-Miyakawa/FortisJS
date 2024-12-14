@@ -44,7 +44,7 @@ Fortis.Scene = class {
     remove(layer) {//レイヤー削除
         if (layer == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(layer, "object", "Layer")) return Fortis.error.ArgTypeWrong();
-        if (this.ids[layer.id] == undefined) return Fortis.error.LayerNotExists();
+        if (this.ids[layer.id] === undefined) return Fortis.error.LayerNotExists();
         if (layer.id == this.namedLayer["BG"].id || layer.id == this.namedLayer["Obj"].id || layer.id == this.namedLayer["UI"].id) return Fortis.error.CantDeleteNamedLayer();
         let repeat_count = this.layer.length - this.ids[layer.id] - 1;
         let start_index = this.ids[layer.id] + 1;
@@ -65,7 +65,7 @@ Fortis.Scene = class {
     reorder(layer, index) {//順番を変える
         if (layer == null || index == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(layer, "object", "Layer") || !Fortis.util.checkType(index, "number")) return Fortis.error.ArgTypeWrong();
-        if (this.ids[layer.id] == undefined) return Fortis.error.LayerNotExists();
+        if (this.ids[layer.id] === undefined) return Fortis.error.LayerNotExists();
         if (index < 0 || index > this.layer - 1) return Fortis.error.ArgIncorrectVarRange();
         if (index == this.ids[layer.id]) return this.layer;
         let index_id = this.layer[index].id
@@ -126,7 +126,7 @@ Fortis.Layer = class {
     remove(entity) {//エンティティ削除
         if (entity == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(entity, "object", "Entity")) return Fortis.error.ArgTypeWrong();
-        if (this.ids[entity.id] == undefined) return Fortis.error.EntityNotExists();
+        if (this.ids[entity.id] === undefined) return Fortis.error.EntityNotExists();
         let repeat_count = this.entity.length - this.ids[entity.id] - 1;
         let start_index = this.ids[entity.id] + 1;
         for (let i = 0; i < repeat_count; i++) {
@@ -146,7 +146,7 @@ Fortis.Layer = class {
     reorder(entity, index) {//順番を変える
         if (entity == null || index == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(entity, "object", "Entity") || !Fortis.util.checkType(index, "number")) return Fortis.error.ArgTypeWrong();
-        if (this.ids[entity.id] == undefined) return Fortis.error.EntityNotExists();
+        if (this.ids[entity.id] === undefined) return Fortis.error.EntityNotExists();
         if (index < 0 || index > this.entity - 1) return Fortis.error.ArgIncorrectVarRange();
         if (index == this.ids[entity.id]) return this.entity;
         let index_id = this.entity[index].id

@@ -25,11 +25,19 @@ Fortis.error = {
     CantDeleteNamedLayer() { Fortis.util.console("Error", "名前付きのレイヤーは削除できません。") },
     ColorAlreadyExists() { Fortis.util.console("Error", "そのColorは既に存在しています。") },
     ColorNotExists() { Fortis.util.console("Error", "そのColorは存在していません。") },
+    FontCouldntLoaded(name) { Fortis.util.console("Error", 'フォント"' + name + '"のロードができませんでした。') },
+    FontAlreadyExists(name) { Fortis.util.console("Error", 'フォント"' + name + '"は既に存在しています。') },
+    FontNotExists(name) { Fortis.util.console("Error", 'フォント"' + name + '"は存在しません。') },
+    ImgCouldntLoaded(name) { Fortis.util.console("Error", '画像"' + name + '"のロードができませんでした。') },
+    ImgAlreadyExists(name) { Fortis.util.console("Error", '画像"' + name + '"は既に存在しています。') },
+    ImgNotExists(name) { Fortis.util.console("Error", '画像"' + name + '"は存在しません。') },
 }
 
 Fortis.info = {
     SystemInitCompleted() { Fortis.util.console("Info", "ゲームシステムの初期化が完了しました。") },
     StartGameLoop() { Fortis.util.console("Info", "ゲームループを開始します。") },
+    FontLoaded(name) { Fortis.util.console("Info", 'フォント"' + name + '"がロードされました。') },
+    ImageLoaded(name) { Fortis.util.console("Info", '画像"' + name + '"がロードされました。') },
 }
 
 Fortis.util.console = function (type, content) {
@@ -52,7 +60,7 @@ Fortis.util.console = function (type, content) {
 Fortis.util.checkType = function (variable, varType, type) {
     if (typeof (variable) != varType) return false;//変数方チェック
     if (type == null) return true;//引数のtypeがあるか
-    if (variable.type == undefined) return variable.indexOf(type) != -1;//variableにtypeが存在するか + variableのチェック
+    if (variable.type === undefined) return variable.indexOf(type) != -1;//variableにtypeが存在するか + variableのチェック
     return variable.type.indexOf(type) != -1;//variable.typeのチェック
 }
 
@@ -69,7 +77,7 @@ Fortis.util.hexToRGB = function (hex) {
 
 Fortis.util.HSVToRGB = function (hsv) {
     if (!Fortis.util.checkType(hsv, "object")) return Fortis.error.ArgTypeWrong();
-    if (hsv.h == undefined || hsv.s == undefined || hsv.v == undefined) return Fortis.error.ArgTypeWrong();
+    if (hsv.h === undefined || hsv.s === undefined || hsv.v === undefined) return Fortis.error.ArgTypeWrong();
     if (!(hsv.h >= 0 && hsv.h <= 360 && hsv.s >= 0 && hsv.s <= 1 && hsv.v >= 0 && hsv.v <= 1)) return Fortis.error.ArgTypeWrong();
     let RGB = {};
     let max = hsv.v * 255;
@@ -105,7 +113,7 @@ Fortis.util.HSVToRGB = function (hsv) {
 
 Fortis.util.RGBToHex = function (rgb) {
     if (!Fortis.util.checkType(rgb, "object")) return Fortis.error.ArgTypeWrong();
-    if (rgb.r == undefined || rgb.g == undefined || rgb.b == undefined) return Fortis.error.ArgTypeWrong();
+    if (rgb.r === undefined || rgb.g === undefined || rgb.b === undefined) return Fortis.error.ArgTypeWrong();
     if (!(rgb.r >= 0 && rgb.r <= 255 && rgb.g >= 0 && rgb.g <= 255 && rgb.b >= 0 && rgb.b <= 255)) return Fortis.error.ArgTypeWrong();
     let code_text = "#";
     let RGB = { r: rgb.r, g: rgb.g, b: rgb.b }
@@ -121,7 +129,7 @@ Fortis.util.RGBToHex = function (rgb) {
 
 Fortis.util.RGBToHSV = function (rgb) {
     if (!Fortis.util.checkType(rgb, "object")) return Fortis.error.ArgTypeWrong();
-    if (rgb.r == undefined || rgb.g == undefined || rgb.b == undefined) return Fortis.error.ArgTypeWrong();
+    if (rgb.r === undefined || rgb.g === undefined || rgb.b === undefined) return Fortis.error.ArgTypeWrong();
     if (!(rgb.r >= 0 && rgb.r <= 255 && rgb.g >= 0 && rgb.g <= 255 && rgb.b >= 0 && rgb.b <= 255)) return Fortis.error.ArgTypeWrong();
     let HSV = {};
     let max = Math.max(rgb.r, Math.max(rgb.g, rgb.b));

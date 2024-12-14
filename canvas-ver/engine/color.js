@@ -21,7 +21,7 @@ Fortis.Color = class {
                     return Fortis.error.NotColorCode();
                 }
             } else if (Fortis.util.checkType(hexOrR, "string")) {//名前付き色判定
-                if (Fortis.util.namedColors[hexOrR] == undefined) {
+                if (Fortis.util.namedColors[hexOrR] === undefined) {
                     return Fortis.error.KeyNotExistsInObject();
                 } else {
                     this.r = Fortis.util.namedColors[hexOrR].r;
@@ -156,7 +156,7 @@ Fortis.GradationCore = class {
     remove(color) {//色削除
         if (color == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(color, "object", "Color")) return Fortis.error.ArgTypeWrong();
-        if (this.ids[color.id] == undefined) return Fortis.error.ColorNotExists();
+        if (this.ids[color.id] === undefined) return Fortis.error.ColorNotExists();
         this.color.splice(this.ids[color.id], 1);
         delete this.ids[color.id];
         return this.color;

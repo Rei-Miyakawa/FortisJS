@@ -321,3 +321,61 @@ Fortis.PolygonShape = class {
         return vertices;
     }
 }
+
+Fortis.TextShape = class {
+    get type() {
+        return "TextShape";
+    }
+    constructor(font, text) {
+        if (font == null) {
+            this.font = new Fortis.Font();
+        } else {
+            if (!Fortis.util.checkType(font, "object", "Font")) return Fortis.error.ArgTypeWrong();
+            this.font = font;
+        }
+        if (text == null) {
+            this.text = "Hello World.";
+        } else {
+            if (!Fortis.util.checkType(text, "string")) return Fortis.error.ArgTypeWrong();
+            this.text = text;
+        }
+        this.direction = "inherit";
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    getText() {//テキスト取得
+        return this.text;
+    }
+    setText(text) {//テキスト設定
+        if (text == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(text, "string")) return Fortis.error.ArgTypeWrong();
+        this.text = text;
+        return this.text;
+    }
+    getFont() {//フォント取得
+        return this.font;
+    }
+    setFont(font) {//フォント設定
+        if (font == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(font, "object", "Font")) return Fortis.error.ArgTypeWrong();
+        this.font = font;
+        return this.font;
+    }
+    getDirection() {//フォント取得
+        return this.direction;
+    }
+    setDirection(direction) {//フォント設定
+        if (direction == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(direction, "string")) return Fortis.error.ArgTypeWrong();
+        this.direction = direction;
+        return this.direction;
+    }
+}

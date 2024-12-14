@@ -45,6 +45,9 @@ Fortis.Game.draw = function () {
                         case "PolygonShape":
                             Fortis.draw.polygon(entity);
                             break
+                        case "TextShape":
+                            Fortis.draw.text(entity);
+                            break
                     }
                     Fortis.Game.context.restore();
                 }
@@ -162,6 +165,19 @@ Fortis.draw.polygon = function (entity) {
         Fortis.Game.context.lineWidth = entity.material.thick;
         Fortis.Game.context.closePath();
         Fortis.Game.context.stroke();
+    }
+}
+
+Fortis.draw.text = function (entity) {
+    Fortis.Game.context.font = entity.shape.font.output();
+    Fortis.Game.context.direction = entity.shape.direction;
+    if (entity.material.fill != false) {
+        Fortis.draw.setFillColor(entity.material.fill);
+        Fortis.Game.context.fillText(entity.shape.text, 0, 0);
+    }
+    if (entity.material.stroke != false) {
+        Fortis.draw.setStrokeColor(entity.material.stroke);
+        Fortis.Game.context.strokeText(entity.shape.text, 0, 0);
     }
 }
 

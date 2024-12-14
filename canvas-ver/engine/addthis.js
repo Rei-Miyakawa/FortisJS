@@ -3,6 +3,8 @@ let files = [
     "vector",
     "scene",
     "color",
+    "font",
+    "image",
     "material",
     "shape",
     "entity",

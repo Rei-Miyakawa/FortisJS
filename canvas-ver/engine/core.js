@@ -34,6 +34,7 @@ let Fortis = {
         ellipse: null,//楕円
         regPolygon: null,//正多角形
         polygon: null,//多角形
+        text: null,//テキスト
         setFillColor: null,//塗りつぶしの色をセット
         setStrokeColor: null,//枠塗りの色をセット
     },
@@ -56,6 +57,7 @@ let Fortis = {
 
     //マテリアル
     ColorMaterial: null,//カラーマテリアル-material.js
+    ImageMaterial: null,//画像マテリアル-material.js
 
     //シェイプ
     LineShape: null,//線-shape.js
@@ -64,6 +66,15 @@ let Fortis = {
     EllipseShape: null,//楕円-shape.js
     RegPolygonShape: null,//正多角形-shape.js
     PolygonShape: null,//多角形-shape.js
+    TextShape: null,//文字-shape.js
+    Sprite: null,//スプライト(画像)-shape.js
+
+    //フォント
+    FontLoader: null,//フォントの読み込み・保存-font.js
+    Font: null,//フォントの管理
+
+    //画像
+    ImageLoader: null,//画像の読み込み・保存-image.js
 
     //コンテナ(画像合成も可能)
     EntityContainer: null,//コンテナ-entity.js
@@ -100,6 +111,8 @@ Fortis.Game = {
         //オフスクリーンキャンバス
         this.canvas = new OffscreenCanvas(100, 100);
         this.context = this.canvas.getContext("2d");
+        this.context.textAlign = "center";
+        this.context.textBaseline = "middle";
 
         //最終的な描画キャンバス
         this.finalCanvas = document.createElement("canvas");
