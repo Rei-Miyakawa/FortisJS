@@ -111,8 +111,6 @@ Fortis.Game = {
         //オフスクリーンキャンバス
         this.canvas = new OffscreenCanvas(100, 100);
         this.context = this.canvas.getContext("2d");
-        this.context.textAlign = "center";
-        this.context.textBaseline = "middle";
 
         //最終的な描画キャンバス
         this.finalCanvas = document.createElement("canvas");

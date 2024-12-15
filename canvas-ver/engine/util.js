@@ -58,7 +58,7 @@ Fortis.util.console = function (type, content) {
 }
 
 Fortis.util.checkType = function (variable, varType, type) {
-    if (typeof (variable) != varType) return false;//変数方チェック
+    if (typeof (variable) != varType) return false;//変数型チェック
     if (type == null) return true;//引数のtypeがあるか
     if (variable.type === undefined) return variable.indexOf(type) != -1;//variableにtypeが存在するか + variableのチェック
     return variable.type.indexOf(type) != -1;//variable.typeのチェック

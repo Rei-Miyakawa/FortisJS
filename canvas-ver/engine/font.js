@@ -18,7 +18,7 @@ Fortis.FontLoader = {
     },
 
     loadFonts(array) {//フォントの複数ロード。配列で中にkeyとurlがあるオブジェクトを入れる。
-        if (array = null) return Fortis.error.ArgNotExsits();
+        if (array == null) return Fortis.error.ArgNotExsits();
         if (!Fortis.util.checkType(array, "object")) return Fortis.error.ArgTypeWrong();
         array.forEach(element => {
             this.loadFont(element.key, element.url);
@@ -26,14 +26,14 @@ Fortis.FontLoader = {
     },
 
     getFont(key) {//フォントの取得
-        if (key = null) return Fortis.error.ArgNotExsits();
+        if (key == null) return Fortis.error.ArgNotExsits();
         if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
         if (this.fonts[key] === undefined) return Fortis.error.FontNotExists(key);
         return this.fonts[key];
     },
 
     deleteFont(key) {//フォントの削除
-        if (key = null) return Fortis.error.ArgNotExsits();
+        if (key == null) return Fortis.error.ArgNotExsits();
         if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
         if (this.fonts[key] === undefined) return Fortis.error.FontNotExists(key);
         document.head.removeChild(this.fonts[key])

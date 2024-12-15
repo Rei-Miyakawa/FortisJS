@@ -25,22 +25,23 @@ Fortis.ImageLoader = {
     },
 
     loadImgs(array) {//画像の複数ロード。配列で中にkeyとurlがあるオブジェクトを入れる。
-        if (array = null) return Fortis.error.ArgNotExsits();
+        if (array == null) return Fortis.error.ArgNotExsits();
         if (!Fortis.util.checkType(array, "object")) return Fortis.error.ArgTypeWrong();
         array.forEach(element => {
             this.loadImg(element.key, element.url);
         });
     },
 
-    getImg(key) {//フォントの取得
-        if (key = null) return Fortis.error.ArgNotExsits();
+    getImg(key) {//画像の取得
+        if (key == null) return Fortis.error.ArgNotExsits();
+        console.log(key)
         if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
         if (this.imgs[key] === undefined) return Fortis.error.ImgNotExists(key);
         return this.imgs[key];
     },
 
-    deleteImg(key) {//フォントの削除
-        if (key = null) return Fortis.error.ArgNotExsits();
+    deleteImg(key) {//画像の削除
+        if (key == null) return Fortis.error.ArgNotExsits();
         if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
         if (this.imgs[key] === undefined) return Fortis.error.ImgNotExists(key);
         document.head.removeChild(this.imgs[key])
@@ -48,10 +49,10 @@ Fortis.ImageLoader = {
         return this.imgs;
     },
 
-    getImgKeys() {//フォントのキーの取得
+    getImgKeys() {//画像のキーの取得
         return this.imgs.keys();
     },
-    getImgs() {//全フォント取得
+    getImgs() {//全画像取得
         let imgs = [];
         this.imgs.forEach(img => {
             imgs.push(img);

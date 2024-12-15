@@ -56,3 +56,27 @@ Fortis.ColorMaterial = class {
         return this.thick;
     }
 }
+
+Fortis.ImageMaterial = class{
+    get type() {
+        return "ImageMaterial";
+    }
+    constructor(img,sLoc,eLoc) {
+    if(img == null){
+        this.img = Fortis.ImageLoader.getImg("karikenji");
+    }else{
+        if(!Fortis.util.checkType(img,"object") || img.tagName === undefined)return Fortis.error.ArgTypeWrong();
+        this.img = img;
+    }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+}

@@ -1,5 +1,5 @@
 let scene, bg, color, color2, material, mateiral2;
-let e1, e2, t1;
+let e1, e2, t1,i1;
 let container;
 let layer;
 
@@ -32,11 +32,14 @@ function Ready() {
     t1 = new Fortis.Entity(new Fortis.TextShape(new Fortis.Font("RocknRoll One", 30), "こんにちは"), material);
     t1.pos = new Fortis.Vector2(300, 300);
     t1.shape.font.setStyle("italic");
+    let hoge = Fortis.ImageLoader.getImg("karikenji")
+    i1 = new Fortis.ImageMaterial(hoge);
     layer.add(t1);
     scene.add(layer);
 }
 
 function Update() {
+    t1.angle++;
     //e1.move(new Fortis.Vector2(1,1));
     //console.log(e1.material.fill.pos)
 }

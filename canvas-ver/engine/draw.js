@@ -169,6 +169,8 @@ Fortis.draw.polygon = function (entity) {
 }
 
 Fortis.draw.text = function (entity) {
+    Fortis.Game.context.textAlign = "center";
+    Fortis.Game.context.textBaseline = "middle";
     Fortis.Game.context.font = entity.shape.font.output();
     Fortis.Game.context.direction = entity.shape.direction;
     if (entity.material.fill != false) {
