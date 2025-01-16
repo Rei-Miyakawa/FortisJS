@@ -379,3 +379,33 @@ Fortis.TextShape = class {
         return this.direction;
     }
 }
+
+Fortis.ImageShape = class {
+    get type() {
+        return "ImageShape";
+    }
+    constructor(imgOrVector) {
+        if(imgOrVector == null){
+            this.size = new Fortis.Vector2(100,100);
+        }else if(Fortis.util.checkType(imgOrVector,"object","Vector2")){
+            this.size = imgOrVector.copy();
+        }else if(Fortis.util.checkType(img,"object") && img.tagName == "IMG"){
+            this.size = new Fortis.Vector2(imgOrVector.width,imgOrVector.height);
+        }else{
+            return Fortis.error.ArgTypeWrong();
+        }
+        
+        this.clipPos = null;
+        this.clipSize = null;
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+}

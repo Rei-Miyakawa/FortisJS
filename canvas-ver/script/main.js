@@ -6,8 +6,12 @@ let layer;
 function Init() {
     Fortis.Game.config.debug = true;
     //Fortis.Game.config.loop = false;
-    Fortis.FontLoader.loadFont("test", 'https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap');
-    Fortis.ImageLoader.loadImg("karikenji", "./karikenji1.jpg");
+    Fortis.FontLoader.addFonts({
+        "test": 'https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap',
+    });
+    Fortis.ImageLoader.addImages({
+        "sample":"./sample.jpg",
+    });
 }
 
 function Ready() {
@@ -19,20 +23,24 @@ function Ready() {
     material = new Fortis.ColorMaterial(color);
     mateiral2 = new Fortis.ColorMaterial(color2);
     layer = new Fortis.Layer();
+    /*
     e2 = new Fortis.Entity(new Fortis.CircleShape(200), material);
     e2.pos = new Fortis.Vector2(150, 150)
     e1 = new Fortis.Entity(new Fortis.RectShape(300, 300), mateiral2);
     e1.pos = new Fortis.Vector2(200, 200);
+    
     container = new Fortis.EntityContainer();
     container.add(e1);
     container.add(e2, "source-in");
-    //e1.shape.setDegree(180);
-    //console.log(e1)
-    //layer.add(container);
+    e1.shape.setDegree(180);
+    console.log(e1)
+    layer.add(container);
+    */
     t1 = new Fortis.Entity(new Fortis.TextShape(new Fortis.Font("RocknRoll One", 30), "こんにちは"), material);
     t1.pos = new Fortis.Vector2(300, 300);
     t1.shape.font.setStyle("italic");
-    let hoge = Fortis.ImageLoader.getImg("karikenji")
+    let hoge = Fortis.ImageLoader.getImg("sample");
+    console.log(hoge)
     i1 = new Fortis.ImageMaterial(hoge);
     layer.add(t1);
     scene.add(layer);

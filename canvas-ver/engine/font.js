@@ -1,28 +1,63 @@
 Fortis.FontLoader = {
     fonts: {},
 
-    async loadFont(key, url) {//フォントのロード
-        if (key == null || url == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(key, "string") || !Fortis.util.checkType(url, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.fonts[key] !== undefined) return Fortis.error.FontAlreadyExists(key);
+    loadFont(key) {//フォントのロード
+        if (key == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
+        let url = Fortis.FontLoader.fonts[key];
         let newFont = document.createElement("link");
         document.head.appendChild(newFont);
-        newFont.href = url;
-        newFont.rel = "stylesheet"
-        let result = await document.fonts.ready;
-        if (result) {
-            this.fonts[key] = url;
-            return Fortis.info.FontLoaded(key);
-        }
-        return Fortis.error.FontCouldntLoaded(key);
+        return new Promise((resolve, reject) => {
+            newFont.onload = () => {
+                Fortis.FontLoader.fonts[key] = newFont;
+                Fortis.info.FontLoaded(key);
+                resolve(true);
+            }
+            newFont.onerror = () => {
+                Fortis.error.FontCouldntLoaded(key);
+                reject(false);
+            }
+            newFont.href = url;
+            newFont.rel = "stylesheet";
+        })
+
+
     },
 
-    loadFonts(array) {//フォントの複数ロード。配列で中にkeyとurlがあるオブジェクトを入れる。
-        if (array == null) return Fortis.error.ArgNotExsits();
-        if (!Fortis.util.checkType(array, "object")) return Fortis.error.ArgTypeWrong();
-        array.forEach(element => {
-            this.loadFont(element.key, element.url);
-        });
+    loadFonts() {//フォントの複数ロード。配列で中にkeyとurlがあるオブジェクトを入れる。
+        return new Promise((resolve, reject) => {
+            async function promise() {
+                let keys = Object.keys(Fortis.FontLoader.fonts);
+                try {
+                    const fonts = await Promise.all(keys.map(Fortis.FontLoader.loadFont));
+                    //console.log("All images loaded successfully:", images);
+                    return fonts; // 全ての画像オブジェクトがここに入ります
+                } catch (error) {
+                    //console.error("Error loading images:", error);
+                    throw error; // エラーを伝播させる場合
+                }
+            }
+            promise()
+                .then(() => {//フォントのロードが終わった
+                    resolve(true);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        })
+    },
+
+    addFonts(object) {//フォントを追加
+        if (object == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(object, "object")) return Fortis.error.ArgTypeWrong();
+        for (let key in object) {
+            let url = object[key];
+            if (key == null || url == null) return Fortis.error.ArgNotExists();
+            if (!Fortis.util.checkType(key, "string") || !Fortis.util.checkType(url, "string")) return Fortis.error.ArgTypeWrong();
+            if (Fortis.FontLoader.fonts[key] !== undefined) return Fortis.error.ImgAlreadyExists(key);
+            Fortis.FontLoader.fonts[key] = url;
+        }
+        return this.fonts;
     },
 
     getFont(key) {//フォントの取得

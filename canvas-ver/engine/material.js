@@ -61,13 +61,14 @@ Fortis.ImageMaterial = class{
     get type() {
         return "ImageMaterial";
     }
-    constructor(img,sLoc,eLoc) {
+    constructor(img) {
     if(img == null){
-        this.img = Fortis.ImageLoader.getImg("karikenji");
+        this.img = Fortis.ImageLoader.getImg("sample");
     }else{
         if(!Fortis.util.checkType(img,"object") || img.tagName === undefined)return Fortis.error.ArgTypeWrong();
         this.img = img;
     }
+    this.size = new Fortis.Vector2(img.width,img.height);
     }
     getType() {//タイプ取得
         return this.type;
@@ -78,5 +79,17 @@ Fortis.ImageMaterial = class{
                 this[key] = null;
             }
         }
+    }
+    setImage(img){//画像を変更
+        if(img == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(img,"object") || img.tagName === undefined)return Fortis.error.ArgTypeWrong();
+        this.img = img;
+        return img;
+    }
+    getImage(){//画像を取得
+        return this.img;    
+    }
+    getSize(){//画像のサイズを取得
+        return this.size;
     }
 }

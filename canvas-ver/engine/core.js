@@ -22,6 +22,7 @@ let Fortis = {
 
     //関数
     setup: null,//ファイルの読み込みが終わったときの処理
+    loadMaterials: null,//素材の読み込み(今のところ画像とフォント)
 
     error: null,//エラーをまとめたもの-util.js
     info: null,//処理完了などのお知らせをまとめたもの-util.js
@@ -67,6 +68,7 @@ let Fortis = {
     RegPolygonShape: null,//正多角形-shape.js
     PolygonShape: null,//多角形-shape.js
     TextShape: null,//文字-shape.js
+    ImageShape: null,//画像-shape.js
     Sprite: null,//スプライト(画像)-shape.js
 
     //フォント
@@ -82,14 +84,27 @@ let Fortis = {
 
 Fortis.setup = function () {
     Init();//ゲーム設定を想定
-    Fortis.Game.init();//ゲームシステムの初期化
-    Ready();//ゲームが初期化された後に実行。素材の読み込みなどを想定
-    if (Fortis.Game.config.loop) {//ゲームループをするか
-        Fortis.info.StartGameLoop();
-        Fortis.Game.loop();//ゲームループスタート
-    } else {
-        EngineLoaded();//エンジンが読み込まれた
-    }
+    Fortis.Game.init();//ゲームシステムの初期化。素材の読み込みの設定などもここでやる
+    Fortis.loadMaterials()
+        .then(() => {
+            Ready();//ゲームが初期化された後に実行
+            if (Fortis.Game.config.loop) {//ゲームループをするか
+                Fortis.info.StartGameLoop();
+                Fortis.Game.loop();//ゲームループスタート
+            } else {
+                EngineLoaded();//エンジンが読み込まれた
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+            console.error("Failed to load some materials. Stopping initialization.")
+        })
+}
+
+Fortis.loadMaterials = async function () {
+    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs()];
+    const promiseAll = await Promise.all(functionNames);
+    return promiseAll;
 }
 
 Fortis.Game = {
