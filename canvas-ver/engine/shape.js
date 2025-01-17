@@ -384,19 +384,20 @@ Fortis.ImageShape = class {
     get type() {
         return "ImageShape";
     }
-    constructor(imgOrVector) {
-        if(imgOrVector == null){
+    constructor(imgOrVec) {//imgもしくはVector2を引数とする
+        //サイズ
+        if(imgOrVec == null){
             this.size = new Fortis.Vector2(100,100);
-        }else if(Fortis.util.checkType(imgOrVector,"object","Vector2")){
-            this.size = imgOrVector.copy();
-        }else if(Fortis.util.checkType(img,"object") && img.tagName == "IMG"){
-            this.size = new Fortis.Vector2(imgOrVector.width,imgOrVector.height);
+        }else if(Fortis.util.checkType(imgOrVec,"object") && imgOrVec.tagName == "IMG"){
+            this.size = new Fortis.Vector2(imgOrVec.width,imgOrVec.height);
+        }else if(Fortis.util.checkType(imgOrVec,"object","Vector2")){
+            this.size = imgOrVec.copy();
         }else{
             return Fortis.error.ArgTypeWrong();
         }
         
-        this.clipPos = null;
-        this.clipSize = null;
+        this.clipPos;
+        this.clipSize;
     }
     getType() {//タイプ取得
         return this.type;
@@ -407,5 +408,42 @@ Fortis.ImageShape = class {
                 this[key] = null;
             }
         }
+    }
+    setSize(imgOrVec){//サイズ変更
+        if(imgOrVec == null){
+            this.size = new Fortis.Vector2(100,100);
+        }else if(Fortis.util.checkType(imgOrVec,"object","Vector2")){
+            this.size = imgOrVec.copy();
+        }else if(Fortis.util.checkType(img,"object") && img.tagName == "IMG"){
+            this.size = new Fortis.Vector2(imgOrVec.width,imgOrVec.height);
+        }else{
+            return Fortis.error.ArgTypeWrong();
+        }
+        return this.size;
+    }
+    getSize(){//サイズ取得
+        return this.size;    
+    }
+    setClip(pos,size){//画像クリップの情報を設定
+        if(pos == null){
+            this.clipPos = new Fortis.Vector2();
+        }else if(Fortis.util.checkType(pos,"object","Vector2")){
+            this.clipPos = pos;    
+        }else{
+            return Fortis.error.ArgTypeWrong();
+        }
+
+        if(size == null){
+            this.clipSize = new Fortis.Vector2();
+        }else if(Fortis.util.checkType(size,"object","Vector2")){
+            this.clipSize = size;    
+        }else{
+            return Fortis.error.ArgTypeWrong();
+        }
+
+        return {pos:this.clipPos,size:this.clipSize};
+    }
+    getClip(){//クリップの情報を取得
+        return {pos:this.clipPos,size:this.clipSize};
     }
 }

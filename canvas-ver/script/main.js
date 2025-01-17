@@ -1,5 +1,5 @@
 let scene, bg, color, color2, material, mateiral2;
-let e1, e2, t1,i1;
+let e1, e2, t1,i1,is;
 let container;
 let layer;
 
@@ -42,12 +42,16 @@ function Ready() {
     let hoge = Fortis.ImageLoader.getImg("sample");
     console.log(hoge)
     i1 = new Fortis.ImageMaterial(hoge);
+    is = new Fortis.Entity(new Fortis.ImageShape(hoge),i1);
+    i1.globalAlpha = 0.5
+    is.pos = new Fortis.Vector2(300, 300);
     layer.add(t1);
+    layer.add(is);
     scene.add(layer);
 }
 
 function Update() {
-    t1.angle++;
+    //t1.angle++;
     //e1.move(new Fortis.Vector2(1,1));
     //console.log(e1.material.fill.pos)
 }

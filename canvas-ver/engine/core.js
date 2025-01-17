@@ -36,6 +36,7 @@ let Fortis = {
         regPolygon: null,//正多角形
         polygon: null,//多角形
         text: null,//テキスト
+        image: null,//画像
         setFillColor: null,//塗りつぶしの色をセット
         setStrokeColor: null,//枠塗りの色をセット
     },
