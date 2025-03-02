@@ -51,6 +51,9 @@ Fortis.Game.draw = function () {
                         case "ImageShape":
                             Fortis.draw.image(entity);
                             break
+                        case "SpriteShape":
+                            Fortis.draw.image(entity,true);
+                            break
                     }
                     Fortis.Game.context.restore();
                 }
@@ -186,9 +189,11 @@ Fortis.draw.text = function (entity) {
     }
 }
 
-Fortis.draw.image = function (entity){
+Fortis.draw.image = function (entity,sprite){
     Fortis.Game.context.globalAlpha = entity.material.globalAlpha;
-    if(entity.shape.clipPos === undefined){
+    if(sprite){
+        Fortis.Game.context.drawImage(entity.material.img)//次はここから
+    }else if(entity.shape.clipPos === undefined){
         Fortis.Game.context.drawImage(entity.material.img,-entity.shape.size.x/2,-entity.shape.size.y/2,entity.shape.size.x,entity.shape.size.y);
     }else{
         Fortis.Game.context.drawImage(entity.material.img,entity.shape.clipPos.x,entity.shape.clipPos.y,entity.shape.clipSize.x,entity.shape.clipSize.y,-entity.shape.size.x/2,-entity.shape.size.y/2,entity.shape.size.x,entity.shape.size.y);

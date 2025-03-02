@@ -50,7 +50,7 @@ function Ready() {
     scene.add(layer);
 }
 
-function Update() {
+function Update(delta) {
     //t1.angle++;
     //e1.move(new Fortis.Vector2(1,1));
     //console.log(e1.material.fill.pos)

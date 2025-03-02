@@ -1,5 +1,6 @@
 let files = [
     "core",
+    "fps",
     "vector",
     "scene",
     "color",

@@ -59,7 +59,7 @@ let Fortis = {
 
     //マテリアル
     ColorMaterial: null,//カラーマテリアル-material.js
-    ImageMaterial: null,//画像マテリアル-material.js
+    ImageMaterial: null,//画像マテリアル-material.js\
 
     //シェイプ
     LineShape: null,//線-shape.js
@@ -70,7 +70,7 @@ let Fortis = {
     PolygonShape: null,//多角形-shape.js
     TextShape: null,//文字-shape.js
     ImageShape: null,//画像-shape.js
-    Sprite: null,//スプライト(画像)-shape.js
+    SpriteShape: null,//スプライト(画像)-shape.js
 
     //フォント
     FontLoader: null,//フォントの読み込み・保存-font.js
@@ -120,6 +120,7 @@ Fortis.Game = {
         debug: false,//デバッグモード
         loop: true,//ゲームループをするか
     },
+    fpsCtrl: null,//fps.js
     scene: null,//シーン
 
     //関数
@@ -140,12 +141,36 @@ Fortis.Game = {
         this.finalCanvas.width = this.size.x;
         this.finalCanvas.height = this.size.y;
 
+        //fps
+        this.fpsCtrl.init();
+
         Fortis.info.SystemInitCompleted();
+    },
+    setScene(scene) {//シーン設定
+        if (scene == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(scene, "object", "Scene")) return Fortis.error.ArgTypeWrong();
+        this.scene = scene;
+        return this.scene;
+    },
+    getScene() {//シーン取得
+        return this.scene;
+    },
+    getConfig() {//設定取得
+        return this.config;
+    },
+    setConfig(object) {//設定を変更
+        if (object == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(object, "object")) return Fortis.error.ArgTypeWrong();
+        for (let key in object) {
+            if (Fortis.Game.config[key] !== undefined) Fortis.Game.config[key] = object[key];
+        }
+        return this.config;
     },
 
     //ゲームループ
     loop() {
-        Update();//更新
+        let delta = this.fpsCtrl.update();
+        Update(delta);//更新
         this.draw();
         requestAnimationFrame(this.loop.bind(this));//アニメーションループ
     },

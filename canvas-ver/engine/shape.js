@@ -1,3 +1,5 @@
+const { now } = require("core-js/core/date");
+
 Fortis.LineShape = class {
     get type() {
         return "LineShape";
@@ -386,16 +388,16 @@ Fortis.ImageShape = class {
     }
     constructor(imgOrVec) {//imgもしくはVector2を引数とする
         //サイズ
-        if(imgOrVec == null){
-            this.size = new Fortis.Vector2(100,100);
-        }else if(Fortis.util.checkType(imgOrVec,"object") && imgOrVec.tagName == "IMG"){
-            this.size = new Fortis.Vector2(imgOrVec.width,imgOrVec.height);
-        }else if(Fortis.util.checkType(imgOrVec,"object","Vector2")){
+        if (imgOrVec == null) {
+            this.size = new Fortis.Vector2(100, 100);
+        } else if (Fortis.util.checkType(imgOrVec, "object") && imgOrVec.tagName == "IMG") {
+            this.size = new Fortis.Vector2(imgOrVec.width, imgOrVec.height);
+        } else if (Fortis.util.checkType(imgOrVec, "object", "Vector2")) {
             this.size = imgOrVec.copy();
-        }else{
+        } else {
             return Fortis.error.ArgTypeWrong();
         }
-        
+
         this.clipPos;
         this.clipSize;
     }
@@ -409,41 +411,129 @@ Fortis.ImageShape = class {
             }
         }
     }
-    setSize(imgOrVec){//サイズ変更
-        if(imgOrVec == null){
-            this.size = new Fortis.Vector2(100,100);
-        }else if(Fortis.util.checkType(imgOrVec,"object","Vector2")){
+    setSize(imgOrVec) {//サイズ変更
+        if (imgOrVec == null) {
+            this.size = new Fortis.Vector2(100, 100);
+        } else if (Fortis.util.checkType(imgOrVec, "object", "Vector2")) {
             this.size = imgOrVec.copy();
-        }else if(Fortis.util.checkType(img,"object") && img.tagName == "IMG"){
-            this.size = new Fortis.Vector2(imgOrVec.width,imgOrVec.height);
-        }else{
+        } else if (Fortis.util.checkType(imgOrVec, "object") && imgOrVec.tagName == "IMG") {
+            this.size = new Fortis.Vector2(imgOrVec.width, imgOrVec.height);
+        } else {
             return Fortis.error.ArgTypeWrong();
         }
         return this.size;
     }
-    getSize(){//サイズ取得
-        return this.size;    
+    getSize() {//サイズ取得
+        return this.size;
     }
-    setClip(pos,size){//画像クリップの情報を設定
-        if(pos == null){
+    setClip(pos, size) {//画像クリップの情報を設定
+        if (pos == null) {
             this.clipPos = new Fortis.Vector2();
-        }else if(Fortis.util.checkType(pos,"object","Vector2")){
-            this.clipPos = pos;    
-        }else{
+        } else if (Fortis.util.checkType(pos, "object", "Vector2")) {
+            this.clipPos = pos;
+        } else {
             return Fortis.error.ArgTypeWrong();
         }
 
-        if(size == null){
+        if (size == null) {
             this.clipSize = new Fortis.Vector2();
-        }else if(Fortis.util.checkType(size,"object","Vector2")){
-            this.clipSize = size;    
-        }else{
+        } else if (Fortis.util.checkType(size, "object", "Vector2")) {
+            this.clipSize = size;
+        } else {
             return Fortis.error.ArgTypeWrong();
         }
 
-        return {pos:this.clipPos,size:this.clipSize};
+        return { pos: this.clipPos, size: this.clipSize };
     }
-    getClip(){//クリップの情報を取得
-        return {pos:this.clipPos,size:this.clipSize};
+    getClip() {//クリップの情報を取得
+        return { pos: this.clipPos, size: this.clipSize };
+    }
+}
+
+Fortis.SpriteShape = class {
+    get type() {
+        return "SpriteShape";
+    }
+    constructor(img, aspect, frameCount) {//imgもしくはVector2を引数とする・aspectは画像を縦横に分割する数
+        this.nowFrame = 0;//表示中のフレーム
+
+        if (aspect == null) {
+            this.aspect = new Fortis.Vector2(1, 1);
+        } else if (Fortis.util.checkType(aspect, "object", "Vector2")) {
+            this.aspect = aspect;
+        } else {
+            return Fortis.error.ArgTypeWrong();
+        }
+
+        if (frameCount == null) {
+            this.frameCount = 1;
+        } else if (Fortis.util.checkType(frameCount, "number")) {
+            this.frameCount = frameCount;
+        } else {
+            return Fortis.error.ArgTypeWrong();
+        }
+
+        if (img == null) {
+            this.size = new Fortis.Vector2(100, 100);
+            this.clipSize = this.size.mul(1/this.aspect);
+        } else if (Fortis.util.checkType(img, "object") && img.tagName == "IMG") {
+            this.size = new Fortis.Vector2(img.width, img.height);
+            this.clipSize = this.size.mul(1/this.aspect);
+        } else {
+            return Fortis.error.ArgTypeWrong();
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    setSize(img) {//サイズ変更(画像を引数とする)
+        if (img == null) return Fortis.error.ArgNotExists();
+        if (Fortis.util.checkType(img, "object") && img.tagName == "IMG") {
+            this.size = new Fortis.Vector2(img.width, img.height);
+            this.clipSize = this.size.mul(1/this.aspect);
+        } else {
+            return Fortis.error.ArgTypeWrong();
+        }
+        return this.size;
+    }
+    getSize() {//サイズ取得
+        return this.size;
+    }
+    setAspect(aspect) {//アスペクト比を変更
+        if (aspect == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(aspect, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.aspect = aspect;
+        this.clipSize = this.size.mul(1/this.aspect);
+        return aspect;
+    }
+    getAspect() {//アスペクト比を取得
+        return this.aspect;
+    }
+    nextFrame() {//次のフレームへ
+        this.nowFrame++;
+        if (this.frameCount < this.nowFrame) this.nowFrame = 0;
+        return this.nowFrame;
+    }
+    backFrame() {//前のフレームへ
+        this.nowFrame--;
+        if (this.nowFrame < 0) this.nowFrame = 0;
+        return this.nowFrame;
+    }
+    goto(number) {//フレームのジャンプ
+        if (number == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(number, "number")) return Fortis.error.ArgTypeWrong();
+        if (number < 0 || number > this.frameCount) return Fortis.error.ArgIncorrectVarRange();
+        this.nowFrame = number;
+        return this.nowFrame;
+    }
+    getNowFrame() {//現在のフレームを取得
+        return this.nowFrame;
     }
 }

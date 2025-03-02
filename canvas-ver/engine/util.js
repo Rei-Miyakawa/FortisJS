@@ -32,6 +32,7 @@ Fortis.error = {
     ImgAlreadyExists(name) { Fortis.util.console("Error", '画像"' + name + '"は既に存在しています。') },
     ImgNotExists(name) { Fortis.util.console("Error", '画像"' + name + '"は存在しません。') },
     LoadingImgIsFailed() { Fortis.util.console("Error", "画像の読み込みに失敗しました。") },
+    AnimationAlreadyExists(name) { Fortis.util.console("Error", 'アニメーション"' + name + '"は既に存在しています。') },
 }
 
 Fortis.info = {
