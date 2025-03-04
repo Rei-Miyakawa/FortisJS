@@ -2,6 +2,7 @@ let scene, bg, color, color2, material, mateiral2;
 let e1, e2, t1,i1,is;
 let container;
 let layer;
+let ssi,sss,ssm,sse;
 
 function Init() {
     Fortis.Game.config.debug = true;
@@ -11,6 +12,7 @@ function Init() {
     });
     Fortis.ImageLoader.addImages({
         "sample":"./sample.jpg",
+        "ss":"./spritesheet.png",
     });
 }
 
@@ -36,6 +38,17 @@ function Ready() {
     console.log(e1)
     layer.add(container);
     */
+    ssi = Fortis.ImageLoader.getImg("ss");
+    sss = new Fortis.SpriteShape(ssi,new Fortis.Vector2(8,4),32);
+    
+    ssm = new Fortis.ImageMaterial(ssi);
+    console.log(sss)
+    sse = new Fortis.Entity(sss,ssm);
+    sse.pos = new Fortis.Vector2(150, 150);
+    sss.setRepeat(sse,500,false);
+    sss.start();
+    layer.add(sse);
+
     t1 = new Fortis.Entity(new Fortis.TextShape(new Fortis.Font("RocknRoll One", 30), "こんにちは"), material);
     t1.pos = new Fortis.Vector2(300, 300);
     t1.shape.font.setStyle("italic");
@@ -48,12 +61,23 @@ function Ready() {
     layer.add(t1);
     layer.add(is);
     scene.add(layer);
+    let ttimer = Fortis.Timer.add(5000,false,Test);
+    //console.log(ttimer)
+    Fortis.Timer.start(ttimer);
+    //sse.shape.backFrame();
 }
 
 function Update(delta) {
+    
     //t1.angle++;
     //e1.move(new Fortis.Vector2(1,1));
     //console.log(e1.material.fill.pos)
 }
 
 function EngineLoaded() { }
+
+function Test(){
+    sse.shape.stop();
+    //sse.shape.backFrame();
+    //console.log("konnitiha");
+}

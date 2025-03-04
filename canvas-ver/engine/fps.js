@@ -16,7 +16,7 @@ Fortis.Game.fpsCtrl = {
 
     //関数
     init() {//初期化
-        this.startTime = new Date();
+        this.startTime = performance.now();
         this.lastTime = this.startTime;
         this.max = 60;
         this.frameTime = Math.floor((1000 / this.max) * 100) / 100;
@@ -26,7 +26,7 @@ Fortis.Game.fpsCtrl = {
         this.fpsCount = 0;
     },
     update() {//更新
-        this.nowTime = new Date();
+        this.nowTime = performance.now();
         this.delta = this.nowTime - this.lastTime;
         this.lastTime = this.nowTime;
         //一秒経ったか

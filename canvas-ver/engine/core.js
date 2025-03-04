@@ -43,6 +43,7 @@ let Fortis = {
 
     //クラス
     Vector2: null,//二次元配列(x,y)の形-vector.js
+    Timer: null,//タイマー-timer.js
 
     //シーン関係
     Scene: null,//シーン-scene.js
@@ -171,6 +172,7 @@ Fortis.Game = {
     loop() {
         let delta = this.fpsCtrl.update();
         Update(delta);//更新
+        Fortis.Timer.update(delta);//タイマーの更新
         this.draw();
         requestAnimationFrame(this.loop.bind(this));//アニメーションループ
     },

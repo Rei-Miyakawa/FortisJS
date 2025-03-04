@@ -10,6 +10,7 @@ let files = [
     "shape",
     "entity",
     "draw",
+    "timer",
     "util",
 ];
 
