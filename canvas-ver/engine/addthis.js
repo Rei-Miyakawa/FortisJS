@@ -11,6 +11,7 @@ let files = [
     "entity",
     "draw",
     "timer",
+    "motion",
     "util",
 ];
 

@@ -32,7 +32,8 @@ Fortis.error = {
     ImgAlreadyExists(name) { Fortis.util.console("Error", '画像"' + name + '"は既に存在しています。') },
     ImgNotExists(name) { Fortis.util.console("Error", '画像"' + name + '"は存在しません。') },
     LoadingImgIsFailed() { Fortis.util.console("Error", "画像の読み込みに失敗しました。") },
-    TimerNotExists(name) { Fortis.util.console("Error", 'タイマーID"' + name + '"は存在していません。') },
+    TimerNotExists(name) { Fortis.util.console("Error", 'タイマー ID"' + name + '"は存在していません。') },
+    MotionNotExists(name) { Fortis.util.console("Error", 'モーション ID"' + name + '"は存在していません。') },
 }
 
 Fortis.info = {

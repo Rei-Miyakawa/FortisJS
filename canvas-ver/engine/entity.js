@@ -9,7 +9,7 @@ Fortis.Entity = class {
         this.shape = shape;
         this.material = material;
         this.pos = new Fortis.Vector2();
-        this.scale = 1;
+        this.scale = new Fortis.Vector2(1, 1);
         this.angle = 0;
         this.invisibility = false;
     }
@@ -69,8 +69,8 @@ Fortis.Entity = class {
     }
     setScale(value) {//拡大縮小率を変更
         if (value == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(value, "number")) return Fortis.error.ArgTypeWrong();
-        if (value < 0) return Fortis.error.ArgIncorrectVarRange();
+        if (!Fortis.util.checkType(value, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        if (value.x < 0 || value.y < 0) return Fortis.error.ArgIncorrectVarRange();
         this.scale = value;
         return this.scale;
     }

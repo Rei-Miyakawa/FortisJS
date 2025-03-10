@@ -45,7 +45,7 @@ function Ready() {
     console.log(sss)
     sse = new Fortis.Entity(sss,ssm);
     sse.pos = new Fortis.Vector2(150, 150);
-    sss.setRepeat(sse,500,false);
+    sss.setRepeat(sse,500);
     sss.start();
     layer.add(sse);
 
@@ -76,8 +76,8 @@ function Update(delta) {
 
 function EngineLoaded() { }
 
-function Test(){
-    sse.shape.stop();
+function Test(delta){
+    //sse.shape.stop();
     //sse.shape.backFrame();
     //console.log("konnitiha");
 }

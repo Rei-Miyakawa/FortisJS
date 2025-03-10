@@ -1,6 +1,8 @@
 let Fortis = {
     //変数
     Game: null,//メインのゲームシステム
+    MotionManager: null,//エンティティのモーション(フェードなど)-animation.js
+    InputKey: {},//キーインプット
 
     //便利なやつをまとめたもの-util.js
     util: {
@@ -13,6 +15,7 @@ let Fortis = {
         degreeToRadian: null,//度数法から弧度法
         radianToDegree: null,//弧度法から度数法
         getPointOnCircle: null,//任意の座標を中心として任意の半径の円周上の任意の角度の点の座標を取得
+        argAdjustmentWithDelta: null,//deltaを使って引数の時間に処理を完了するように調整する
         //色
         hexToRGB: null,//カラーコードをRGBに
         HSVToRGB: null,//HSVをRGBに
@@ -179,4 +182,15 @@ Fortis.Game = {
 
     //描画
     draw: null,
+}
+
+//キーを押した
+window.addEventListener("keydown", Keydown);
+function Keydown(e) {
+    Fortis.InputKey[e.code] = true;
+}
+//キーが離された
+window.addEventListener("keyup", Keyup);
+function Keyup(e) {
+    Fortis.InputKey[e.code] = false;
 }

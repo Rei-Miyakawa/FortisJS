@@ -2,6 +2,7 @@ Fortis.Timer = {
     list: {},//中身id:{time:時間(ms),repeat:繰り返すか(boolean),func:呼び出す関数,id:ID}
     add(time, repeat, func, target) {//追加
         let list = {};
+
         if (repeat == null) {
             list["repeat"] = false;
         } else if (Fortis.util.checkType(repeat, "boolean")) {
@@ -26,7 +27,7 @@ Fortis.Timer = {
             if (!Fortis.util.checkType(target, "object")) return Fortis.error.ArgTypeWrong();
             if (func == null) return Fortis.error.ArgNotExists();
             if (!Fortis.util.checkType(func, "string")) return Fortis.error.ArgTypeWrong();
-            list["func"] = [target,func];
+            list["func"] = [target, func];
         }
 
 
@@ -48,7 +49,7 @@ Fortis.Timer = {
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
         if (this.list[id] === undefined) return Fortis.error.TimerNotExists(id);
-        this.list[id] = null;
+        delete this.list[id];
         return this.list;
     },
     removeLists(ids) {//複数削除
@@ -65,27 +66,27 @@ Fortis.Timer = {
     getTimer(id) {//タイマー取得
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.list[id] === undefined) return Fortis.error.TimerNotExists();
+        if (this.list[id] === undefined) return Fortis.error.TimerNotExists(id);
         return this.list[id];
     },
     start(id) {//タイマースタート
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.list[id] === undefined) return Fortis.error.TimerNotExists();
+        if (this.list[id] === undefined) return Fortis.error.TimerNotExists(id);
         this.list[id]["management"]["activity"] = true;
         return this.list[id];
     },
     stop(id) {//タイマーストップ
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.list[id] === undefined) return Fortis.error.TimerNotExists();
+        if (this.list[id] === undefined) return Fortis.error.TimerNotExists(id);
         this.list[id]["management"]["activity"] = false;
         return this.list[id];
     },
     reset(id) {//タイマーリセット(タイマーは停止状態になる)
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.list[id] === undefined) return Fortis.error.TimerNotExists();
+        if (this.list[id] === undefined) return Fortis.error.TimerNotExists(id);
         this.list[id]["management"]["activity"] = false;
         this.list[id]["management"]["time"] = this.list[id]["time"];
         return this.list[id];
@@ -93,7 +94,7 @@ Fortis.Timer = {
     setStatus(id, time, repeat, func) {//ステータス変更
         if (id == null || time == null || repeat == null || func == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string") || !Fortis.util.checkType(time, "number") || !Fortis.util.checkType(repeat, "boolean") || !Fortis.util.checkType(func, "function")) return Fortis.error.ArgTypeWrong();
-        if (this.list[id] === undefined) return Fortis.error.TimerNotExists();
+        if (this.list[id] === undefined) return Fortis.error.TimerNotExists(id);
         this.list[id]["time"] = time;
         this.list[id]["repeat"] = repeat;
         this.list[id]["func"] = func;
@@ -105,10 +106,10 @@ Fortis.Timer = {
                 //console.log(this.list[id]["management"]["time"])
                 this.list[id]["management"]["time"] -= delta;
                 if (this.list[id]["management"]["time"] <= 0) {
-                    if(Fortis.util.checkType(this.list[id]["func"],"object")){
-                        this.list[id]["func"][0].shape[this.list[id]["func"][1]]();
-                    }else{
-                        this.list[id]["func"]();
+                    if (Fortis.util.checkType(this.list[id]["func"], "object")) {
+                        this.list[id]["func"][0].shape[this.list[id]["func"][1]](delta);
+                    } else {
+                        this.list[id]["func"](delta);
                     }
                     if (this.list[id]["repeat"]) {
                         this.list[id]["management"]["time"] = this.list[id]["time"];

@@ -566,7 +566,6 @@ Fortis.SpriteShape = class {
         if(!Fortis.util.checkType(target,"object"))return Fortis.error.ArgTypeWrong();
 
         let animationOrder;
-        console.log(this)
         if(order == null){
             animationOrder = "nextFrame";
         }else if(Fortis.util.checkType(order,"boolean")){
