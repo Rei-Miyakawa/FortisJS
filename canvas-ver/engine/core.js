@@ -176,6 +176,7 @@ Fortis.Game = {
         let delta = this.fpsCtrl.update();
         Update(delta);//更新
         Fortis.Timer.update(delta);//タイマーの更新
+        Fortis.MotionManager.update(delta);//モーションマネージャーの更新
         this.draw();
         requestAnimationFrame(this.loop.bind(this));//アニメーションループ
     },

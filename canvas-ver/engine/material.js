@@ -69,7 +69,6 @@ Fortis.ImageMaterial = class{
         this.img = img;
     }
     this.size = new Fortis.Vector2(img.width,img.height);
-    this.globalAlpha = 1;
     }
     getType() {//タイプ取得
         return this.type;
@@ -92,12 +91,5 @@ Fortis.ImageMaterial = class{
     }
     getSize(){//画像のサイズを取得
         return this.size;
-    }
-    setGlobalAlpha(value){//透明度を設定
-        if(value == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(value,"number"))return Fortis.error.ArgTypeWrong();
-        if(!(value >= 0 && value <= 1))return Fortis.error.ArgIncorrectVarRange();
-        this.globalAlpha = value;
-        return this.globalAlpha;
     }
 }

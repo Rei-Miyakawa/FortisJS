@@ -11,7 +11,7 @@ Fortis.Entity = class {
         this.pos = new Fortis.Vector2();
         this.scale = new Fortis.Vector2(1, 1);
         this.angle = 0;
-        this.invisibility = false;
+        this.alpha = 1;
     }
     getType() {//タイプ取得
         return this.type;
@@ -27,10 +27,10 @@ Fortis.Entity = class {
         }
     }
     show() {//表示させる
-        this.invisibility = true;
+        this.alpha = 1;
     }
     hide() {//隠す
-        this.invisibility = false;
+        this.alpha = 0;
     }
     getShape() {//図形取得
         return this.shape;
@@ -82,6 +82,16 @@ Fortis.Entity = class {
         if (!Fortis.util.checkType(new_angle, "number")) return Fortis.error.ArgTypeWrong();
         this.angle = new_angle;
         return this.angle;
+    }
+    setAlpha(value,mode){//透明度を設定
+        if(value == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(value,"number"))return Fortis.error.ArgTypeWrong();
+        if(!(value >= 0 && value <= 1))return Fortis.error.ArgIncorrectVarRange();
+        this.alpha = value;
+        return this.alpha;
+    }
+    getAlpha(){//透明度を取得
+        return this.alpha;
     }
 }
 

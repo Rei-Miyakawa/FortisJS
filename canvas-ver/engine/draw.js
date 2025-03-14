@@ -13,7 +13,7 @@ Fortis.Game.draw = function () {
     function repeatIdentifyingEntity(array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
         array.entity.forEach(tmpEntity => {
             let entity = tmpEntity;
-            if (!entity.invisibility) {
+            if (entity.alpha != 0) {
                 Fortis.Game.context.save();
                 if (mode) {
                     entity = tmpEntity["entity"];
@@ -24,6 +24,7 @@ Fortis.Game.draw = function () {
                 if (entity.type == "EntityContainer") {
                     repeatIdentifyingEntity(entity, true);
                 } else {
+                    Fortis.Game.context.globalAlpha = entity.alpha;
                     Fortis.Game.context.translate(entity.pos.x, entity.pos.y);
                     Fortis.Game.context.rotate(Fortis.util.degreeToRadian(entity.angle));
                     switch (entity.shape.type) {
@@ -190,7 +191,6 @@ Fortis.draw.text = function (entity) {
 }
 
 Fortis.draw.image = function (entity, sprite) {
-    Fortis.Game.context.globalAlpha = entity.material.globalAlpha;
     if (sprite) {
         Fortis.Game.context.drawImage(entity.material.img, entity.shape.clipSize.x * ((entity.shape.nowFrame - 1) % entity.shape.aspect.x), entity.shape.clipSize.y * Math.floor((entity.shape.nowFrame - 1) / entity.shape.aspect.x), entity.shape.clipSize.x, entity.shape.clipSize.y, -entity.shape.size.x / 2, -entity.shape.size.y / 2, entity.shape.size.x, entity.shape.size.y);
     } else if (entity.shape.clipPos === undefined) {
