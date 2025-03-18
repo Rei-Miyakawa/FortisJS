@@ -157,7 +157,7 @@ Fortis.Font = class {
         this.style = style;
         return this.style;
     }
-    output() {//出力
-        return this.style + " " + this.weight + " " + this.size + "px " + this.family;
+    output(scale) {//出力
+        return this.style + " " + this.weight + " " + this.size*scale + "px " + this.family;
     }
 }

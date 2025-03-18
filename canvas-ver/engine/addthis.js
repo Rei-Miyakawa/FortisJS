@@ -6,6 +6,7 @@ let files = [
     "color",
     "font",
     "image",
+    "sound",
     "material",
     "shape",
     "entity",

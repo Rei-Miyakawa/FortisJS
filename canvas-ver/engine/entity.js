@@ -9,7 +9,7 @@ Fortis.Entity = class {
         this.shape = shape;
         this.material = material;
         this.pos = new Fortis.Vector2();
-        this.scale = new Fortis.Vector2(1, 1);
+        this.scale = new Fortis.Vector2(1, 1);//scale.xが優先される
         this.angle = 0;
         this.alpha = 1;
     }

@@ -31,7 +31,10 @@ Fortis.error = {
     ImgCouldntLoaded(name) { Fortis.util.console("Error", '画像"' + name + '"のロードができませんでした。') },
     ImgAlreadyExists(name) { Fortis.util.console("Error", '画像"' + name + '"は既に存在しています。') },
     ImgNotExists(name) { Fortis.util.console("Error", '画像"' + name + '"は存在しません。') },
-    LoadingImgIsFailed() { Fortis.util.console("Error", "画像の読み込みに失敗しました。") },
+    SoundCouldntLoaded(name) { Fortis.util.console("Error", 'サウンド"' + name + '"のロードができませんでした。') },
+    SoundAlreadyExists(name) { Fortis.util.console("Error", 'サウンド"' + name + '"は既に存在しています。') },
+    SoundNotExists(name) { Fortis.util.console("Error", 'サウンド"' + name + '"は存在しません。') },
+    //LoadingImgIsFailed() { Fortis.util.console("Error", "画像の読み込みに失敗しました。") },
     TimerNotExists(name) { Fortis.util.console("Error", 'タイマー ID"' + name + '"は存在していません。') },
     MotionNotExists(name) { Fortis.util.console("Error", 'モーション ID"' + name + '"は存在していません。') },
 }
@@ -41,6 +44,7 @@ Fortis.info = {
     StartGameLoop() { Fortis.util.console("Info", "ゲームループを開始します。") },
     FontLoaded(name) { Fortis.util.console("Info", 'フォント"' + name + '"がロードされました。') },
     ImageLoaded(name) { Fortis.util.console("Info", '画像"' + name + '"がロードされました。') },
+    SoundLoaded(name) { Fortis.util.console("Info", 'サウンド"' + name + '"がロードされました。') },
 }
 
 Fortis.util.console = function (type, content) {

@@ -26,6 +26,7 @@ let Fortis = {
     //関数
     setup: null,//ファイルの読み込みが終わったときの処理
     loadMaterials: null,//素材の読み込み(今のところ画像とフォント)
+    loadfail: null,//読み込み失敗時に再読み込みする。
 
     error: null,//エラーをまとめたもの-util.js
     info: null,//処理完了などのお知らせをまとめたもの-util.js
@@ -83,6 +84,9 @@ let Fortis = {
     //画像
     ImageLoader: null,//画像の読み込み・保存-image.js
 
+    //サウンド
+    SoundManager: null,//サウンドの管理。読み込みから再生まで-sound.js
+
     //コンテナ(画像合成も可能)
     EntityContainer: null,//コンテナ-entity.js
 }
@@ -102,14 +106,21 @@ Fortis.setup = function () {
         })
         .catch((error) => {
             console.log(error)
-            console.error("Failed to load some materials. Stopping initialization.")
+            Fortis.loadfail();
         })
 }
 
 Fortis.loadMaterials = async function () {
-    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs()];
+    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs(),Fortis.SoundManager.loadSounds()];
     const promiseAll = await Promise.all(functionNames);
     return promiseAll;
+}
+
+Fortis.loadfail = function () {
+    let answer = confirm("エラーが発生したため、ページを再読み込みします。");
+    setTimeout(() => {
+        if (answer) Location.reload();
+    }, 1000);
 }
 
 Fortis.Game = {
@@ -126,6 +137,17 @@ Fortis.Game = {
     },
     fpsCtrl: null,//fps.js
     scene: null,//シーン
+    mouse: {//マウス
+        pos: null,
+        movement: null,
+        outsideOfCanvas: false,
+        lClick: false,
+        rClick: false,
+        wClick: false,
+        click: false,
+        fFrameatClick: false,
+        wheel: 0
+    },
 
     //関数
     init() {//初期化
@@ -145,10 +167,78 @@ Fortis.Game = {
         this.finalCanvas.width = this.size.x;
         this.finalCanvas.height = this.size.y;
 
+        //マウス
+        this.mouse.pos = new Fortis.Vector2(0, 0);
+        this.mouse.movement = new Fortis.Vector2(0,0);
+
         //fps
         this.fpsCtrl.init();
 
         Fortis.info.SystemInitCompleted();
+
+        //マウスを押した
+        Fortis.Game.finalCanvas.addEventListener("mousedown", (e) => {
+            Fortis.Game.mouse.click = true;
+            switch (e.button) {
+                case 0://左
+                    Fortis.Game.mouse.lClick = true;
+                    break;
+                case 1://ホイール
+                    Fortis.Game.mouse.wClick = true;
+                    break;
+                case 2://右
+                    Fortis.Game.mouse.rClick = true;
+                    break
+            }
+            Fortis.Game.mouse.fFrameatClick = true;
+        });
+        //マウスを離した
+        Fortis.Game.finalCanvas.addEventListener("mouseup", (e) => {
+            Fortis.Game.mouse.click = false;
+            switch (e.button) {
+                case 0://左
+                    Fortis.Game.mouse.lClick = false;
+                    break;
+                case 1://ホイール
+                    Fortis.Game.mouse.wClick = false;
+                    break;
+                case 2://右
+                    Fortis.Game.mouse.rClick = false;
+                    break
+            }
+        });
+
+        //右クリでのメニュー表示禁止
+        Fortis.Game.finalCanvas.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+        });
+
+        //マウスが動いた
+        Fortis.Game.finalCanvas.addEventListener("mousemove", (e) => {
+            Fortis.Game.mouse.pos.x = e.offsetX;
+            Fortis.Game.mouse.pos.y = e.offsetY;
+            Fortis.Game.mouse.movement.x = e.movementX;
+            Fortis.Game.mouse.movement.y = e.movementY;
+        });
+
+        //ホイールが動いた
+        Fortis.Game.finalCanvas.addEventListener("wheel", (e) => {
+            //console.log(e)
+            Fortis.Game.mouse.wheel = e.wheelDelta;
+        });
+
+        //マウスが範囲外に移動した
+        Fortis.Game.finalCanvas.addEventListener("mouseout", (e) => {
+            Fortis.Game.mouse.outsideOfCanvas = true;
+            Fortis.Game.mouse.rClick = false;
+            Fortis.Game.mouse.lClick = false;
+            Fortis.Game.mouse.click = false;
+            Fortis.Game.mouse.wClick = false;
+        });
+        //マウスが範囲外に移動した
+        Fortis.Game.finalCanvas.addEventListener("mouseover", (e) => {
+            Fortis.Game.mouse.outsideOfCanvas = false;
+        });
     },
     setScene(scene) {//シーン設定
         if (scene == null) return Fortis.error.ArgNotExists();
@@ -178,6 +268,11 @@ Fortis.Game = {
         Fortis.Timer.update(delta);//タイマーの更新
         Fortis.MotionManager.update(delta);//モーションマネージャーの更新
         this.draw();
+
+        //マウスの変数のリセット
+        this.mouse.fFrameatClick = false;
+        this.mouse.wheel = 0;
+
         requestAnimationFrame(this.loop.bind(this));//アニメーションループ
     },
 
@@ -186,12 +281,17 @@ Fortis.Game = {
 }
 
 //キーを押した
-window.addEventListener("keydown", Keydown);
-function Keydown(e) {
+window.addEventListener("keydown", (e) => {
     Fortis.InputKey[e.code] = true;
-}
+    //console.log("down:",e.code)
+});
 //キーが離された
-window.addEventListener("keyup", Keyup);
-function Keyup(e) {
+window.addEventListener("keyup", (e) => {
     Fortis.InputKey[e.code] = false;
+    //console.log("up:",e.code)
+});
+
+//エラー吐いたら再読み込み
+window.onerror = function () {
+    Fortis.loadfail();
 }
