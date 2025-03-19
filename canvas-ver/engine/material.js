@@ -66,6 +66,7 @@ Fortis.ImageMaterial = class{
         this.img = Fortis.ImageLoader.getImg("sample");
     }else{
         if(!Fortis.util.checkType(img,"object") || img.tagName === undefined)return Fortis.error.ArgTypeWrong();
+        if(!img.tagName == "IMG")return Fortis.error.ArgTypeWrong();
         this.img = img;
     }
     this.size = new Fortis.Vector2(img.width,img.height);

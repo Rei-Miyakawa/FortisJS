@@ -85,13 +85,15 @@ let Fortis = {
     ImageLoader: null,//画像の読み込み・保存-image.js
 
     //サウンド
-    SoundManager: null,//サウンドの管理。読み込みから再生まで-sound.js
+    SoundLoader: null,//オーディオの読み込み-audio.js
+    Sound: null,//オーディオの管理
 
     //コンテナ(画像合成も可能)
     EntityContainer: null,//コンテナ-entity.js
 }
 
 Fortis.setup = function () {
+    document.body.removeChild(nowLoadingText);
     Init();//ゲーム設定を想定
     Fortis.Game.init();//ゲームシステムの初期化。素材の読み込みの設定などもここでやる
     Fortis.loadMaterials()
@@ -111,7 +113,7 @@ Fortis.setup = function () {
 }
 
 Fortis.loadMaterials = async function () {
-    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs(),Fortis.SoundManager.loadSounds()];
+    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs(),Fortis.SoundLoader.loadTagSounds()];
     const promiseAll = await Promise.all(functionNames);
     return promiseAll;
 }

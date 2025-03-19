@@ -15,12 +15,19 @@ function Init() {
         "ss":"./spritesheet.png",
     });
     
-    Fortis.SoundManager.addSounds({
+    Fortis.SoundLoader.addTagSounds({
         "dededon":"./get.mp3",
     });
 }
 
+let Sound;
 function Ready() {
+    let audio = Fortis.SoundLoader.getTagSound("dededon");
+    Sound = new Fortis.Sound(audio);
+    Sound.setLoop(true);
+    Sound.setVolume(0.2);
+    //Sound.play();
+    console.log(Sound)
     scene = new Fortis.Scene();
     color = new Fortis.Color("blue");
     color2 = new Fortis.Color("red");

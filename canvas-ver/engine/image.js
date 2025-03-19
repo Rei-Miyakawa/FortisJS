@@ -34,7 +34,7 @@ Fortis.ImageLoader = {
                 }
             }
             promise()
-                .then(() => {//フォントのロードが終わった
+                .then(() => {//画像のロードが終わった
                     resolve(true);
                 })
                 .catch((error) => {

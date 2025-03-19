@@ -16,7 +16,10 @@ let files = [
     "util",
 ];
 
+let nowLoadingText = document.createElement("h1");
+nowLoadingText.textContent = "ロード中...";
 onload = function () {
+    document.body.appendChild(nowLoadingText);
     loadFiles(files);
 }
 
