@@ -12,7 +12,7 @@ let files = [
     "entity",
     "draw",
     "timer",
-    "motion",
+    "transition",
     "util",
 ];
 

@@ -1,34 +1,35 @@
 Fortis.SoundLoader = {
-    tagSounds: {},
-    APISounds: {},
+    simpleSounds: {},
+    audioCtx: new AudioContext(),
+    normalSounds: {},
 
-    loadTagSound(key) {//タグサウンドのロード(一枚ずつ)
+    loadSimpleSound(key) {//シンプルサウンドのロード(一枚ずつ)
         if (key == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
-        if (!Fortis.util.checkType(Fortis.SoundLoader.tagSounds[key], "string")) return Fortis.error.TagSoundAlreadyExists(key);
+        if (!Fortis.util.checkType(Fortis.SoundLoader.simpleSounds[key], "string")) return Fortis.error.SimpleSoundAlreadyExists(key);
         let newSound = new Audio();
         return new Promise((resolve, reject) => {
             newSound.addEventListener("canplaythrough", completed);
-            function completed(){
-                newSound.removeEventListener("canplaythrough",completed);
-                Fortis.SoundLoader.tagSounds[key] = newSound;
-                Fortis.info.TagSoundLoaded(key);
+            function completed() {
+                newSound.removeEventListener("canplaythrough", completed);
+                Fortis.SoundLoader.simpleSounds[key] = newSound;
+                Fortis.info.SimpleSoundLoaded(key);
                 resolve(true);
             }
             newSound.onerror = () => {
-                Fortis.error.TagSoundCouldntLoaded(key);
+                Fortis.error.SimpleSoundCouldntLoaded(key);
                 reject(false);
             }
-            newSound.src = Fortis.SoundLoader.tagSounds[key];
+            newSound.src = Fortis.SoundLoader.simpleSounds[key];
         })
     },
 
-    loadTagSounds() {//サウンドのロード(loadSoundで一枚ずつ処理する)
+    loadSimpleSounds() {//サウンドのロード(loadSoundで一枚ずつ処理する)
         return new Promise((resolve, reject) => {
             async function promise() {
-                let keys = Object.keys(Fortis.SoundLoader.tagSounds);
+                let keys = Object.keys(Fortis.SoundLoader.simpleSounds);
                 try {
-                    const sounds = await Promise.all(keys.map(Fortis.SoundLoader.loadTagSound));
+                    const sounds = await Promise.all(keys.map(Fortis.SoundLoader.loadSimpleSound));
                     return sounds;
                 } catch (error) {
                     console.log(error)
@@ -45,63 +46,165 @@ Fortis.SoundLoader = {
         })
     },
 
-    addTagSounds(object) {//タグサウンドを追加
+    addSimpleSounds(object) {//シンプルサウンドを追加
         if (object == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(object, "object")) return Fortis.error.ArgTypeWrong();
         for (let key in object) {
             let url = object[key];
             if (key == null || url == null) return Fortis.error.ArgNotExists();
             if (!Fortis.util.checkType(key, "string") || !Fortis.util.checkType(url, "string")) return Fortis.error.ArgTypeWrong();
-            if (Fortis.SoundLoader.tagSounds[key] !== undefined) return Fortis.error.TagSoundAlreadyExists(key);
-            Fortis.SoundLoader.tagSounds[key] = url;
+            if (Fortis.SoundLoader.simpleSounds[key] !== undefined) return Fortis.error.SimpleSoundAlreadyExists(key);
+            Fortis.SoundLoader.simpleSounds[key] = url;
         }
-        return this.tagSounds;
+        return this.simpleSounds;
     },
 
-    getTagSound(key) {//タグサウンドの取得
+    getSimpleSound(key) {//シンプルサウンドの取得
         if (key == null) return Fortis.error.ArgNotExsits();
         if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.tagSounds[key] === undefined) return Fortis.error.TagSoundNotExists(key);
-        return this.tagSounds[key];
+        if (this.simpleSounds[key] === undefined) return Fortis.error.SimpleSoundNotExists(key);
+        return this.simpleSounds[key];
     },
 
-    deleteTagSound(key) {//タグサウンドの削除
+    deleteSimpleSound(key) {//シンプルサウンドの削除
         if (key == null) return Fortis.error.ArgNotExsits();
         if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.tagSounds[key] === undefined) return Fortis.error.TagSoundNotExists(key);
-        document.head.removeChild(this.tagSounds[key])
-        this.tagSounds.delete(key);
-        return this.tagSounds;
+        if (this.simpleSounds[key] === undefined) return Fortis.error.SimpleSoundNotExists(key);
+        document.head.removeChild(this.simpleSounds[key])
+        this.simpleSounds.delete(key);
+        return this.simpleSounds;
     },
 
-    getTagSoundKeys() {//タグサウンドのキーの取得
-        return this.tagSounds.keys();
+    getSimpleSoundKeys() {//シンプルサウンドのキーの取得
+        return Object.keys(this.simpleSounds);
     },
-    getTagSounds() {//全タグサウンド取得
-        let tagSounds = [];
-        this.tagSounds.forEach(tagSound => {
-            tagSounds.push(tagSound);
+    getSimpleSounds() {//全シンプルサウンド取得
+        let simpleSounds = [];
+        this.simpleSounds.forEach(simpleSound => {
+            simpleSounds.push(simpleSound);
         });
-        return tagSound;
-    }
+        return simpleSounds;
+    },
+
+    loadNormalSound(key) {
+        if (key == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
+        if (!Fortis.util.checkType(Fortis.SoundLoader.normalSounds[key], "string")) return Fortis.error.NormalSoundAlreadyExists(key);
+        let request = new XMLHttpRequest();
+        request.responseType = 'arraybuffer';
+        return new Promise((resolve,reject) => {
+            request.open("GET", Fortis.SoundLoader.normalSounds[key], true);
+            request.send();
+            request.onload = () => {
+                let arrayBuffer = request.response;
+                Fortis.SoundLoader.audioCtx.decodeAudioData(arrayBuffer, function (audioBuffer) {
+                    Fortis.SoundLoader.normalSounds[key] = audioBuffer;
+                    Fortis.info.NormalSoundLoaded(key);
+                    resolve(true);
+                });
+            }
+            request.onerror = () =>{
+                Fortis.error.NormalSoundCouldntLoaded(key);
+                reject(false);
+            }
+        })
+        request.open("GET",Fortis.SoundLoader.normalSounds[key],true);
+        request.send();
+        request.onload = function(){
+            let arrayBuffer = request.response;
+            Fortis.SoundLoader.audioCtx.decodeAudioData(arrayBuffer, function(audioBuffer) {
+                console.log(audioBuffer);
+                Fortis.info.NormalSoundLoaded(key);
+            });
+        }
+    },
+    loadNormalSounds() {//サウンドのロード(loadSoundで一枚ずつ処理する)
+        return new Promise((resolve, reject) => {
+            async function promise() {
+                let keys = Object.keys(Fortis.SoundLoader.normalSounds);
+                try {
+                    const sounds = await Promise.all(keys.map(Fortis.SoundLoader.loadNormalSound));
+                    return sounds;
+                } catch (error) {
+                    console.log(error)
+                    throw error; // エラーを伝播させる場合
+                }
+            }
+            promise()
+                .then(() => {//サウンドのロードが終わった
+                    resolve(true);
+                })
+                .catch((error) => {
+                    reject(false);
+                });
+        })
+    },
+
+    addNormalSounds(object) {//サウンドを追加
+        if (object == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(object, "object")) return Fortis.error.ArgTypeWrong();
+        for (let key in object) {
+            let url = object[key];
+            if (key == null || url == null) return Fortis.error.ArgNotExists();
+            if (!Fortis.util.checkType(key, "string") || !Fortis.util.checkType(url, "string")) return Fortis.error.ArgTypeWrong();
+            if (Fortis.SoundLoader.normalSounds[key] !== undefined) return Fortis.error.SimpleSoundAlreadyExists(key);
+            Fortis.SoundLoader.normalSounds[key] = url;
+        }
+        return this.normalSounds;
+    },
+
+    getNormalSound(key) {//サウンドの取得
+        if (key == null) return Fortis.error.ArgNotExsits();
+        if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
+        if (this.normalSounds[key] === undefined) return Fortis.error.NormalSoundNotExists(key);
+        return this.normalSounds[key];
+    },
+
+    deleteNormalSound(key) {//サウンドの削除
+        if (key == null) return Fortis.error.ArgNotExsits();
+        if (!Fortis.util.checkType(key, "string")) return Fortis.error.ArgTypeWrong();
+        if (this.simpleSounds[key] === undefined) return Fortis.error.NormalSoundNotExists(key);
+        this.normalSounds.delete(key);
+        return this.normalSounds;
+    },
+
+    getNormalSoundKeys() {//サウンドのキーの取得
+        return Object.keys(this.normalSounds);
+    },
+    getNormalSounds() {//全サウンド取得
+        let normalSounds = [];
+        this.normalSounds.forEach(normalSound => {
+            normalSounds.push(normalSound);
+        });
+        return normalSounds;
+    },
 }
 
-Fortis.Sound = class{
+Fortis.SimpleSound = class {
     get type() {
-        return "Sound";
+        return "SimpleSound";
     }
-    constructor(sound){
-        if(!Fortis.util.checkType(sound,"object") || sound.tagName === undefined)return Fortis.error.ArgTypeWrong();
-        if(!sound.tagName == "AUDIO")return Fortis.error.ArgTypeWrong();
+    constructor(sound) {
+        if (!Fortis.util.checkType(sound, "object") || sound.tagName === undefined) return Fortis.error.ArgTypeWrong();
+        if (!sound.simpleName == "AUDIO") return Fortis.error.ArgTypeWrong();
         this.sound = sound;
         this.rate = sound.playbackRate;//再生速度
         this.volume = sound.volume;//0.0～1.0
-        this.time = sound.duration*1000;//再生時間(msに直す)
+        this.time = sound.duration * 1000;//再生時間(msに直す)
         this.loop = sound.loop;
-        this.status = false;//falseで再生中、trueで停止/終了
-
-        this.sound.onended = function(){
-            this.status = false;
+        this.status = true;//falseで再生中、trueで停止/終了
+        this.fadeOutData = { id: null, time: null };
+        this.sound.onended = () => {
+            this.status = true;
+        }
+        this.sound.onvolumechange = () => {
+            this.volume = this.sound.volume;
+        }
+        this.sound.ontimeupdate = () => {
+            this.nowTime = this.sound.currentTime;
+        }
+        this.sound.onratechange = () => {
+            this.rate = this.sound.playbackRate;
         }
     }
     getType() {//タイプ取得
@@ -114,85 +217,127 @@ Fortis.Sound = class{
             }
         }
     }
-    setSound(sound){//サウンドを設定
-        if(!Fortis.util.checkType(sound,"object") || sound.tagName === undefined)return Fortis.error.ArgTypeWrong();
-        if(!sound.tagName == "AUDIO")return Fortis.error.ArgTypeWrong();
+    setSound(sound) {//サウンドを設定
+        if (!Fortis.util.checkType(sound, "object") || sound.simpleName === undefined) return Fortis.error.ArgTypeWrong();
+        if (!sound.simpleName == "AUDIO") return Fortis.error.ArgTypeWrong();
         this.sound = sound;
         this.rate = sound.playbackRate;
         this.volume = sound.volume;
-        this.time = sound.duration*1000;
+        this.time = sound.duration * 1000;
+        this.nowTime = sound.currentTime;
         this.loop = sound.loop;
-        this.status = false;
+        this.status = true;
         return this.sound;
     }
-    getSound(){//サウンドを取得
+    getSound() {//サウンドを取得
         return this.sound;
     }
-    setRate(value){//再生速度を設定
-        if(value == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(value,"number"))return Fortis.error.ArgTypeWrong();
+    setRate(value) {//再生速度を設定
+        if (value == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(value, "number")) return Fortis.error.ArgTypeWrong();
         this.sound.playbackRate = value;
         this.rate = value;
         return this.rate;
     }
-    setVolume(value){//音量を設定
-        if(value == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(value,"number"))return Fortis.error.ArgTypeWrong();
-        if(value<0 || value>1)return Fortis.error.ArgIncorrectVarRange();
+    setVolume(value) {//音量を設定
+        if (value == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(value, "number")) return Fortis.error.ArgTypeWrong();
+        if (value < 0 || value > 1) return Fortis.error.ArgIncorrectVarRange();
         this.sound.volume = value;
         this.volume = value;
         return this.volume;
     }
-    setNowTime(value){//現在の時間を設定(ms)
-        if(value == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(value,"number"))return Fortis.error.ArgTypeWrong();
-        if(value<0 || value>this.time)return Fortis.error.ArgIncorrectVarRange();
-        this.sound.currentTime = value/1000;
+    setNowTime(value) {//現在の時間を設定(ms)
+        if (value == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(value, "number")) return Fortis.error.ArgTypeWrong();
+        if (value < 0 || value > this.time) return Fortis.error.ArgIncorrectVarRange();
+        this.sound.currentTime = value / 1000;
         return value;
     }
-    setLoop(boolean){//ループするか
-        if(boolean == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(boolean,"boolean"))return Fortis.error.ArgTypeWrong();
+    setLoop(boolean) {//ループするか
+        if (boolean == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(boolean, "boolean")) return Fortis.error.ArgTypeWrong();
         this.sound.loop = boolean;
         this.loop = boolean;
         return this.loop;
     }
-    getRate(){//再生速度を取得
-        return this.rate;    
+    getRate() {//再生速度を取得
+        return this.rate;
     }
-    getVolume(){//音量を取得
+    getVolume() {//音量を取得
         return this.volume;
     }
-    getTime(){//再生時間を取得
-        return this.time;    
+    getTime() {//再生時間を取得
+        return this.time;
     }
-    getNowTime(){//現在の再生時間を取得
-        return this.sound.currentTime*1000;    
+    getNowTime() {//現在の再生時間を取得
+        return this.sound.currentTime * 1000;
     }
-    getloop(){//ループするか
+    getloop() {//ループするか
         return this.loop;
     }
-    getStatus(){//現在の状況を取得
-        return this.status;    
+    getStatus() {//現在の状況を取得
+        return this.status;
     }
-    play(time){//再生
+    play(time, fadeIn, fadeOut) {//再生
         let Time = 0;
-        if(time != null){
-            if(!Fortis.util.checkType(time,"number"))return Fortis.error.ArgTypeWrong();
-            if(time<0 || time>this.time)return Fortis.error.ArgIncorrectVarRange();
+        if (time != null) {
+            if (!Fortis.util.checkType(time, "number")) return Fortis.error.ArgTypeWrong();
+            if (time < 0 || time > this.time) return Fortis.error.ArgIncorrectVarRange();
             Time = time;
         }
         this.status = false;
-        this.sound.currentTime = Time/1000;
+        this.sound.currentTime = Time / 1000;
         this.sound.play();
+        if (fadeIn != null) {
+            if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
+            Fortis.TransitionManager.add(this.sound, "volume", fadeIn, 0.0, 1.0);
+        }
+        if (fadeOut != null) {
+            if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
+            if (fadeOut < 0 || fadeOut > this.time) return Fortis.error.ArgIncorrectVarRange();
+            if (this.fadeOutData.id == null || Fortis.Timer.getTimer(this.fadeOutData.id) == false) {
+                this.fadeOutData = { id: Fortis.Timer.add(this.time - fadeOut, false, "fadeOut", this), time: fadeOut };
+            } else {
+                Fortis.Timer.reset(this.fadeOutData.id);
+            }
+            Fortis.Timer.start(this.fadeOutData.id);
+        }
     }
-    pause(){//中断
+    pause() {//中断
         this.status = true;
-        this.sound.pause();   
+        this.sound.pause();
+        if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
+            Fortis.Timer.stop(this.fadeOutData.id);
+        }
         return this.sound.currentTime;
     }
-    continue(){//再開
+    continue(fadeIn) {//再開
         this.status = false;
         this.sound.play();
+        if (fadeIn != null) {
+            if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
+            Fortis.TransitionManager.add(this, "volume", fadeIn, 0.0, 1.0);
+        }
+        if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
+            Fortis.Timer.start(this.fadeOutData.id);
+        }
+    }
+    resetConfig() {//設定をリセット
+        this.rate = sound.playbackRate = 1.0;
+        this.volume = sound.volume = 1.0;
+        this.loop = sound.loop = false;
+    }
+    fadeOut(time) {//フェードアウト
+        if (this.status == false) {
+            if (time != null) {
+                if (!Fortis.util.checkType(time, "number")) return Fortis.error.ArgTypeWrong();
+            }
+            if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
+                Fortis.Timer.remove(this.fadeOutData.id);
+            }
+            Fortis.TransitionManager.add(this.sound, "volume", this.fadeOutData.time, 1.0, 0.0);
+        }
+
     }
 }

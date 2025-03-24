@@ -15,16 +15,22 @@ function Init() {
         "ss":"./spritesheet.png",
     });
     
-    Fortis.SoundLoader.addTagSounds({
+    Fortis.SoundLoader.addSimpleSounds({
         "dededon":"./get.mp3",
     });
+    
+    Fortis.SoundLoader.addNormalSounds({
+        "star":"./maou_14_shining_star.mp3",
+    })
 }
 
 let Sound;
 function Ready() {
-    let audio = Fortis.SoundLoader.getTagSound("dededon");
-    Sound = new Fortis.Sound(audio);
-    Sound.setLoop(true);
+    
+
+    let audio = Fortis.SoundLoader.getSimpleSound("dededon");
+    Sound = new Fortis.SimpleSound(audio);
+    //Sound.setLoop(true);
     Sound.setVolume(0.2);
     //Sound.play();
     console.log(Sound)
@@ -59,9 +65,9 @@ function Ready() {
     console.log(sss)
     sse = new Fortis.Entity(sss,ssm);
     sse.pos = new Fortis.Vector2(150, 150);
-    sss.setRepeat(sse,500);
+    sss.setRepeat(500);
     sss.start();
-    //layer.add(sse);
+    layer.add(sse);
 
     t1 = new Fortis.Entity(new Fortis.TextShape(new Fortis.Font("RocknRoll One", 30), "こんにちは"), material);
     t1.pos = new Fortis.Vector2(300, 300);
@@ -82,6 +88,13 @@ function Ready() {
 }
 
 function Update(delta) {
+    if(Fortis.Game.mouse.fFrameatClick){
+        if(Sound.status){
+            //Sound.play();
+        }else{
+            Sound.pause();
+        }
+    }
     //console.log(Fortis.Game.mouse.wheel)
     //console.log(sse.scale)
     //t1.angle++;

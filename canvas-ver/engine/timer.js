@@ -24,7 +24,6 @@ Fortis.Timer = {
             if (!Fortis.util.checkType(func, "function")) return Fortis.error.ArgTypeWrong();
             list["func"] = func;
         } else {
-            if (!Fortis.util.checkType(target, "object")) return Fortis.error.ArgTypeWrong();
             if (func == null) return Fortis.error.ArgNotExists();
             if (!Fortis.util.checkType(func, "string")) return Fortis.error.ArgTypeWrong();
             list["func"] = [target, func];
@@ -66,7 +65,7 @@ Fortis.Timer = {
     getTimer(id) {//タイマー取得
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.list[id] === undefined) return Fortis.error.TimerNotExists(id);
+        if (this.list[id] === undefined) return false;
         return this.list[id];
     },
     start(id) {//タイマースタート
@@ -106,15 +105,15 @@ Fortis.Timer = {
                 //console.log(this.list[id]["management"]["time"])
                 this.list[id]["management"]["time"] -= delta;
                 if (this.list[id]["management"]["time"] <= 0) {
-                    if (Fortis.util.checkType(this.list[id]["func"], "object")) {
-                        this.list[id]["func"][0].shape[this.list[id]["func"][1]](delta);
-                    } else {
-                        this.list[id]["func"](delta);
-                    }
                     if (this.list[id]["repeat"]) {
                         this.list[id]["management"]["time"] = this.list[id]["time"];
                     } else {
                         Fortis.Timer.reset(id);
+                    }
+                    if (Fortis.util.checkType(this.list[id]["func"], "object")) {
+                        this.list[id]["func"][0][this.list[id]["func"][1]](delta);
+                    } else {
+                        this.list[id]["func"](delta);
                     }
                 }
             }

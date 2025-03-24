@@ -561,9 +561,7 @@ Fortis.SpriteShape = class {
     getNowFrame() {//現在のフレームを取得
         return this.nowFrame;
     }
-    setRepeat(target,time,order){//自動でアニメーション
-        if(target == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(target,"object"))return Fortis.error.ArgTypeWrong();
+    setRepeat(time,order){//自動でアニメーション
 
         let animationOrder;
         if(order == null){
@@ -578,9 +576,9 @@ Fortis.SpriteShape = class {
             return Fortis.error.ArgTypeWrong();
         }
         if(time == null){
-            this.autoId = Fortis.Timer.add(1000,true,animationOrder,target);
+            this.autoId = Fortis.Timer.add(1000,true,animationOrder,this);
         }else if(Fortis.util.checkType(time,"number")){
-            this.autoId = Fortis.Timer.add(time,true,animationOrder,target);
+            this.autoId = Fortis.Timer.add(time,true,animationOrder,this);
         }
         return this.autoId;
     }

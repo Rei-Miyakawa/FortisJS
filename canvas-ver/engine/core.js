@@ -1,7 +1,7 @@
 let Fortis = {
     //変数
     Game: null,//メインのゲームシステム
-    MotionManager: null,//エンティティのモーション(フェードなど)-animation.js
+    TransitionManager: null,//エンティティのモーション(フェードなど)-animation.js
     InputKey: {},//キーインプット
 
     //便利なやつをまとめたもの-util.js
@@ -86,18 +86,18 @@ let Fortis = {
 
     //サウンド
     SoundLoader: null,//オーディオの読み込み-audio.js
-    Sound: null,//オーディオの管理
+    TagSound: null,//オーディオの管理
 
     //コンテナ(画像合成も可能)
     EntityContainer: null,//コンテナ-entity.js
 }
 
 Fortis.setup = function () {
-    document.body.removeChild(nowLoadingText);
     Init();//ゲーム設定を想定
     Fortis.Game.init();//ゲームシステムの初期化。素材の読み込みの設定などもここでやる
     Fortis.loadMaterials()
         .then(() => {
+            document.body.removeChild(nowLoadingText);
             Ready();//ゲームが初期化された後に実行
             if (Fortis.Game.config.loop) {//ゲームループをするか
                 Fortis.info.StartGameLoop();
@@ -113,7 +113,7 @@ Fortis.setup = function () {
 }
 
 Fortis.loadMaterials = async function () {
-    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs(),Fortis.SoundLoader.loadTagSounds()];
+    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs(),Fortis.SoundLoader.loadSimpleSounds(),Fortis.SoundLoader.loadNormalSounds(),];
     const promiseAll = await Promise.all(functionNames);
     return promiseAll;
 }
@@ -268,7 +268,7 @@ Fortis.Game = {
         let delta = this.fpsCtrl.update();
         Update(delta);//更新
         Fortis.Timer.update(delta);//タイマーの更新
-        Fortis.MotionManager.update(delta);//モーションマネージャーの更新
+        Fortis.TransitionManager.update(delta);//モーションマネージャーの更新
         this.draw();
 
         //マウスの変数のリセット
