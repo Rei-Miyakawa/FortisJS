@@ -1,6 +1,5 @@
 Fortis.SoundLoader = {
     simpleSounds: {},
-    audioCtx: new AudioContext(),
     normalSounds: {},
 
     loadSimpleSound(key) {//シンプルサウンドのロード(一枚ずつ)
@@ -97,7 +96,7 @@ Fortis.SoundLoader = {
             request.send();
             request.onload = () => {
                 let arrayBuffer = request.response;
-                Fortis.SoundLoader.audioCtx.decodeAudioData(arrayBuffer, function (audioBuffer) {
+                Fortis.Game.audioCtx.decodeAudioData(arrayBuffer, function (audioBuffer) {
                     Fortis.SoundLoader.normalSounds[key] = audioBuffer;
                     Fortis.info.NormalSoundLoaded(key);
                     resolve(true);
@@ -107,16 +106,7 @@ Fortis.SoundLoader = {
                 Fortis.error.NormalSoundCouldntLoaded(key);
                 reject(false);
             }
-        })
-        request.open("GET",Fortis.SoundLoader.normalSounds[key],true);
-        request.send();
-        request.onload = function(){
-            let arrayBuffer = request.response;
-            Fortis.SoundLoader.audioCtx.decodeAudioData(arrayBuffer, function(audioBuffer) {
-                console.log(audioBuffer);
-                Fortis.info.NormalSoundLoaded(key);
-            });
-        }
+        });
     },
     loadNormalSounds() {//サウンドのロード(loadSoundで一枚ずつ処理する)
         return new Promise((resolve, reject) => {
@@ -186,7 +176,7 @@ Fortis.SimpleSound = class {
     }
     constructor(sound) {
         if (!Fortis.util.checkType(sound, "object") || sound.tagName === undefined) return Fortis.error.ArgTypeWrong();
-        if (!sound.simpleName == "AUDIO") return Fortis.error.ArgTypeWrong();
+        if (!sound.tagName == "AUDIO") return Fortis.error.ArgTypeWrong();
         this.sound = sound;
         this.rate = sound.playbackRate;//再生速度
         this.volume = sound.volume;//0.0～1.0
@@ -340,4 +330,175 @@ Fortis.SimpleSound = class {
         }
 
     }
+}
+
+Fortis.NormalSound = class {
+    get type() {
+        return "NormalSound";
+    }
+    constructor(soundBuffer) {
+        if (!Fortis.util.checkType(soundBuffer, "object")) return Fortis.error.ArgTypeWrong();
+        this.buffer = soundBuffer;
+        this.source = Fortis.Game.audioCtx.createBufferSource();
+        this.source.buffer = soundBuffer;
+        this.source.connect(Fortis.Game.audioCtx.destination);
+        this.rate = null;
+        this.volume = null;
+        this.time = soundBuffer.duration;
+        this.loop = null;
+    }
+        /*
+        this.rate = sound.playbackRate;//再生速度
+        this.volume = sound.volume;//0.0～1.0
+        this.time = sound.duration * 1000;//再生時間(msに直す)
+        this.loop = sound.loop;
+        this.status = true;//falseで再生中、trueで停止/終了
+        this.fadeOutData = { id: null, time: null };
+        
+        this.sound.onended = () => {
+            this.status = true;
+        }
+        this.sound.onvolumechange = () => {
+            this.volume = this.sound.volume;
+        }
+        this.sound.ontimeupdate = () => {
+            this.nowTime = this.sound.currentTime;
+        }
+        this.sound.onratechange = () => {
+            this.rate = this.sound.playbackRate;
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    setSound(sound) {//サウンドを設定
+        if (!Fortis.util.checkType(sound, "object") || sound.simpleName === undefined) return Fortis.error.ArgTypeWrong();
+        if (!sound.simpleName == "AUDIO") return Fortis.error.ArgTypeWrong();
+        this.sound = sound;
+        this.rate = sound.playbackRate;
+        this.volume = sound.volume;
+        this.time = sound.duration * 1000;
+        this.nowTime = sound.currentTime;
+        this.loop = sound.loop;
+        this.status = true;
+        return this.sound;
+    }
+    getSound() {//サウンドを取得
+        return this.sound;
+    }
+    setRate(value) {//再生速度を設定
+        if (value == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(value, "number")) return Fortis.error.ArgTypeWrong();
+        this.sound.playbackRate = value;
+        this.rate = value;
+        return this.rate;
+    }
+    setVolume(value) {//音量を設定
+        if (value == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(value, "number")) return Fortis.error.ArgTypeWrong();
+        if (value < 0 || value > 1) return Fortis.error.ArgIncorrectVarRange();
+        this.sound.volume = value;
+        this.volume = value;
+        return this.volume;
+    }
+    setNowTime(value) {//現在の時間を設定(ms)
+        if (value == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(value, "number")) return Fortis.error.ArgTypeWrong();
+        if (value < 0 || value > this.time) return Fortis.error.ArgIncorrectVarRange();
+        this.sound.currentTime = value / 1000;
+        return value;
+    }
+    setLoop(boolean) {//ループするか
+        if (boolean == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(boolean, "boolean")) return Fortis.error.ArgTypeWrong();
+        this.sound.loop = boolean;
+        this.loop = boolean;
+        return this.loop;
+    }
+    getRate() {//再生速度を取得
+        return this.rate;
+    }
+    getVolume() {//音量を取得
+        return this.volume;
+    }
+    getTime() {//再生時間を取得
+        return this.time;
+    }
+    getNowTime() {//現在の再生時間を取得
+        return this.sound.currentTime * 1000;
+    }
+    getloop() {//ループするか
+        return this.loop;
+    }
+    getStatus() {//現在の状況を取得
+        return this.status;
+    }
+    play(time, fadeIn, fadeOut) {//再生
+        let Time = 0;
+        if (time != null) {
+            if (!Fortis.util.checkType(time, "number")) return Fortis.error.ArgTypeWrong();
+            if (time < 0 || time > this.time) return Fortis.error.ArgIncorrectVarRange();
+            Time = time;
+        }
+        this.status = false;
+        this.sound.currentTime = Time / 1000;
+        this.sound.play();
+        if (fadeIn != null) {
+            if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
+            Fortis.TransitionManager.add(this.sound, "volume", fadeIn, 0.0, 1.0);
+        }
+        if (fadeOut != null) {
+            if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
+            if (fadeOut < 0 || fadeOut > this.time) return Fortis.error.ArgIncorrectVarRange();
+            if (this.fadeOutData.id == null || Fortis.Timer.getTimer(this.fadeOutData.id) == false) {
+                this.fadeOutData = { id: Fortis.Timer.add(this.time - fadeOut, false, "fadeOut", this), time: fadeOut };
+            } else {
+                Fortis.Timer.reset(this.fadeOutData.id);
+            }
+            Fortis.Timer.start(this.fadeOutData.id);
+        }
+    }
+    pause() {//中断
+        this.status = true;
+        this.sound.pause();
+        if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
+            Fortis.Timer.stop(this.fadeOutData.id);
+        }
+        return this.sound.currentTime;
+    }
+    continue(fadeIn) {//再開
+        this.status = false;
+        this.sound.play();
+        if (fadeIn != null) {
+            if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
+            Fortis.TransitionManager.add(this, "volume", fadeIn, 0.0, 1.0);
+        }
+        if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
+            Fortis.Timer.start(this.fadeOutData.id);
+        }
+    }
+    resetConfig() {//設定をリセット
+        this.rate = sound.playbackRate = 1.0;
+        this.volume = sound.volume = 1.0;
+        this.loop = sound.loop = false;
+    }
+    fadeOut(time) {//フェードアウト
+        if (this.status == false) {
+            if (time != null) {
+                if (!Fortis.util.checkType(time, "number")) return Fortis.error.ArgTypeWrong();
+            }
+            if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
+                Fortis.Timer.remove(this.fadeOutData.id);
+            }
+            Fortis.TransitionManager.add(this.sound, "volume", this.fadeOutData.time, 1.0, 0.0);
+        }
+
+    }*/
 }

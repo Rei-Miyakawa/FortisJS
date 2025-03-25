@@ -21,12 +21,14 @@ function Init() {
     
     Fortis.SoundLoader.addNormalSounds({
         "star":"./maou_14_shining_star.mp3",
+        "dededon":"./get.mp3",
     })
 }
 
-let Sound;
+let Sound, sound2;
 function Ready() {
-    
+    sound2 = new Fortis.NormalSound(Fortis.SoundLoader.getNormalSound("dededon"));
+
 
     let audio = Fortis.SoundLoader.getSimpleSound("dededon");
     Sound = new Fortis.SimpleSound(audio);

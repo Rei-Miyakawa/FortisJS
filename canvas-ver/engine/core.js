@@ -84,9 +84,10 @@ let Fortis = {
     //画像
     ImageLoader: null,//画像の読み込み・保存-image.js
 
-    //サウンド
-    SoundLoader: null,//オーディオの読み込み-audio.js
-    TagSound: null,//オーディオの管理
+    //サウンド-sound.js
+    SoundLoader: null,//サウンドの読み込み・保存
+    SimpleSound: null,//Audio要素を使ったサウンドの管理
+    NormalSound: null,//Web Audio APIを使ったサウンドの管理
 
     //コンテナ(画像合成も可能)
     EntityContainer: null,//コンテナ-entity.js
@@ -119,16 +120,14 @@ Fortis.loadMaterials = async function () {
 }
 
 Fortis.loadfail = function () {
-    let answer = confirm("エラーが発生したため、ページを再読み込みします。");
-    setTimeout(() => {
-        if (answer) Location.reload();
-    }, 1000);
+    alert("エラーが発生したため、ページを再読み込みしてください。");
 }
 
 Fortis.Game = {
     //変数系
     canvas: null,//オフスクリーンキャンバス(エンジン外からのアクセスの便宜上この名前とする)
     context: null,//canvasのコンテキスト(名前の理由は同上)
+    audioCtx: new AudioContext(),
     finalCanvas: null,//最終的に描画されるキャンバス
     finalContext: null,//finalCanvasのコンテキスト
     size: null,//キャンバスのサイズ
