@@ -28,6 +28,7 @@ function Init() {
 let Sound, sound2;
 function Ready() {
     sound2 = new Fortis.NormalSound(Fortis.SoundLoader.getNormalSound("dededon"));
+    sound2.volume = 0.2;
 
 
     let audio = Fortis.SoundLoader.getSimpleSound("dededon");
@@ -67,8 +68,8 @@ function Ready() {
     console.log(sss)
     sse = new Fortis.Entity(sss,ssm);
     sse.pos = new Fortis.Vector2(150, 150);
-    sss.setRepeat(500);
-    sss.start();
+    //sss.setRepeat(500);
+    //sss.start();
     layer.add(sse);
 
     t1 = new Fortis.Entity(new Fortis.TextShape(new Fortis.Font("RocknRoll One", 30), "こんにちは"), material);
@@ -83,13 +84,14 @@ function Ready() {
     layer.add(t1);
     layer.add(is);
     scene.add(layer);
-    let ttimer = Fortis.Timer.add(5000,false,Test);
+    //let ttimer = Fortis.Timer.add(5000,false,Test);
     //console.log(ttimer)
-    Fortis.Timer.start(ttimer);
+    //Fortis.Timer.start(ttimer);
     //sse.shape.backFrame();
 }
 
 function Update(delta) {
+    console.log(sound2.gain.gain.value)
     if(Fortis.Game.mouse.fFrameatClick){
         if(Sound.status){
             //Sound.play();
