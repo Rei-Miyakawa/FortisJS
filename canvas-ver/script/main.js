@@ -17,10 +17,11 @@ function Init() {
     
     Fortis.SoundLoader.addSimpleSounds({
         "dededon":"./get.mp3",
+        "star":"./maou_14_shining_star.mp3",
     });
     
     Fortis.SoundLoader.addNormalSounds({
-        "star":"./maou_14_shining_star.mp3",
+        //"star":"./maou_14_shining_star.mp3",
         "dededon":"./get.mp3",
     })
 }
@@ -94,9 +95,9 @@ function Update(delta) {
     console.log(sound2.gain.gain.value)
     if(Fortis.Game.mouse.fFrameatClick){
         if(Sound.status){
-            //Sound.play();
+            //Sound.play(0,1000,3000);
         }else{
-            Sound.pause();
+            Sound.pause(1000);
         }
     }
     //console.log(Fortis.Game.mouse.wheel)

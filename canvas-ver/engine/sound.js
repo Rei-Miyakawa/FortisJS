@@ -183,24 +183,25 @@ Fortis.SimpleSound = class {
         this.time = sound.duration * 1000;//再生時間(msに直す)
         this.loop = sound.loop;
         this.status = true;//falseで再生中、trueで停止/終了
-        this.fadeOutData = { id: null, time: null };
+        this.fadeOutData = { id: null, time: null, tId: null };//Timerで指定の時間まで待ち、fadeOut関数でtransitionの関数を実行。tIdはtransitionManagerの方でのID
+        this.fadeInData = { id: null}//transitionで管理
         this.sound.onended = () => {
             this.status = true;
         }
-        this.sound.onvolumechange = () => {
-            this.volume = this.sound.volume;
-        }
         this.sound.ontimeupdate = () => {
             this.nowTime = this.sound.currentTime;
-        }
-        this.sound.onratechange = () => {
-            this.rate = this.sound.playbackRate;
         }
     }
     getType() {//タイプ取得
         return this.type;
     }
     delete() {//削除
+        if(Fortis.Timer.getTimer(this.fadeOutData.id) != false){
+            Fortis.Timer.remove(this.fadeOutData.id);
+        }
+        if(Fortis.TransitionManager.get(this.fadeInData) != false){
+            Fortis.TransitionManager.remove(this.fadeInData.id);
+        }
         for (let key in this) {
             if (this.hasOwnProperty(key)) {
                 this[key] = null;
@@ -276,20 +277,37 @@ Fortis.SimpleSound = class {
             if (time < 0 || time > this.time) return Fortis.error.ArgIncorrectVarRange();
             Time = time;
         }
+        
+        if(this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false){
+            Fortis.TransitionManager.remove(this.fadeInData.id);
+        }
+        if(this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false){
+            Fortis.TransitionManager.remove(this.fadeOutData.tId);
+        }
+        if(this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false){
+            Fortis.Timer.remove(this.fadeOutData.id);
+        }
+
         this.status = false;
         this.sound.currentTime = Time / 1000;
         this.sound.play();
+        this.sound.volume = this.volume;
+        this.sound.playbackRate = this.rate;
+        this.sound.loop = this.loop;
+
+        
+
         if (fadeIn != null) {
             if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
-            Fortis.TransitionManager.add(this.sound, "volume", fadeIn, 0.0, this.volume);
+            this.fadeInData.id = Fortis.TransitionManager.add(this.sound, "volume", fadeIn, 0.0, this.volume);
+            Fortis.TransitionManager.start(this.fadeInData.id);
+            //console.log(this.fadeInData)
         }
         if (fadeOut != null) {
             if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
             if (fadeOut < 0 || fadeOut > this.time) return Fortis.error.ArgIncorrectVarRange();
             if (this.fadeOutData.id == null || Fortis.Timer.getTimer(this.fadeOutData.id) == false) {
-                this.fadeOutData = { id: Fortis.Timer.add(this.time - fadeOut, false, "fadeOut", this), time: fadeOut };
-            } else {
-                Fortis.Timer.reset(this.fadeOutData.id);
+                this.fadeOutData = { id: Fortis.Timer.add(this.time - fadeOut - Time, false, "fadeOut", this), time: fadeOut };
             }
             Fortis.Timer.start(this.fadeOutData.id);
         }
@@ -300,17 +318,34 @@ Fortis.SimpleSound = class {
         if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
             Fortis.Timer.stop(this.fadeOutData.id);
         }
+        if(this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false){
+            Fortis.TransitionManager.stop(this.fadeOutData.tId);
+        }
+        if(this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false){
+            Fortis.TransitionManager.stop(this.fadeInData.id);
+        }
         return this.sound.currentTime;
     }
     continue(fadeIn) {//再開
         this.status = false;
         this.sound.play();
-        if (fadeIn != null) {
+        if(fadeIn == null){
+            if(this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false){
+                Fortis.TransitionManager.start(this.fadeInData.id);
+            }
+        }else{
             if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
-            Fortis.TransitionManager.add(this, "volume", fadeIn, 0.0, 1.0);
+            if(this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false){
+                Fortis.TransitionManager.remove(this.fadeInData.id);
+            }
+            this.fadeInData.id = Fortis.TransitionManager.add(this.sound, "volume", fadeIn, 0.0, this.volume);
+            Fortis.TransitionManager.start(this.fadeInData.id)
         }
         if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
             Fortis.Timer.start(this.fadeOutData.id);
+        }
+        if(this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false){
+            Fortis.TransitionManager.stop(this.fadeOutData.tId);
         }
     }
     resetConfig() {//設定をリセット
@@ -319,6 +354,7 @@ Fortis.SimpleSound = class {
         this.loop = sound.loop = false;
     }
     fadeOut(time, identify) {//フェードアウト(timeはms、identifyはTimerから呼び出されているかfalseいないかtrue)
+        //console.log(identify)
         if (this.status == false) {
             if (identify != null) {
                 if (!Fortis.util.checkType(identify, "boolean")) return Fortis.error.ArgTypeWrong();
@@ -326,12 +362,11 @@ Fortis.SimpleSound = class {
             if (identify) {
                 if (time == null) return Fortis.error.ArgNotExists();
                 if (!Fortis.util.checkType(time, "number")) return Fortis.error.ArgTypeWrong();
-                Fortis.TransitionManager.add(this.sound, "volume", time, this.volume, 0.0);
-            } else {
-                if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
-                    Fortis.Timer.remove(this.fadeOutData.id);
-                }
-                Fortis.TransitionManager.add(this.sound, "volume", this.fadeOutData.time, this.volume, 0.0);
+                this.fadeOutData.tId = Fortis.TransitionManager.add(this.sound, "volume", time, this.volume, 0.0);
+                Fortis.TransitionManager.start(this.fadeOutData.tId);
+            } else{
+                this.fadeOutData.tId = Fortis.TransitionManager.add(this.sound, "volume", this.fadeOutData.time, this.volume, 0.0);
+                Fortis.TransitionManager.start(this.fadeOutData.tId);
             }
         }
 
@@ -368,52 +403,63 @@ Fortis.NormalSound = class {
     }
     play(time, fadeIn, fadeOut) {//再生(timeは再生開始時間でms、fadeInはフェードインの時間でms、fadeOutはフェードアウトの時間でms)
         if (this.status) {
-            
+
         }
-            let Time = 0;
-            if (time != null) {
-                if (!Fortis.util.checkType(time, "number")) return Fortis.error.ArgTypeWrong();
-                if (time < 0 || time > this.time) return Fortis.error.ArgIncorrectVarRange();
-                Time = time;
-            }
+        let Time = 0;
+        if (time != null) {
+            if (!Fortis.util.checkType(time, "number")) return Fortis.error.ArgTypeWrong();
+            if (time < 0 || time > this.time) return Fortis.error.ArgIncorrectVarRange();
+            Time = time;
+        }
 
-            this.source = Fortis.Game.audioCtx.createBufferSource();
-            this.source.buffer = this.buffer;
-            this.source.connect(this.gain);
-            this.gain.connect(Fortis.Game.audioCtx.destination);
-            this.source.playbackRate.value = this.rate;
-            this.gain.gain.value = this.volume;
-            this.source.loop = this.loop;
-            this.source.onended = () => {
-                this.status = true;
-            }
-            this.source.start(0, Time);
-            this.status = false;
-            this.startTime = performance.now() + Time;
+        this.source = Fortis.Game.audioCtx.createBufferSource();
+        this.source.buffer = this.buffer;
+        this.source.connect(this.gain);
+        this.gain.connect(Fortis.Game.audioCtx.destination);
+        this.source.playbackRate.value = this.rate;
+        this.gain.gain.value = this.volume;
+        this.source.loop = this.loop;
+        this.source.onended = () => {
+            this.status = true;
+        }
+        this.source.start(0, Time);
+        this.status = false;
+        this.startTime = performance.now() + Time;
 
-            if (fadeIn != null) {
-                if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
-                if (fadeIn < 0 || fadeIn > this.time) return Fortis.error.ArgIncorrectVarRange();
-                this.gain.gain.value = 0;
-                this.gain.gain.linearRampToValueAtTime(this.volume, Fortis.Game.audioCtx.currentTime + fadeIn / 1000);
-            }
+        if(this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false){
+            Fortis.Timer.remove(this.fadeOutData.id);
+        }
 
-            if (fadeOut != null) {
-                if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
-                if (fadeIn < 0 || fadeIn > this.time) return Fortis.error.ArgIncorrectVarRange();
-                console.log(this)
-                this.fadeOutData = { id: Fortis.Timer.add(this.time - fadeOut, false, "fadeOut", this), time: fadeOut };
-                Fortis.Timer.start(this.fadeOutData.id);
-            }
-            return this.startTime;
-        
-        return false;
+        if (fadeIn != null) {
+            if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
+            if (fadeIn < 0 || fadeIn > this.time) return Fortis.error.ArgIncorrectVarRange();
+            this.gain.gain.value = 0;
+            this.gain.gain.linearRampToValueAtTime(this.volume, Fortis.Game.audioCtx.currentTime + fadeIn / 1000);
+        }
+
+        if(this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false){
+            Fortis.Timer.remove(this.fadeOutData.id);
+        }
+
+        if (fadeOut != null) {
+            if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
+            if (fadeIn < 0 || fadeIn > this.time) return Fortis.error.ArgIncorrectVarRange();
+            //console.log(this)
+            this.fadeOutData = { id: Fortis.Timer.add(this.time - fadeOut - Time, false, "fadeOut", this), time: fadeOut };
+            Fortis.Timer.start(this.fadeOutData.id);
+        }
+        return this.startTime;
     }
     pause() {
         if (!this.status) {
             this.source.stop();
             this.status = true;
             this.nowTime += performance.now() - this.startTime;
+
+            if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
+                Fortis.Timer.stop(this.fadeOutData.id);
+            }
+
             return this.nowTime;
         }
         return false;
@@ -441,12 +487,15 @@ Fortis.NormalSound = class {
                 this.gain.gain.linearRampToValueAtTime(1, Fortis.Game.audioCtx.currentTime + fadeIn);
             }
 
+            if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
+                Fortis.Timer.start(this.fadeOutData.id);
+            }
+
             return this.nowTime;
         }
         return false;
     }
     fadeOut(delta) {
-        console.log("aa")
         this.gain.gain.value = this.volume;
         this.gain.gain.linearRampToValueAtTime(0, Fortis.Game.audioCtx.currentTime + this.fadeOutData.time / 1000);
     }

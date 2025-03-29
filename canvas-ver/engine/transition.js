@@ -5,13 +5,14 @@ Fortis.TransitionManager = {
         if (target == null || tVar == null || from == null || to == null) return Fortis.error.ArgNotExists();
 
         let list = {};
+        list["activity"] = false;
 
         list["target"] = target;
 
         let tmpDic = { tVar };
         list["tVar"] = tmpDic["tVar"];
         let tVarType = typeof (target[tVar])
-        console.log(target[tVar])
+        //console.log(target[tVar])
         list["type"] = tVarType;
         if (tVarType == "number") {
             list["difference"] = to - from;
@@ -80,70 +81,85 @@ Fortis.TransitionManager = {
         delete this.list[id];
         return this.list;
     },
+    stop(id) {
+        if (id == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
+        if (this.list[id] === undefined) return Fortis.error.TransitionNotExists(id);
+        this.list[id]["activity"] = false;
+    },
+    start(id) {
+        if (id == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
+        if (this.list[id] === undefined) return Fortis.error.TransitionNotExists(id);
+        this.list[id]["activity"] = true;
+    },
     update(delta) {
         for (id in this.list) {
-            Fortis.TransitionManager.list[id]["elapsedTime"] += delta;
-            let finish = false;
-            if (Fortis.TransitionManager.list[id]["elapsedTime"] >= Fortis.TransitionManager.list[id]["time"]) finish = true;
-            if (Fortis.TransitionManager.list[id]["type"] == "number") {
-                Fortis.TransitionManager.list[id]["now"] += delta * Fortis.TransitionManager.list[id]["difference"] / Fortis.TransitionManager.list[id]["time"];
-                if (Fortis.TransitionManager.list[id]["difference"] > 0) {
-                    if (Fortis.TransitionManager.list[id]["now"] > Fortis.TransitionManager.list[id]["to"]) {
-                        Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Math.min(Fortis.TransitionManager.list[id]["to"], Fortis.TransitionManager.list[id]["now"]);
+            if (this.list[id]["activity"]) {
+                //console.log(this.list[id]["target"])
+                Fortis.TransitionManager.list[id]["elapsedTime"] += delta;
+                let finish = false;
+                if (Fortis.TransitionManager.list[id]["elapsedTime"] >= Fortis.TransitionManager.list[id]["time"]) finish = true;
+                if (Fortis.TransitionManager.list[id]["type"] == "number") {
+                    Fortis.TransitionManager.list[id]["now"] += delta * Fortis.TransitionManager.list[id]["difference"] / Fortis.TransitionManager.list[id]["time"];
+                    if (Fortis.TransitionManager.list[id]["difference"] > 0) {
+                        if (Fortis.TransitionManager.list[id]["now"] > Fortis.TransitionManager.list[id]["to"]) {
+                            Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Math.min(Fortis.TransitionManager.list[id]["to"], Fortis.TransitionManager.list[id]["now"]);
+                        } else {
+                            Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["now"];
+                        }
                     } else {
-                        Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["now"];
+                        if (Fortis.TransitionManager.list[id]["now"] < Fortis.TransitionManager.list[id]["to"]) {
+                            Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Math.max(Fortis.TransitionManager.list[id]["to"], Fortis.TransitionManager.list[id]["now"]);
+                        } else {
+                            Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["now"];
+                        }
                     }
-                } else {
-                    if (Fortis.TransitionManager.list[id]["now"] < Fortis.TransitionManager.list[id]["to"]) {
-                        Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Math.max(Fortis.TransitionManager.list[id]["to"], Fortis.TransitionManager.list[id]["now"]);
-                    } else {
-                        Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["now"];
-                    }
+                    if (finish) Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["to"];
+                } else if (Fortis.TransitionManager.list[id]["type"] == "object") {
+                    Fortis.TransitionManager.list[id]["now"].add(Fortis.TransitionManager.list[id]["difference"].copy().mul(delta / Fortis.TransitionManager.list[id]["time"]));
+                    Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["now"];
+                    if (finish) Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["to"];
                 }
-                if (finish) Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["to"];
-            } else if (Fortis.TransitionManager.list[id]["type"] == "object") {
-                Fortis.TransitionManager.list[id]["now"].add(Fortis.TransitionManager.list[id]["difference"].copy().mul(delta / Fortis.TransitionManager.list[id]["time"]));
-                Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["now"];
-                if (finish) Fortis.TransitionManager.list[id]["target"][Fortis.TransitionManager.list[id]["tVar"]] = Fortis.TransitionManager.list[id]["to"];
-            }
-            /*
-            switch (Fortis.TransitionManager.list[id]["type"]) {
-                case "fade":
-                    Fortis.TransitionManager.list[id]["now"] += delta * Fortis.TransitionManager.list[id]["difference"] / Fortis.TransitionManager.list[id]["time"];
-                    Fortis.TransitionManager.list[id]["target"].alpha = Fortis.TransitionManager.list[id]["now"];
-                    if (finish) Fortis.TransitionManager.list[id]["target"].alpha = Fortis.TransitionManager.list[id]["to"];
-                    break;
-                case "pos":
-                    Fortis.TransitionManager.list[id]["now"].add(Fortis.TransitionManager.list[id]["difference"].copy().mul(delta / Fortis.TransitionManager.list[id]["time"]));
-                    Fortis.TransitionManager.list[id]["target"].pos = Fortis.TransitionManager.list[id]["now"];
-                    if (finish) Fortis.TransitionManager.list[id]["target"].pos = Fortis.TransitionManager.list[id]["to"];
-                    break;
-                case "angle":
-                    Fortis.TransitionManager.list[id]["now"] += delta * Fortis.TransitionManager.list[id]["difference"] / Fortis.TransitionManager.list[id]["time"];
-                    Fortis.TransitionManager.list[id]["target"].angle = Fortis.TransitionManager.list[id]["now"];
-                    if (finish) Fortis.TransitionManager.list[id]["target"].angle = Fortis.TransitionManager.list[id]["to"];
-                    break;
-                case "size":
-                    Fortis.TransitionManager.list[id]["now"].add(Fortis.TransitionManager.list[id]["difference"].copy().mul(delta / Fortis.TransitionManager.list[id]["time"]));
-                    Fortis.TransitionManager.list[id]["target"].scale = Fortis.TransitionManager.list[id]["now"];
-                    if (finish) Fortis.TransitionManager.list[id]["target"].scale = Fortis.TransitionManager.list[id]["to"];
-                    break;
-                case "scale":
-                    Fortis.TransitionManager.list[id]["now"] += delta * Fortis.TransitionManager.list[id]["difference"] / Fortis.TransitionManager.list[id]["time"];
-                    Fortis.TransitionManager.list[id]["target"].scale.x = Fortis.TransitionManager.list[id]["target"].scale.y = Fortis.TransitionManager.list[id]["now"];
-                    if (finish) Fortis.TransitionManager.list[id]["target"].scale.x = Fortis.TransitionManager.list[id]["target"].scale.y = Fortis.TransitionManager.list[id]["to"];
-                    break;
-            }
-                    */
-            if (finish) {
-                Fortis.TransitionManager.remove(id);
+                /*
+                switch (Fortis.TransitionManager.list[id]["type"]) {
+                    case "fade":
+                        Fortis.TransitionManager.list[id]["now"] += delta * Fortis.TransitionManager.list[id]["difference"] / Fortis.TransitionManager.list[id]["time"];
+                        Fortis.TransitionManager.list[id]["target"].alpha = Fortis.TransitionManager.list[id]["now"];
+                        if (finish) Fortis.TransitionManager.list[id]["target"].alpha = Fortis.TransitionManager.list[id]["to"];
+                        break;
+                    case "pos":
+                        Fortis.TransitionManager.list[id]["now"].add(Fortis.TransitionManager.list[id]["difference"].copy().mul(delta / Fortis.TransitionManager.list[id]["time"]));
+                        Fortis.TransitionManager.list[id]["target"].pos = Fortis.TransitionManager.list[id]["now"];
+                        if (finish) Fortis.TransitionManager.list[id]["target"].pos = Fortis.TransitionManager.list[id]["to"];
+                        break;
+                    case "angle":
+                        Fortis.TransitionManager.list[id]["now"] += delta * Fortis.TransitionManager.list[id]["difference"] / Fortis.TransitionManager.list[id]["time"];
+                        Fortis.TransitionManager.list[id]["target"].angle = Fortis.TransitionManager.list[id]["now"];
+                        if (finish) Fortis.TransitionManager.list[id]["target"].angle = Fortis.TransitionManager.list[id]["to"];
+                        break;
+                    case "size":
+                        Fortis.TransitionManager.list[id]["now"].add(Fortis.TransitionManager.list[id]["difference"].copy().mul(delta / Fortis.TransitionManager.list[id]["time"]));
+                        Fortis.TransitionManager.list[id]["target"].scale = Fortis.TransitionManager.list[id]["now"];
+                        if (finish) Fortis.TransitionManager.list[id]["target"].scale = Fortis.TransitionManager.list[id]["to"];
+                        break;
+                    case "scale":
+                        Fortis.TransitionManager.list[id]["now"] += delta * Fortis.TransitionManager.list[id]["difference"] / Fortis.TransitionManager.list[id]["time"];
+                        Fortis.TransitionManager.list[id]["target"].scale.x = Fortis.TransitionManager.list[id]["target"].scale.y = Fortis.TransitionManager.list[id]["now"];
+                        if (finish) Fortis.TransitionManager.list[id]["target"].scale.x = Fortis.TransitionManager.list[id]["target"].scale.y = Fortis.TransitionManager.list[id]["to"];
+                        break;
+                }
+                        */
+                if (finish) {
+                    Fortis.TransitionManager.remove(id);
+                }
             }
         }
     },
     get(id) {
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
-        if (this.list[id] === undefined) return Fortis.error.TransitionNotExists(id);
+        if (this.list[id] === undefined) return false
         return this.list[id];
     }
 }

@@ -27,6 +27,7 @@ Fortis.Timer = {
             if (func == null) return Fortis.error.ArgNotExists();
             if (!Fortis.util.checkType(func, "string")) return Fortis.error.ArgTypeWrong();
             list["func"] = [target, func];
+            //console.log([target, func])
         }
 
 
@@ -105,15 +106,15 @@ Fortis.Timer = {
                 //console.log(this.list[id]["management"]["time"])
                 this.list[id]["management"]["time"] -= delta;
                 if (this.list[id]["management"]["time"] <= 0) {
-                    if (this.list[id]["repeat"]) {
-                        this.list[id]["management"]["time"] = this.list[id]["time"];
-                    } else {
-                        Fortis.Timer.reset(id);
-                    }
                     if (Fortis.util.checkType(this.list[id]["func"], "object")) {
                         this.list[id]["func"][0][this.list[id]["func"][1]](delta);
                     } else {
                         this.list[id]["func"](delta);
+                    }
+                    if (this.list[id]["repeat"]) {
+                        this.list[id]["management"]["time"] = this.list[id]["time"];
+                    } else {
+                        Fortis.Timer.remove(id);
                     }
                 }
             }
