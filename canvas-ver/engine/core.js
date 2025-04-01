@@ -47,35 +47,37 @@ let Fortis = {
 
     //クラス
     Vector2: null,//二次元配列(x,y)の形-vector.js
+
     Timer: null,//タイマー-timer.js
 
-    //シーン関係
-    Scene: null,//シーン-scene.js
-    Layer: null,//レイヤー-scene.js
+    //シーン関係+α-scene.js
+    Scene: null,//シーン
+    Layer: null,//レイヤー
+    CRFunction: null,//CustomRenderFunctionの略。layerに追加して、エンジンの範囲でやりきれない処理をここで描けるようにする。
 
-    //色
-    Color: null,//色-color.js
-    GradationCore: null,//グラデーションのコア-color.js
-    LinearGradation: null,//線形グラデーション-color.js
-    RadialGradation: null,//円形グラデーション-color.js
-    ConicGradation: null,//扇形グラデーション-color.js
+    //色-color.js
+    Color: null,//色
+    GradationCore: null,//グラデーションのコア
+    LinearGradation: null,//線形グラデーション
+    RadialGradation: null,//円形グラデーション
+    ConicGradation: null,//扇形グラデーション
 
     Entity: null,//エンティティ-entity.js
 
-    //マテリアル
-    ColorMaterial: null,//カラーマテリアル-material.js
-    ImageMaterial: null,//画像マテリアル-material.js\
+    //マテリアル-material.js
+    ColorMaterial: null,//カラーマテリアル
+    ImageMaterial: null,//画像マテリアル
 
-    //シェイプ
-    LineShape: null,//線-shape.js
-    RectShape: null,//矩形-shape.js
-    CircleShape: null,//円(弧)-shape.js
-    EllipseShape: null,//楕円-shape.js
-    RegPolygonShape: null,//正多角形-shape.js
-    PolygonShape: null,//多角形-shape.js
-    TextShape: null,//文字-shape.js
-    ImageShape: null,//画像-shape.js
-    SpriteShape: null,//スプライト(画像)-shape.js
+    //シェイプ-shape.js
+    LineShape: null,//線
+    RectShape: null,//矩形
+    CircleShape: null,//円(弧)
+    EllipseShape: null,//楕円
+    RegPolygonShape: null,//正多角形
+    PolygonShape: null,//多角形
+    TextShape: null,//文字
+    ImageShape: null,//画像
+    SpriteShape: null,//スプライト(画像)
 
     //フォント
     FontLoader: null,//フォントの読み込み・保存-font.js
@@ -224,7 +226,6 @@ Fortis.Game = {
 
         //ホイールが動いた
         Fortis.Game.finalCanvas.addEventListener("wheel", (e) => {
-            //console.log(e)
             Fortis.Game.mouse.wheel = e.wheelDelta;
         });
 
@@ -268,7 +269,7 @@ Fortis.Game = {
         Update(delta);//更新
         Fortis.Timer.update(delta);//タイマーの更新
         Fortis.TransitionManager.update(delta);//モーションマネージャーの更新
-        this.draw();
+        this.draw(delta);
 
         //マウスの変数のリセット
         this.mouse.fFrameatClick = false;

@@ -110,7 +110,7 @@ Fortis.Layer = class {
     }
     add(entity) {//エンティティ追加
         if (entity == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(entity, "object", "Entity")) return Fortis.error.ArgTypeWrong();
+        if (!Fortis.util.checkType(entity, "object", "Entity") && !Fortis.util.checkType(entity,"object","Function")) return Fortis.error.ArgTypeWrong();
         if (this.ids[entity.id] != undefined) return Fortis.error.EntityAlreadyExists();
         this.entity.push(entity);
         this.ids[entity.id] = this.entity.length - 1;
@@ -125,7 +125,7 @@ Fortis.Layer = class {
     }
     remove(entity) {//エンティティ削除
         if (entity == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(entity, "object", "Entity")) return Fortis.error.ArgTypeWrong();
+        if (!Fortis.util.checkType(entity, "object", "Entity") && !Fortis.util.checkType(entity,"object","Function")) return Fortis.error.ArgTypeWrong();
         if (this.ids[entity.id] === undefined) return Fortis.error.EntityNotExists();
         let repeat_count = this.entity.length - this.ids[entity.id] - 1;
         let start_index = this.ids[entity.id] + 1;
@@ -145,7 +145,7 @@ Fortis.Layer = class {
     }
     reorder(entity, index) {//順番を変える
         if (entity == null || index == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(entity, "object", "Entity") || !Fortis.util.checkType(index, "number")) return Fortis.error.ArgTypeWrong();
+        if ((!Fortis.util.checkType(entity, "object", "Entity") && !Fortis.util.checkType(entity,"object","Function")) || !Fortis.util.checkType(index, "number")) return Fortis.error.ArgTypeWrong();
         if (this.ids[entity.id] === undefined) return Fortis.error.EntityNotExists();
         if (index < 0 || index > this.entity - 1) return Fortis.error.ArgIncorrectVarRange();
         if (index == this.ids[entity.id]) return this.entity;
@@ -155,5 +155,49 @@ Fortis.Layer = class {
         this.ids[index_id] = this.ids[entity.id];
         this.ids[entity.id] = index;
         return this.entity;
+    }
+}
+
+Fortis.CRFunction = class{
+    get type() {
+        return "CustomRenderFunction";
+    }
+    constructor(func) {
+        if(func == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(func,"function"))return Fortis.error.ArgTypeWrong();
+        this.func = func;//引数にdeltaを入れておくこと
+        this.activity = true;
+        this.id = Fortis.util.randomID();
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    setActivity(boolean){
+        if(boolean == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(boolean,"boolean"))return Fortis.error.ArgTypeWrong();
+        this.activity = boolean;
+        return boolean;
+    }
+    getActivity(){
+        return this.activity;
+    }
+    setFunc(func){
+        if(func == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(func,"function"))return Fortis.error.ArgTypeWrong();
+        this.func = func;
+        return func;
+    }
+    getFunc(){
+        return this.func;
+    }
+    getId(){
+        return this.id;
     }
 }

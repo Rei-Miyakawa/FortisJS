@@ -4,13 +4,13 @@ Fortis.ColorMaterial = class {
     }
     constructor(fillColor, strokeColor) {
         if (fillColor != null) {
-            if (!Fortis.util.checkType(fillColor, "object", "Color"))if(!fillColor.type.indexOf("Gradation")) return Fortis.error.ArgTypeWrong();
+            if (!Fortis.util.checkType(fillColor, "object", "Color")) if (!fillColor.type.indexOf("Gradation")) return Fortis.error.ArgTypeWrong();
             this.fill = fillColor;
         } else {
             this.fill = false;
         }
         if (strokeColor != null) {
-            if (!Fortis.util.checkType(strokeColor, "object", "Color"))if(!strokeColor.type.indexOf("Gradation")) return Fortis.error.ArgTypeWrong();
+            if (!Fortis.util.checkType(strokeColor, "object", "Color")) if (!strokeColor.type.indexOf("Gradation")) return Fortis.error.ArgTypeWrong();
             this.stroke = strokeColor;
         } else {
             this.stroke = false;
@@ -57,19 +57,20 @@ Fortis.ColorMaterial = class {
     }
 }
 
-Fortis.ImageMaterial = class{
+Fortis.ImageMaterial = class {
     get type() {
         return "ImageMaterial";
     }
-    constructor(img) {
-    if(img == null){
-        this.img = Fortis.ImageLoader.getImg("sample");
-    }else{
-        if(!Fortis.util.checkType(img,"object") || img.tagName === undefined)return Fortis.error.ArgTypeWrong();
-        if(!img.tagName == "IMG")return Fortis.error.ArgTypeWrong();
-        this.img = img;
-    }
-    this.size = new Fortis.Vector2(img.width,img.height);
+    constructor(imgKey) {
+        if (imgKey == null) {
+            this.key = "sample";
+        } else {
+            if (!Fortis.util.checkType(imgKey, "string")) return Fortis.error.ArgTypeWrong();
+            this.key = imgKey;
+        }
+        let tmpImg = Fortis.ImageLoader.getImg(this.key);
+        this.size = new Fortis.Vector2(tmpImg.width, tmpImg.height);
+        tmpImg = null;
     }
     getType() {//タイプ取得
         return this.type;
@@ -81,16 +82,19 @@ Fortis.ImageMaterial = class{
             }
         }
     }
-    setImage(img){//画像を変更
-        if(img == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(img,"object") || img.tagName === undefined)return Fortis.error.ArgTypeWrong();
-        this.img = img;
+    setImageKey(key) {//画像を変更
+        if (key == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(imgKey, "string")) return Fortis.error.ArgTypeWrong();
+        this.key = imgKey;
+        let tmpImg = Fortis.ImageLoader.getImg(this.key);
+        this.size = new Fortis.Vector2(tmpImg.width, tmpImg.height);
+        tmpImg = null;
         return img;
     }
-    getImage(){//画像を取得
-        return this.img;    
+    getImageKey() {//画像を取得
+        return this.key;
     }
-    getSize(){//画像のサイズを取得
+    getSize() {//画像のサイズを取得
         return this.size;
     }
 }

@@ -28,12 +28,12 @@ function Init() {
 
 let Sound, sound2;
 function Ready() {
-    sound2 = new Fortis.NormalSound(Fortis.SoundLoader.getNormalSound("dededon"));
-    sound2.volume = 0.2;
+    sound2 = new Fortis.NormalSound("dededon");
+    sound2.volume = 0.5;
 
 
     let audio = Fortis.SoundLoader.getSimpleSound("dededon");
-    Sound = new Fortis.SimpleSound(audio);
+    Sound = new Fortis.SimpleSound("dededon");
     //Sound.setLoop(true);
     Sound.setVolume(0.2);
     //Sound.play();
@@ -62,24 +62,26 @@ function Ready() {
     layer.add(e2);
     //layer.add(e1);
     
-    ssi = Fortis.ImageLoader.getImg("ss");
-    sss = new Fortis.SpriteShape(ssi,new Fortis.Vector2(8,4),32);
     
-    ssm = new Fortis.ImageMaterial(ssi);
+    ssi = Fortis.ImageLoader.getImg("ss");
+    sss = new Fortis.SpriteShape("ss",new Fortis.Vector2(8,4),32);
+    
+    ssm = new Fortis.ImageMaterial("ss");
     console.log(sss)
     sse = new Fortis.Entity(sss,ssm);
     sse.pos = new Fortis.Vector2(150, 150);
-    //sss.setRepeat(500);
-    //sss.start();
+    sss.setRepeat(500);
+    sss.start();
     layer.add(sse);
+    
 
     t1 = new Fortis.Entity(new Fortis.TextShape(new Fortis.Font("RocknRoll One", 30), "こんにちは"), material);
     t1.pos = new Fortis.Vector2(300, 300);
     t1.shape.font.setStyle("italic");
     let hoge = Fortis.ImageLoader.getImg("sample");
     console.log(hoge)
-    i1 = new Fortis.ImageMaterial(hoge);
-    is = new Fortis.Entity(new Fortis.ImageShape(hoge),i1);
+    i1 = new Fortis.ImageMaterial("sample");
+    is = new Fortis.Entity(new Fortis.ImageShape("sample"),i1);
     i1.globalAlpha = 0.5
     //is.pos = new Fortis.Vector2(300, 300);
     layer.add(t1);
@@ -89,6 +91,11 @@ function Ready() {
     //console.log(ttimer)
     //Fortis.Timer.start(ttimer);
     //sse.shape.backFrame();
+
+    /*
+    let tmpf = new Fortis.CRFunction(Test);
+    layer.add(tmpf);
+    */
 }
 
 function Update(delta) {
@@ -110,6 +117,7 @@ function Update(delta) {
 function EngineLoaded() { }
 
 function Test(delta){
+    console.log(delta)
     //sse.shape.stop();
     //sse.shape.backFrame();
     //console.log("konnitiha");

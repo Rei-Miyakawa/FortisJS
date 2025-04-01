@@ -1,4 +1,4 @@
-Fortis.Game.draw = function () {
+Fortis.Game.draw = function (delta) {
     Fortis.Game.context.clearRect(0, 0, Fortis.Game.size.x, Fortis.Game.size.y);//オフスクリーンキャンバスの初期化
     if (Fortis.Game.scene != null) {//シーンが設定されているか
         Fortis.Game.scene.layer.forEach(layer => {
@@ -13,7 +13,7 @@ Fortis.Game.draw = function () {
     function repeatIdentifyingEntity(array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
         array.entity.forEach(tmpEntity => {
             let entity = tmpEntity;
-            if (entity.alpha != 0) {
+            if (entity.alpha !==undefined && entity.alpha != 0) {
                 Fortis.Game.context.save();
                 if (mode) {
                     entity = tmpEntity["entity"];
@@ -58,6 +58,8 @@ Fortis.Game.draw = function () {
                     }
                     Fortis.Game.context.restore();
                 }
+            }else{
+                entity.func(delta);
             }
         });
     }
@@ -200,11 +202,11 @@ Fortis.draw.image = function (entity, sprite) {
     size.x *= entity.scale.x;
     size.y *= entity.scale.x;
     if (sprite) {
-        Fortis.Game.context.drawImage(entity.material.img, entity.shape.clipSize.x * ((entity.shape.nowFrame - 1) % entity.shape.aspect.x), entity.shape.clipSize.y * Math.floor((entity.shape.nowFrame - 1) / entity.shape.aspect.x), entity.shape.clipSize.x, entity.shape.clipSize.y, -size.x / 2, -size.y / 2, size.x, size.y);
+        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipSize.x * ((entity.shape.nowFrame - 1) % entity.shape.aspect.x), entity.shape.clipSize.y * Math.floor((entity.shape.nowFrame - 1) / entity.shape.aspect.x), entity.shape.clipSize.x, entity.shape.clipSize.y, -size.x / 2, -size.y / 2, size.x, size.y);
     } else if (entity.shape.clipPos === undefined) {
-        Fortis.Game.context.drawImage(entity.material.img, -size.x / 2, -size.y / 2, size.x, size.y);
+        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), -size.x / 2, -size.y / 2, size.x, size.y);
     } else {
-        Fortis.Game.context.drawImage(entity.material.img, entity.shape.clipPos.x, entity.shape.clipPos.y, entity.shape.clipSize.x, entity.shape.clipSize.y, -size.x / 2, -size.y / 2, size.x, size.y);
+        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipPos.x, entity.shape.clipPos.y, entity.shape.clipSize.x, entity.shape.clipSize.y, -size.x / 2, -size.y / 2, size.x, size.y);
     }
 }
 

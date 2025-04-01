@@ -384,14 +384,16 @@ Fortis.ImageShape = class {
     get type() {
         return "ImageShape";
     }
-    constructor(imgOrVec) {//imgもしくはVector2を引数とする
+    constructor(keyOrVec) {//imgのkeyもしくはVector2を引数とする
         //サイズ
-        if (imgOrVec == null) {
+        if (keyOrVec == null) {
             this.size = new Fortis.Vector2(100, 100);
-        } else if (Fortis.util.checkType(imgOrVec, "object") && imgOrVec.tagName == "IMG") {
-            this.size = new Fortis.Vector2(imgOrVec.width, imgOrVec.height);
-        } else if (Fortis.util.checkType(imgOrVec, "object", "Vector2")) {
-            this.size = imgOrVec.copy();
+        } else if (Fortis.util.checkType(keyOrVec, "string")) {
+            let tmpImg = Fortis.ImageLoader.getImg(keyOrVec);
+            this.size = new Fortis.Vector2(tmpImg.width, tmpImg.height);
+            tmpImg = null;
+        } else if (Fortis.util.checkType(keyOrVec, "object", "Vector2")) {
+            this.size = keyOrVec.copy();
         } else {
             return Fortis.error.ArgTypeWrong();
         }
@@ -409,13 +411,15 @@ Fortis.ImageShape = class {
             }
         }
     }
-    setSize(imgOrVec) {//サイズ変更
-        if (imgOrVec == null) {
+    setSize(keyOrVec) {//サイズ変更
+        if (keyOrVec == null) {
             this.size = new Fortis.Vector2(100, 100);
-        } else if (Fortis.util.checkType(imgOrVec, "object", "Vector2")) {
-            this.size = imgOrVec.copy();
-        } else if (Fortis.util.checkType(imgOrVec, "object") && imgOrVec.tagName == "IMG") {
-            this.size = new Fortis.Vector2(imgOrVec.width, imgOrVec.height);
+        } else if (Fortis.util.checkType(keyOrVec, "string")) {
+            let tmpImg = Fortis.ImageLoader.getImg(keyOrVec);
+            this.size = new Fortis.Vector2(tmpImg.width, tmpImg.height);
+            tmpImg = null;
+        } else if (Fortis.util.checkType(keyOrVec, "object", "Vector2")) {
+            this.size = keyOrVec.copy();
         } else {
             return Fortis.error.ArgTypeWrong();
         }
@@ -452,7 +456,7 @@ Fortis.SpriteShape = class {
     get type() {
         return "SpriteShape";
     }
-    constructor(img, aspect, frameCount, size) {//imgもしくはVector2を引数とする・aspectは画像を縦横に分割する数
+    constructor(imgKey, aspect, frameCount, size) {//imgのkeyもしくはVector2を引数とする・aspectは画像を縦横に分割する数
         this.nowFrame = 1;//表示中のフレーム
 
         if (aspect == null) {
@@ -471,14 +475,16 @@ Fortis.SpriteShape = class {
             return Fortis.error.ArgTypeWrong();
         }
 
-        if (img == null) {
+        if (imgKey == null) {
             this.imgSize = new Fortis.Vector2(100, 100);
             let imgSizeCopy = this.imgSize.copy();
-            this.clipSize = new Fortis.Vector2(imgSizeCopy.x*(1/this.aspect.x),imgSizeCopy.y*(1/this.aspect.y));
-        } else if (Fortis.util.checkType(img, "object") && img.tagName == "IMG") {
-            this.imgSize = new Fortis.Vector2(img.width, img.height);
+            this.clipSize = new Fortis.Vector2(imgSizeCopy.x * (1 / this.aspect.x), imgSizeCopy.y * (1 / this.aspect.y));
+        } else if (Fortis.util.checkType(imgKey, "string")) {
+            let tmpImg = Fortis.ImageLoader.getImg(imgKey);
+            this.imgSize = new Fortis.Vector2(tmpImg.width, tmpImg.height);
             let imgSizeCopy = this.imgSize.copy();
-            this.clipSize = new Fortis.Vector2(imgSizeCopy.x*(1/this.aspect.x),imgSizeCopy.y*(1/this.aspect.y));
+            this.clipSize = new Fortis.Vector2(imgSizeCopy.x * (1 / this.aspect.x), imgSizeCopy.y * (1 / this.aspect.y));
+            tmpImg = null;
         } else {
             return Fortis.error.ArgTypeWrong();
         }
@@ -513,15 +519,16 @@ Fortis.SpriteShape = class {
         }
         return this.size;
     }
-    getSize(){//サイズ取得
-        return this.size;    
+    getSize() {//サイズ取得
+        return this.size;
     }
-    setImgSize(img) {//サイズ変更(画像を引数とする)
-        if (img == null) return Fortis.error.ArgNotExists();
-        if (Fortis.util.checkType(img, "object") && img.tagName == "IMG") {
-            this.imgSize = new Fortis.Vector2(img.width, img.height);
+    setImgSize(imgKey) {//サイズ変更(画像のkeyを引数とする)
+        if (imgKey == null) return Fortis.error.ArgNotExists();
+        if (Fortis.util.checkType(imgKey, "string")) {
+            let tmpImg = Fortis.ImageLoader.getImg(this.key);
+            this.imgSize = new Fortis.Vector2(tmpImg.width, tmpImg.height);
             let imgSizeCopy = this.imgSize.copy();
-            this.clipSize = new Fortis.Vector2(imgSizeCopy.x*(1/this.aspect.x),imgSizeCopy.y*(1/this.aspect.y));
+            this.clipSize = new Fortis.Vector2(imgSizeCopy.x * (1 / this.aspect.x), imgSizeCopy.y * (1 / this.aspect.y));
         } else {
             return Fortis.error.ArgTypeWrong();
         }
@@ -535,7 +542,7 @@ Fortis.SpriteShape = class {
         if (!Fortis.util.checkType(aspect, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
         this.aspect = aspect;
         let imgSizeCopy = this.imgSize.copy();
-            this.clipSize = new Fortis.Vector2(imgSizeCopy.x*(1/this.aspect.x),imgSizeCopy.y*(1/this.aspect.y));
+        this.clipSize = new Fortis.Vector2(imgSizeCopy.x * (1 / this.aspect.x), imgSizeCopy.y * (1 / this.aspect.y));
         return aspect;
     }
     getAspect() {//アスペクト比を取得
@@ -561,37 +568,37 @@ Fortis.SpriteShape = class {
     getNowFrame() {//現在のフレームを取得
         return this.nowFrame;
     }
-    setRepeat(time,order){//自動でアニメーション
+    setRepeat(time, order) {//自動でアニメーション
 
         let animationOrder;
-        if(order == null){
+        if (order == null) {
             animationOrder = "nextFrame";
-        }else if(Fortis.util.checkType(order,"boolean")){
-            if(order){
+        } else if (Fortis.util.checkType(order, "boolean")) {
+            if (order) {
                 animationOrder = "nextFrame";
-            }else{
+            } else {
                 animationOrder = "backFrame";
             }
-        }else{
+        } else {
             return Fortis.error.ArgTypeWrong();
         }
-        if(time == null){
-            this.autoId = Fortis.Timer.add(1000,true,animationOrder,this);
-        }else if(Fortis.util.checkType(time,"number")){
-            this.autoId = Fortis.Timer.add(time,true,animationOrder,this);
+        if (time == null) {
+            this.autoId = Fortis.Timer.add(1000, true, animationOrder, this);
+        } else if (Fortis.util.checkType(time, "number")) {
+            this.autoId = Fortis.Timer.add(time, true, animationOrder, this);
         }
         return this.autoId;
     }
-    deleteRepeat(){//自動アニメーションを削除
+    deleteRepeat() {//自動アニメーションを削除
         Fortis.Timer.remove(this.autoId);
     }
-    start(){//自動アニメーション開始
+    start() {//自動アニメーション開始
         return Fortis.Timer.start(this.autoId);
     }
-    stop(){//自動アニメーション停止
+    stop() {//自動アニメーション停止
         return Fortis.Timer.stop(this.autoId);
     }
-    reset(){//自動アニメーションリセット
+    reset() {//自動アニメーションリセット
         return Fortis.Timer.reset(this.autoId);
     }
 }
