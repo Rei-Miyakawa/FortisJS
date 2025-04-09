@@ -85,7 +85,7 @@ function Ready() {
     i1.globalAlpha = 0.5
     //is.pos = new Fortis.Vector2(300, 300);
     layer.add(t1);
-    layer.add(is);
+    //layer.add(is);
     scene.add(layer);
     //let ttimer = Fortis.Timer.add(5000,false,Test);
     //console.log(ttimer)
@@ -98,13 +98,20 @@ function Ready() {
     */
 }
 
+let tkey;
 function Update(delta) {
-    console.log(sound2.gain.gain.value)
+    //console.log(sse.pos)
+    //console.log(sound2.gain.gain.value)
     if(Fortis.Game.mouse.fFrameatClick){
-        if(Sound.status){
+        if(tkey !== undefined && Fortis.TransitionManager.get(tkey) != false){
             //Sound.play(0,1000,3000);
+            Fortis.TransitionManager.remove(tkey);
         }else{
-            Sound.pause(1000);
+            tkey = Fortis.TransitionManager.add(sse,"pos",2000,new Fortis.Vector2(0,0),new Fortis.Vector2(300,300),Fortis.util.easing.outExpo)
+            //tkey = Fortis.TransitionManager.add(sse,"angle",2000,0,360,Fortis.util.easing.inTrig)
+            Fortis.TransitionManager.start(tkey);
+            
+            //Sound.pause(1000);
         }
     }
     //console.log(Fortis.Game.mouse.wheel)
@@ -117,7 +124,7 @@ function Update(delta) {
 function EngineLoaded() { }
 
 function Test(delta){
-    console.log(delta)
+    //console.log(delta)
     //sse.shape.stop();
     //sse.shape.backFrame();
     //console.log("konnitiha");

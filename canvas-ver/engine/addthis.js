@@ -13,11 +13,12 @@ let files = [
     "draw",
     "timer",
     "transition",
+    "easing",
     "util",
 ];
 
 let nowLoadingText = document.createElement("h1");
-nowLoadingText.textContent = "ロード中...";
+nowLoadingText.textContent = "ロード中...(長い場合はリロードしてください)";
 onload = function () {
     document.body.appendChild(nowLoadingText);
     loadFiles(files);

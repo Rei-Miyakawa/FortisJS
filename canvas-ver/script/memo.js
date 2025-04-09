@@ -429,3 +429,39 @@ Fortis.ImageMaterial = class{
         return this.size;
     }
 }
+
+/*
+        if (!Fortis.util.checkType(type, "string")) return Fortis.error.ArgTypeWrong();
+        switch (type) {
+            case "fade":
+                if (!Fortis.util.checkType(from, "number") || !Fortis.util.checkType(to, "number")) return Fortis.error.ArgTypeWrong();
+                if ((from < 0 || from > 1) || (to < 0 || to > 1)) return Fortis.error.ArgIncorrectVarRange();
+                list["difference"] = to - from;
+                if (list["difference"] == 0) return false;
+                break;
+            case "pos":
+                if (!Fortis.util.checkType(from, "object", "Vector2") || !Fortis.util.checkType(to, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+                list["difference"] = to.copy().sub(from);
+                if (list["difference"].x == 0 && list["difference"].y == 0) return false;
+                break;
+            case "size":
+                if (!Fortis.util.checkType(from, "object", "Vector2") || !Fortis.util.checkType(to, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+                list["difference"] = to.copy().sub(from);
+                if (list["difference"].x == 0 && list["difference"].y == 0) return false;
+                break;
+            case "angle":
+                if (!Fortis.util.checkType(from, "number") || !Fortis.util.checkType(to, "number")) return Fortis.error.ArgTypeWrong();
+                list["difference"] = to - from;
+                if (list["difference"] == 0) return false;
+                break;
+            case "scale":
+                if (!Fortis.util.checkType(from, "number") || !Fortis.util.checkType(to, "number")) return Fortis.error.ArgTypeWrong();
+                if (from < 0 || to < 0) return Fortis.error.ArgIncorrectVarRange();
+                list["difference"] = to - from;
+                if (list["difference"] == 0) return false;
+                break;
+            default:
+                return Fortis.error.ArgTypeWrong();
+        }
+        list["type"] = type;
+        */

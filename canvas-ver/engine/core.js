@@ -8,6 +8,7 @@ let Fortis = {
     util: {
         //変数
         namedColors: null,//名前付き色
+
         //関数
         console: null,//コンソール(ゲームの設定のデバッグがtrueでないと機能しない)
         checkType: null,//変数の型やタイプなどについてチェックする
@@ -16,11 +17,47 @@ let Fortis = {
         radianToDegree: null,//弧度法から度数法
         getPointOnCircle: null,//任意の座標を中心として任意の半径の円周上の任意の角度の点の座標を取得
         argAdjustmentWithDelta: null,//deltaを使って引数の時間に処理を完了するように調整する
+
         //色
         hexToRGB: null,//カラーコードをRGBに
         HSVToRGB: null,//HSVをRGBに
         RGBToHex: null,//RGBをカラーコードに
         RGBToHSV: null,//RGBをHSVに
+
+        //イージング関数-easing.js
+        //名前は仮定
+        easing: {
+            //三角関数系
+            inTrig: null,
+            outTrig: null,
+            inOutTrig: null,
+            outInTrig:null,
+            //累乗系
+            inPower: null,
+            outPower: null,
+            inOutPower: null,
+            outInPower:null,
+            //指数関数系
+            inExpo: null,
+            outExpo: null,
+            inOutExpo: null,
+            outInExpo:null,
+            //バック系
+            inBack: null,
+            outBack: null,
+            inOutBack: null,
+            outInBack:null,
+            //円系
+            inCirc: null,
+            outCirc: null,
+            inOutCirc: null,
+            outInCirc:null,
+            //バウンド系
+            inBounce: null,
+            outBounce: null,
+            inOutBounce: null,
+            outInBounce:null,
+        },
     },
 
     //関数
@@ -116,7 +153,7 @@ Fortis.setup = function () {
 }
 
 Fortis.loadMaterials = async function () {
-    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs(),Fortis.SoundLoader.loadSimpleSounds(),Fortis.SoundLoader.loadNormalSounds(),];
+    const functionNames = [Fortis.FontLoader.loadFonts(), Fortis.ImageLoader.loadImgs(), Fortis.SoundLoader.loadSimpleSounds(), Fortis.SoundLoader.loadNormalSounds(),];
     const promiseAll = await Promise.all(functionNames);
     return promiseAll;
 }
@@ -172,7 +209,7 @@ Fortis.Game = {
 
         //マウス
         this.mouse.pos = new Fortis.Vector2(0, 0);
-        this.mouse.movement = new Fortis.Vector2(0,0);
+        this.mouse.movement = new Fortis.Vector2(0, 0);
 
         //fps
         this.fpsCtrl.init();
@@ -285,7 +322,7 @@ Fortis.Game = {
 //キーを押した
 window.addEventListener("keydown", (e) => {
     Fortis.InputKey[e.code] = true;
-    console.log("down:",e.code)
+    console.log("down:", e.code)
 });
 //キーが離された
 window.addEventListener("keyup", (e) => {
