@@ -76,7 +76,7 @@ function Ready() {
     
 
     t1 = new Fortis.Entity(new Fortis.TextShape(new Fortis.Font("RocknRoll One", 30), "こんにちは"), material);
-    t1.pos = new Fortis.Vector2(300, 300);
+    t1.pos = new Fortis.Vector2(150, 150);
     t1.shape.font.setStyle("italic");
     let hoge = Fortis.ImageLoader.getImg("sample");
     console.log(hoge)
@@ -107,7 +107,7 @@ function Update(delta) {
             //Sound.play(0,1000,3000);
             Fortis.TransitionManager.remove(tkey);
         }else{
-            tkey = Fortis.TransitionManager.add(sse,"pos",2000,new Fortis.Vector2(0,0),new Fortis.Vector2(300,300),Fortis.util.easing.outExpo)
+            tkey = Fortis.TransitionManager.add(sse,"pos",2000,new Fortis.Vector2(0,0),new Fortis.Vector2(300,300),Fortis.util.easing.outInCirc)
             //tkey = Fortis.TransitionManager.add(sse,"angle",2000,0,360,Fortis.util.easing.inTrig)
             Fortis.TransitionManager.start(tkey);
             

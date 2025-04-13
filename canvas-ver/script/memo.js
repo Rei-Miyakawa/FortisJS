@@ -12,7 +12,7 @@ Fortis.SimpleSound = class {
         this.loop = sound.loop;
         this.status = true;//falseで再生中、trueで停止/終了
         this.fadeOutData = { id: null, time: null, tId: null };//Timerで指定の時間まで待ち、fadeOut関数でtransitionの関数を実行。tIdはtransitionManagerの方でのID
-        this.fadeInData = { id: null}//transitionで管理
+        this.fadeInData = { id: null }//transitionで管理
         this.sound.onended = () => {
             this.status = true;
         }
@@ -24,13 +24,13 @@ Fortis.SimpleSound = class {
         return this.type;
     }
     delete() {//削除
-        if(Fortis.Timer.getTimer(this.fadeOutData.id) != false){
+        if (Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
             Fortis.Timer.remove(this.fadeOutData.id);
         }
-        if(Fortis.TransitionManager.get(this.fadeOutData.tId) != false){
+        if (Fortis.TransitionManager.get(this.fadeOutData.tId) != false) {
             Fortis.TransitionManager.remove(this.fadeOutData.tId);
         }
-        if(Fortis.TransitionManager.get(this.fadeInData) != false){
+        if (Fortis.TransitionManager.get(this.fadeInData) != false) {
             Fortis.TransitionManager.remove(this.fadeInData.id);
         }
         for (let key in this) {
@@ -108,14 +108,14 @@ Fortis.SimpleSound = class {
             if (time < 0 || time > this.time) return Fortis.error.ArgIncorrectVarRange();
             Time = time;
         }
-        
-        if(this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false){
+
+        if (this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false) {
             Fortis.TransitionManager.remove(this.fadeInData.id);
         }
-        if(this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false){
+        if (this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false) {
             Fortis.TransitionManager.remove(this.fadeOutData.tId);
         }
-        if(this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false){
+        if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
             Fortis.Timer.remove(this.fadeOutData.id);
         }
 
@@ -126,7 +126,7 @@ Fortis.SimpleSound = class {
         this.sound.playbackRate = this.rate;
         this.sound.loop = this.loop;
 
-        
+
 
         if (fadeIn != null) {
             if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
@@ -149,10 +149,10 @@ Fortis.SimpleSound = class {
         if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
             Fortis.Timer.stop(this.fadeOutData.id);
         }
-        if(this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false){
+        if (this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false) {
             Fortis.TransitionManager.stop(this.fadeOutData.tId);
         }
-        if(this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false){
+        if (this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false) {
             Fortis.TransitionManager.stop(this.fadeInData.id);
         }
         return this.sound.currentTime;
@@ -160,13 +160,13 @@ Fortis.SimpleSound = class {
     continue(fadeIn) {//再開
         this.status = false;
         this.sound.play();
-        if(fadeIn == null){
-            if(this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false){
+        if (fadeIn == null) {
+            if (this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false) {
                 Fortis.TransitionManager.start(this.fadeInData.id);
             }
-        }else{
+        } else {
             if (!Fortis.util.checkType(fadeIn, "number")) return Fortis.error.ArgTypeWrong();
-            if(this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false){
+            if (this.fadeInData.id != null && Fortis.TransitionManager.get(this.fadeInData.id) != false) {
                 Fortis.TransitionManager.remove(this.fadeInData.id);
             }
             this.fadeInData.id = Fortis.TransitionManager.add(this.sound, "volume", fadeIn, 0.0, this.volume);
@@ -175,7 +175,7 @@ Fortis.SimpleSound = class {
         if (this.fadeOutData.id != null && Fortis.Timer.getTimer(this.fadeOutData.id) != false) {
             Fortis.Timer.start(this.fadeOutData.id);
         }
-        if(this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false){
+        if (this.fadeOutData.tId != null && Fortis.TransitionManager.get(this.fadeOutData.tId) != false) {
             Fortis.TransitionManager.stop(this.fadeOutData.tId);
         }
     }
@@ -195,7 +195,7 @@ Fortis.SimpleSound = class {
                 if (!Fortis.util.checkType(time, "number")) return Fortis.error.ArgTypeWrong();
                 this.fadeOutData.tId = Fortis.TransitionManager.add(this.sound, "volume", time, this.volume, 0.0);
                 Fortis.TransitionManager.start(this.fadeOutData.tId);
-            } else{
+            } else {
                 this.fadeOutData.tId = Fortis.TransitionManager.add(this.sound, "volume", this.fadeOutData.time, this.volume, 0.0);
                 Fortis.TransitionManager.start(this.fadeOutData.tId);
             }
@@ -392,19 +392,19 @@ Fortis.NormalSound = class {
     }
 }
 
-Fortis.ImageMaterial = class{
+Fortis.ImageMaterial = class {
     get type() {
         return "ImageMaterial";
     }
     constructor(img) {
-    if(img == null){
-        this.img = Fortis.ImageLoader.getImg("sample");
-    }else{
-        if(!Fortis.util.checkType(img,"object") || img.tagName === undefined)return Fortis.error.ArgTypeWrong();
-        if(!img.tagName == "IMG")return Fortis.error.ArgTypeWrong();
-        this.img = img;
-    }
-    this.size = new Fortis.Vector2(img.width,img.height);
+        if (img == null) {
+            this.img = Fortis.ImageLoader.getImg("sample");
+        } else {
+            if (!Fortis.util.checkType(img, "object") || img.tagName === undefined) return Fortis.error.ArgTypeWrong();
+            if (!img.tagName == "IMG") return Fortis.error.ArgTypeWrong();
+            this.img = img;
+        }
+        this.size = new Fortis.Vector2(img.width, img.height);
     }
     getType() {//タイプ取得
         return this.type;
@@ -416,16 +416,16 @@ Fortis.ImageMaterial = class{
             }
         }
     }
-    setImage(img){//画像を変更
-        if(img == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(img,"object") || img.tagName === undefined)return Fortis.error.ArgTypeWrong();
+    setImage(img) {//画像を変更
+        if (img == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(img, "object") || img.tagName === undefined) return Fortis.error.ArgTypeWrong();
         this.img = img;
         return img;
     }
-    getImage(){//画像を取得
-        return this.img;    
+    getImage() {//画像を取得
+        return this.img;
     }
-    getSize(){//画像のサイズを取得
+    getSize() {//画像のサイズを取得
         return this.size;
     }
 }
@@ -465,3 +465,25 @@ Fortis.ImageMaterial = class{
         }
         list["type"] = type;
         */
+
+Fortis.util.easing.outInTrig = function (t) {
+    if (t == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+    if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+    if (t < 0.5) {
+        return Fortis.util.easing.outTrig(t * 2) / 2;
+    } else {
+        return Fortis.util.easing.inTrig((t - 0.5) * 2) / 2 + 0.5;
+    }
+}
+
+Fortis.util.easing.inOutCirc = function (t) {
+    if (t == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+    if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+    if (t < 0.5) {
+        return 0.5 - Math.sqrt(0.25 - t ** 2);
+    } else {
+        return 0.5 + Math.sqrt(0.25 - (t - 1) ** 2);
+    }
+}
