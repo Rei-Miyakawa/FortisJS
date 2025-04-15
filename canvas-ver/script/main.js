@@ -107,7 +107,7 @@ function Update(delta) {
             //Sound.play(0,1000,3000);
             Fortis.TransitionManager.remove(tkey);
         }else{
-            tkey = Fortis.TransitionManager.add(sse,"pos",2000,new Fortis.Vector2(0,0),new Fortis.Vector2(300,300),Fortis.util.easing.outInCirc)
+            tkey = Fortis.TransitionManager.add(sse,"pos",2000,new Fortis.Vector2(0,0),new Fortis.Vector2(300,300),Fortis.util.easing.outInSpring)
             //tkey = Fortis.TransitionManager.add(sse,"angle",2000,0,360,Fortis.util.easing.inTrig)
             Fortis.TransitionManager.start(tkey);
             

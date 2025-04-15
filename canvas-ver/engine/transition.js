@@ -1,7 +1,7 @@
 Fortis.TransitionManager = {
     list: {},
     //{id:{type:対象の変数の型,target:ターゲット,tVar:変数名,time:時間,elapsedTime:経過時間,elapsedRate:経過率,from:初期値,to:最終値,difference:fromとtoの差,now:現在の値}}
-    add(target, tVar, time, from, to, eFunc, ...arg) {//追加
+    add(target, tVar, time, from, to, eFunc, args) {//追加
         if (target == null || tVar == null || from == null || to == null) return Fortis.error.ArgNotExists();
 
         let list = {};
@@ -30,10 +30,10 @@ Fortis.TransitionManager = {
                 "arg": null,
             }
             list["easing"]["func"] = eFunc;
-            if (arg.length == 0) {
+            if (args == null) {
                 list["easing"]["arg"] = null;
             } else {
-                list["easing"]["arg"] = arg;
+                list["easing"]["arg"] = args;
             }
         } else return Fortis.error.ArgTypeWrong();
 

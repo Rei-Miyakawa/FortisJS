@@ -102,9 +102,9 @@
             }
         }
         if (t < 0.5) {
-            return Fortis.util.easing.inPower(t*2,expo)/2;
+            return Fortis.util.easing.inPower(t * 2, expo) / 2;
         } else {
-            return Fortis.util.easing.outPower((t-0.5)*2,expo)/2+0.5;
+            return Fortis.util.easing.outPower((t - 0.5) * 2, expo) / 2 + 0.5;
         }
     }
     Fortis.util.easing.outInPower = function (t, n) {
@@ -126,7 +126,7 @@
                 }
             }
         }
-        return (1+Math.pow(2*t-1,expo))/2;
+        return (1 + Math.pow(2 * t - 1, expo)) / 2;
     }
 }
 
@@ -233,29 +233,56 @@
     }
 }
 
-//バック系　ここからの配列対応から
+//バック系_確認済み
 {
     Fortis.util.easing.inBack = function (t, n, m, a) {
         let expo1 = 3;
         let expo2 = 2;
         let coe = 3;
+        let isArray = false;
+
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (n != null) {
-            if (!Fortis.util.checkType(n, "number")) return Fortis.error.ArgTypeWrong();
-            if (n < 0) return Fortis.error.ArgIncorrectVarRange();
-            expo1 = n;
+            if (typeof (n) == "number") {
+                if (n < 0) return Fortis.error.ArgIncorrectVarRange();
+                expo1 = n;
+
+            } else if (typeof (n) == "object") {
+                isArray = true;
+                if (n.length != 3) return Fortis.error.ArgIncorrectVarRange();
+                if (typeof (n[0]) == "number") {
+                    if (n[0] < 0) return Fortis.error.ArgIncorrectVarRange();
+                    expo1 = n[0];
+                } else {
+                    return Fortis.error.ArgTypeWrong();
+                }
+                if (typeof (n[1]) == "number") {
+                    if (n[1] < 0) return Fortis.error.ArgIncorrectVarRange();
+                    expo2 = n[1];
+                } else {
+                    return Fortis.error.ArgTypeWrong();
+                }
+                if (typeof (n[2]) == "number") {
+                    if (n[2] < 0) return Fortis.error.ArgIncorrectVarRange();
+                    coe = n[2];
+                } else {
+                    return Fortis.error.ArgTypeWrong();
+                }
+            }
         }
-        if (m != null) {
-            if (!Fortis.util.checkType(m, "number")) return Fortis.error.ArgTypeWrong();
-            if (m < 0) return Fortis.error.ArgIncorrectVarRange();
-            expo2 = m;
-        }
-        if (a != null) {
-            if (!Fortis.util.checkType(a, "number")) return Fortis.error.ArgTypeWrong();
-            if (a < 0) return Fortis.error.ArgIncorrectVarRange();
-            coe = a;
+        if (isArray == false) {
+            if (m != null) {
+                if (!Fortis.util.checkType(m, "number")) return Fortis.error.ArgTypeWrong();
+                if (m < 0) return Fortis.error.ArgIncorrectVarRange();
+                expo2 = m;
+            }
+            if (a != null) {
+                if (!Fortis.util.checkType(a, "number")) return Fortis.error.ArgTypeWrong();
+                if (a < 0) return Fortis.error.ArgIncorrectVarRange();
+                coe = a;
+            }
         }
         return coe * Math.pow(t, expo1) - (coe - 1) * Math.pow(t, expo2);
     }
@@ -263,23 +290,50 @@
         let expo1 = 3;
         let expo2 = 2;
         let coe = 3;
+        let isArray = false;
+
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (n != null) {
-            if (!Fortis.util.checkType(n, "number")) return Fortis.error.ArgTypeWrong();
-            if (n < 0) return Fortis.error.ArgIncorrectVarRange();
-            expo1 = n;
+            if (typeof (n) == "number") {
+                if (n < 0) return Fortis.error.ArgIncorrectVarRange();
+                expo1 = n;
+
+            } else if (typeof (n) == "object") {
+                isArray = true;
+                if (n.length != 3) return Fortis.error.ArgIncorrectVarRange();
+                if (typeof (n[0]) == "number") {
+                    if (n[0] < 0) return Fortis.error.ArgIncorrectVarRange();
+                    expo1 = n[0];
+                } else {
+                    return Fortis.error.ArgTypeWrong();
+                }
+                if (typeof (n[1]) == "number") {
+                    if (n[1] < 0) return Fortis.error.ArgIncorrectVarRange();
+                    expo2 = n[1];
+                } else {
+                    return Fortis.error.ArgTypeWrong();
+                }
+                if (typeof (n[2]) == "number") {
+                    if (n[2] < 0) return Fortis.error.ArgIncorrectVarRange();
+                    coe = n[2];
+                } else {
+                    return Fortis.error.ArgTypeWrong();
+                }
+            }
         }
-        if (m != null) {
-            if (!Fortis.util.checkType(m, "number")) return Fortis.error.ArgTypeWrong();
-            if (m < 0) return Fortis.error.ArgIncorrectVarRange();
-            expo2 = m;
-        }
-        if (a != null) {
-            if (!Fortis.util.checkType(a, "number")) return Fortis.error.ArgTypeWrong();
-            if (a < 0) return Fortis.error.ArgIncorrectVarRange();
-            coe = a;
+        if (isArray == false) {
+            if (m != null) {
+                if (!Fortis.util.checkType(m, "number")) return Fortis.error.ArgTypeWrong();
+                if (m < 0) return Fortis.error.ArgIncorrectVarRange();
+                expo2 = m;
+            }
+            if (a != null) {
+                if (!Fortis.util.checkType(a, "number")) return Fortis.error.ArgTypeWrong();
+                if (a < 0) return Fortis.error.ArgIncorrectVarRange();
+                coe = a;
+            }
         }
         return 1 + coe * Math.pow(t - 1, expo1) + (coe - 1) * Math.pow(t - 1, expo2);
     }
@@ -288,9 +342,9 @@
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (t < 0.5) {
-            return Fortis.util.easing.inBack(t*2, n, m, a)/2;
+            return Fortis.util.easing.inBack(t * 2, n, m, a) / 2;
         } else {
-            return Fortis.util.easing.outBack((t-0.5)*2, n, m, a)/2+0.5;
+            return Fortis.util.easing.outBack((t - 0.5) * 2, n, m, a) / 2 + 0.5;
         }
     }
     Fortis.util.easing.outInBack = function (t, n, m, a) {
@@ -298,9 +352,9 @@
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (t < 0.5) {
-            return Fortis.util.easing.outBack(t*2, n, m, a)/2;
+            return Fortis.util.easing.outBack(t * 2, n, m, a) / 2;
         } else {
-            return Fortis.util.easing.inBack((t-0.5)*2, n, m, a)/2+0.5;
+            return Fortis.util.easing.inBack((t - 0.5) * 2, n, m, a) / 2 + 0.5;
         }
     }
 }
@@ -324,9 +378,9 @@
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (t < 0.5) {
-            return Fortis.util.easing.inCirc(t*2)/2;
+            return Fortis.util.easing.inCirc(t * 2) / 2;
         } else {
-            return Fortis.util.easing.outCirc((t-0.5)*2)/2+0.5;
+            return Fortis.util.easing.outCirc((t - 0.5) * 2) / 2 + 0.5;
         }
     }
     Fortis.util.easing.outInCirc = function (t) {
@@ -334,9 +388,94 @@
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (t < 0.5) {
-            return Fortis.util.easing.outCirc(t*2)/2;
+            return Fortis.util.easing.outCirc(t * 2) / 2;
         } else {
-            return Fortis.util.easing.inCirc((t-0.5)*2)/2+0.5;
+            return Fortis.util.easing.inCirc((t - 0.5) * 2) / 2 + 0.5;
+        }
+    }
+}
+
+//バウンド系_確認済み
+{
+    Fortis.util.easing.inBounce = function (t) {
+        if (t == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+        if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+        return 1 - Fortis.util.easing.outBounce(1 - t);
+    }
+    Fortis.util.easing.outBounce = function (t) {
+        if (t == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+        if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+        const n1 = 7.5625;
+        const n2 = 2.75;
+        if (t < 1 / n2) {
+            return n1 * t * t;
+        } else if (t < 2 / n2) {
+            t -= 1.5 / n2
+            return n1 * t * t + 0.75;
+        } else if (t < 2.5 / n2) {
+            t -= 2.25 / n2
+            return n1 * t * t + 0.9375;
+        } else {
+            t -= 2.625 / n2
+            return n1 * t * t + 0.984375;
+        }
+    }
+    Fortis.util.easing.inOutBounce = function (t) {
+        if (t == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+        if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+        if (t < 0.5) {
+            return (1 - Fortis.util.easing.outBounce(1 - 2 * t)) / 2;
+        } else {
+            return (1 + Fortis.util.easing.outBounce(2 * t - 1)) / 2;
+        }
+    }
+    Fortis.util.easing.outInBounce = function (t) {
+        if (t == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+        if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+        if (t < 0.5) {
+            return (Fortis.util.easing.outBounce(2 * t)) / 2;
+        } else {
+            return (2 - Fortis.util.easing.outBounce(2 - 2 * t)) / 2;
+        }
+    }
+}
+
+//バネ系_確認済み
+{
+    Fortis.util.easing.inSpring = function (t) {
+        if (t == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+        if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+        return -Math.pow(2, 10 * t - 10) * Math.sin((t * 10 - 10.75) * 2 / 3 * Math.PI);
+    }
+    Fortis.util.easing.outSpring = function (t) {
+        if (t == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+        if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+        return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * 2 / 3 * Math.PI) + 1;
+    }
+    Fortis.util.easing.inOutSpring = function (t) {
+        if (t == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+        if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+        if (t < 0.5) {
+            return -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2
+        } else {
+            return (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2 + 1;
+        }
+    }
+    Fortis.util.easing.outInSpring = function (t) {
+        if (t == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
+        if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
+        if (t < 0.5) {
+            return (Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2
+        } else {
+            return -(Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2 + 1;
         }
     }
 }

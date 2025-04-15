@@ -57,6 +57,11 @@ let Fortis = {
             outBounce: null,
             inOutBounce: null,
             outInBounce:null,
+            //バネ系
+            inSpring: null,
+            outSpring: null,
+            inOutSpring: null,
+            outInSpring:null,
         },
     },
 
