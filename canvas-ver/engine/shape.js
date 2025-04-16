@@ -627,6 +627,7 @@ Fortis.SpriteShape = class {
         }
 
         this.autoId;
+        this.autoRange = [];
 
         if (distance == null) {
             this.distance = new Fortis.Vector2();
@@ -686,12 +687,20 @@ Fortis.SpriteShape = class {
     }
     nextFrame() {//次のフレームへ
         this.nowFrame++;
-        if (this.frameCount < this.nowFrame) this.nowFrame = 1;
+        if(this.autoRange.length == 0){
+            if (this.frameCount < this.nowFrame) this.nowFrame = 1;
+        }else{
+            if(this.autoRange[1]<this.nowFrame) this.nowFrame = this.autoRange[0];
+        }
         return this.nowFrame;
     }
     backFrame() {//前のフレームへ
         this.nowFrame--;
-        if (this.nowFrame < 1) this.nowFrame = this.frameCount;
+        if(this.autoRange.length == 0){
+            if (this.nowFrame < 1) this.nowFrame = this.frameCount;
+        }else{
+            if(this.autoRange[0]>this.nowFrame) this.nowFrame = this.autoRange[1];
+        }
         return this.nowFrame;
     }
     set(number) {//フレームのジャンプ
@@ -704,7 +713,7 @@ Fortis.SpriteShape = class {
     getNowFrame() {//現在のフレームを取得
         return this.nowFrame;
     }
-    setRepeat(time, order) {//自動でアニメーション
+    setRepeat(time, order,range) {//自動でアニメーション
 
         let animationOrder;
         if (order == null) {
@@ -722,6 +731,19 @@ Fortis.SpriteShape = class {
             this.autoId = Fortis.Timer.add(1000, true, animationOrder, this);
         } else if (Fortis.util.checkType(time, "number")) {
             this.autoId = Fortis.Timer.add(time, true, animationOrder, this);
+        }else{
+            return Fortis.error.ArgTypeWrong();
+        }
+
+        if(range == null){
+            this.autoRange = [];
+        }else if(Fortis.util.checkType(range, "object")){
+            if(range.length != 2)return Fortis.error.ArgTypeWrong();
+            if(!Fortis.util.checkType(range[0], "number") || !Fortis.util.checkType(range[1], "number"))return Fortis.error.ArgTypeWrong();
+            if(range[0]>=range[1] || range[0]<1 || range[0]>=this.frameCount || range[1]<=1 || range[1]>this.frameCount)return Fortis.error.ArgIncorrectVarRange();
+            this.autoRange = range;
+        }else{
+            return Fortis.error.ArgTypeWrong();
         }
         return this.autoId;
     }

@@ -487,3 +487,4 @@ Fortis.util.easing.inOutCirc = function (t) {
         return 0.5 + Math.sqrt(0.25 - (t - 1) ** 2);
     }
 }
+

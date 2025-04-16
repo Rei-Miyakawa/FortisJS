@@ -70,7 +70,7 @@ function Ready() {
     console.log(sss)
     sse = new Fortis.Entity(sss,ssm);
     sse.pos = new Fortis.Vector2(150, 150);
-    sss.setRepeat(500);
+    sss.setRepeat(500, null , [1,5]);
     sss.start();
     layer.add(sse);
     
@@ -83,6 +83,7 @@ function Ready() {
     i1 = new Fortis.ImageMaterial("sample");
     is = new Fortis.Entity(new Fortis.ImageShape("sample"),i1);
     i1.globalAlpha = 0.5
+    t1.shape.distance = new Fortis.Vector2(100,100);
     //is.pos = new Fortis.Vector2(300, 300);
     layer.add(t1);
     //layer.add(is);
@@ -100,7 +101,8 @@ function Ready() {
 
 let tkey;
 function Update(delta) {
-    //console.log(sse.pos)
+    t1.angle++;
+    console.log(sse.shape.nowFrame)
     //console.log(sound2.gain.gain.value)
     if(Fortis.Game.mouse.fFrameatClick){
         if(tkey !== undefined && Fortis.TransitionManager.get(tkey) != false){

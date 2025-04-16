@@ -463,7 +463,7 @@
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (t < 0.5) {
-            return -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2
+            return -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2;
         } else {
             return (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2 + 1;
         }
@@ -473,9 +473,9 @@
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (t < 0.5) {
-            return (Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2
+            return (1 + Math.pow(2, -20 * t) * Math.sin((20 * t - 1.125) * 2 / 4.5 * Math.PI)) / 2;
         } else {
-            return -(Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2 + 1;
+            return (1 - Math.pow(2, 20 * t - 20) * Math.sin((20 * t - 21.125) * 2 / 4.5 * Math.PI)) / 2;
         }
     }
 }
