@@ -1,5 +1,5 @@
 Fortis.Game.draw = function (delta) {
-    Fortis.Game.context.clearRect(0, 0, Fortis.Game.size.x, Fortis.Game.size.y);//オフスクリーンキャンバスの初期化
+    Fortis.Game.context.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);//オフスクリーンキャンバスの初期化
     if (Fortis.Game.scene != null) {//シーンが設定されているか
         Fortis.Game.scene.layer.forEach(layer => {
             repeatIdentifyingEntity(layer, false);
@@ -7,9 +7,9 @@ Fortis.Game.draw = function (delta) {
     }
 
     //実際に表示されるキャンバスの処理
-    Fortis.Game.finalContext.clearRect(0, 0, Fortis.Game.size.x, Fortis.Game.size.y);
-    Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0);
-
+    Fortis.Game.finalContext.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
+    Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0,Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
+    
     function repeatIdentifyingEntity(array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
         array.entity.forEach(tmpEntity => {
             let entity = tmpEntity;

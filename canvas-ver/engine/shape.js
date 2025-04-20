@@ -749,6 +749,7 @@ Fortis.SpriteShape = class {
     }
     deleteRepeat() {//自動アニメーションを削除
         Fortis.Timer.remove(this.autoId);
+        this.autoRange = [];
     }
     start() {//自動アニメーション開始
         return Fortis.Timer.start(this.autoId);
@@ -758,6 +759,7 @@ Fortis.SpriteShape = class {
     }
     reset() {//自動アニメーションリセット
         return Fortis.Timer.reset(this.autoId);
+        this.autoRange = [];
     }
     getDistance() {
         return this.distance;

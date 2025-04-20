@@ -31,37 +31,37 @@ let Fortis = {
             inTrig: null,
             outTrig: null,
             inOutTrig: null,
-            outInTrig:null,
+            outInTrig: null,
             //累乗系
             inPower: null,
             outPower: null,
             inOutPower: null,
-            outInPower:null,
+            outInPower: null,
             //指数関数系
             inExpo: null,
             outExpo: null,
             inOutExpo: null,
-            outInExpo:null,
+            outInExpo: null,
             //バック系
             inBack: null,
             outBack: null,
             inOutBack: null,
-            outInBack:null,
+            outInBack: null,
             //円系
             inCirc: null,
             outCirc: null,
             inOutCirc: null,
-            outInCirc:null,
+            outInCirc: null,
             //バウンド系
             inBounce: null,
             outBounce: null,
             inOutBounce: null,
-            outInBounce:null,
+            outInBounce: null,
             //バネ系
             inSpring: null,
             outSpring: null,
             inOutSpring: null,
-            outInSpring:null,
+            outInSpring: null,
         },
     },
 
@@ -174,11 +174,19 @@ Fortis.Game = {
     audioCtx: new AudioContext(),
     finalCanvas: null,//最終的に描画されるキャンバス
     finalContext: null,//finalCanvasのコンテキスト
-    size: null,//キャンバスのサイズ
     winSize: null,//ウィンドウのサイズ
     config: {//設定
         debug: false,//デバッグモード
         loop: true,//ゲームループをするか
+    },
+    canvasCfg: {
+        aspect: null,
+        size: null,
+        autoResize: true,
+        keepAspect: true,
+        minSize: null,
+        maxSize: null,
+        BGColor: "000000"
     },
     fpsCtrl: null,//fps.js
     scene: null,//シーン
@@ -196,21 +204,54 @@ Fortis.Game = {
 
     //関数
     init() {//初期化
+        document.body.style.margin = "0";
+        document.body.style.padding = "0";
+        document.body.style.overflow = "hidden";
+
         //オフスクリーンキャンバス
         this.canvas = new OffscreenCanvas(100, 100);
         this.context = this.canvas.getContext("2d");
 
         //最終的な描画キャンバス
+
         this.finalCanvas = document.createElement("canvas");
         this.finalContext = this.finalCanvas.getContext("2d");
         document.body.appendChild(this.finalCanvas);
 
+        this.winSize = new Fortis.Vector2(document.documentElement.clientWidth, document.documentElement.clientHeight)
+
+        //キャンバスの設定
+        if (this.canvasCfg.aspect == null) {
+            this.canvasCfg.aspect = new Fortis.Vector2(16, 9);
+        }
+        if (this.canvasCfg.minSize == null) {
+            this.canvasCfg.minSize = new Fortis.Vector2(160, 90);
+        }
+        if (this.canvasCfg.maxSize == null) {
+            this.canvasCfg.maxSize = new Fortis.Vector2(2400, 1350);
+        }
+        if (this.canvasCfg.size == null) {
+            this.canvasCfg.size = new Fortis.Vector2(800, 450);
+        }
+        let tmpx = this.canvasCfg.size.y * this.canvasCfg.aspect.x / this.canvasCfg.aspect.y;
+        if (tmpx > this.canvasCfg.size.x) {
+            let y = this.winSize.x * this.canvasCfg.aspect.y / this.canvasCfg.aspect.x;
+            this.canvasCfg.size.x = document.documentElement.clientWidth;
+            this.canvasCfg.size.y = y;
+        } else {
+            this.canvasCfg.size.x = tmpx;
+            this.canvasCfg.size.y = this.canvasCfg.size.y;
+        }
+        if (this.canvasCfg.size.x < this.canvasCfg.minSize.x) this.canvasCfg.size.x = this.canvasCfg.minSize.x;
+        if (this.canvasCfg.size.y < this.canvasCfg.minSize.y) this.canvasCfg.size.y = this.canvasCfg.minSize.y;
+        if (this.canvasCfg.size.x > this.canvasCfg.maxSize.x) this.canvasCfg.size.x = this.canvasCfg.maxSize.x;
+        if (this.canvasCfg.size.y > this.canvasCfg.maxSize.y) this.canvasCfg.size.y = this.canvasCfg.maxSize.y;
+
         //キャンバスのサイズ
-        this.size = new Fortis.Vector2(800, 450);
-        this.canvas.width = this.size.x;
-        this.canvas.height = this.size.y;
-        this.finalCanvas.width = this.size.x;
-        this.finalCanvas.height = this.size.y;
+        this.canvas.width = this.canvasCfg.size.x;
+        this.canvas.height = this.canvasCfg.size.y;
+        this.finalCanvas.width = this.canvasCfg.size.x;
+        this.finalCanvas.height = this.canvasCfg.size.y;
 
         //マウス
         this.mouse.pos = new Fortis.Vector2(0, 0);
@@ -284,6 +325,30 @@ Fortis.Game = {
             Fortis.Game.mouse.outsideOfCanvas = false;
         });
     },
+    resized(winX, winY) {
+        this.winSize.x = winX;
+        this.winSize.y = winY;
+        if (this.canvasCfg.autoResize) {
+            if (this.canvasCfg.keepAspect) {
+                let tmpx = this.winSize.y * this.canvasCfg.aspect.x / this.canvasCfg.aspect.y;
+                if (tmpx > this.canvasCfg.size.x) {
+                    let y = this.winSize.x * this.canvasCfg.aspect.y / this.canvasCfg.aspect.x;
+                    this.canvasCfg.size.x = winX;
+                    this.canvasCfg.size.y = y;
+                } else {
+                    this.canvasCfg.size.x = tmpx;
+                    this.canvasCfg.size.y = winY;
+                }
+            } else {
+                this.canvasCfg.size.x = winX;
+                this.canvasCfg.size.y = winY;
+            }
+        }
+        //this.canvas.width = this.canvasCfg.size.x;
+        //this.canvas.height = this.canvasCfg.size.y;
+        this.finalCanvas.width = this.canvasCfg.size.x;
+        this.finalCanvas.height = this.canvasCfg.size.y;
+    },
     setScene(scene) {//シーン設定
         if (scene == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(scene, "object", "Scene")) return Fortis.error.ArgTypeWrong();
@@ -334,6 +399,13 @@ window.addEventListener("keyup", (e) => {
     Fortis.InputKey[e.code] = false;
     //console.log("up:",e.code)
 });
+
+//ウィンドウのリサイズ
+window.addEventListener("resize", (e) => {
+    if (Fortis.Game.canvasCfg.autoResize) {
+        Fortis.Game.resized(document.documentElement.clientWidth, document.documentElement.clientHeight);
+    }
+})
 
 //エラー吐いたら再読み込み
 window.onerror = function () {

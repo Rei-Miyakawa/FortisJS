@@ -204,8 +204,6 @@ Fortis.SimpleSound = class {
     }
 }
 
-
-
 Fortis.NormalSound = class {
     get type() {
         return "NormalSound";
@@ -466,25 +464,20 @@ Fortis.ImageMaterial = class {
         list["type"] = type;
         */
 
-Fortis.util.easing.outInTrig = function (t) {
-    if (t == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
-    if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-    if (t < 0.5) {
-        return Fortis.util.easing.outTrig(t * 2) / 2;
+changeSize(){
+    this.winSize.x = document.documentElement.clientWidth;
+    this.winSize.y = document.documentElement.clientHeight;
+    let tmpx = this.winSize.y * 16 / 9;
+    if (tmpx > this.winSize.x) {
+        let y = this.winSize.x * 9 / 16;
+        this.size.x = document.documentElement.clientWidth*0.95;
+        this.size.y = y*0.95;
     } else {
-        return Fortis.util.easing.inTrig((t - 0.5) * 2) / 2 + 0.5;
+        this.size.x = tmpx*0.95;
+        this.size.y = document.documentElement.clientHeight*0.95;
     }
-}
+    this.canvas.width = this.size.x;
+    this.canvas.height = this.size.y;
 
-Fortis.util.easing.inOutCirc = function (t) {
-    if (t == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
-    if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-    if (t < 0.5) {
-        return 0.5 - Math.sqrt(0.25 - t ** 2);
-    } else {
-        return 0.5 + Math.sqrt(0.25 - (t - 1) ** 2);
-    }
+    this.draw();
 }
-

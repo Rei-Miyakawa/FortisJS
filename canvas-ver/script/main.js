@@ -3,10 +3,11 @@ let e1, e2, t1,i1,is, tf;
 let container;
 let layer;
 let ssi,sss,ssm,sse;
+let bgl;
 
 function Init() {
     Fortis.Game.config.debug = true;
-    //Fortis.Game.config.loop = false;
+    //Fortis.Game.canvasCfg.keepAspect = false;
     Fortis.FontLoader.addFonts({
         "test": 'https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap',
     });
@@ -28,6 +29,12 @@ function Init() {
 
 let Sound, sound2;
 function Ready() {
+    scene = new Fortis.Scene();
+    let bgc = new Fortis.Color("black");
+    bg = new Fortis.Entity(new Fortis.RectShape(10000,10000),new Fortis.ColorMaterial(bgc));
+    bgl = scene.getBG();
+    bgl.add(bg);
+
     sound2 = new Fortis.NormalSound("dededon");
     sound2.volume = 0.5;
 
@@ -37,8 +44,8 @@ function Ready() {
     //Sound.setLoop(true);
     Sound.setVolume(0.2);
     //Sound.play();
-    console.log(Sound)
-    scene = new Fortis.Scene();
+    //console.log(Sound)
+    
     color = new Fortis.Color("blue");
     color2 = new Fortis.Color("red");
     scene.bg = bg;
@@ -67,7 +74,7 @@ function Ready() {
     sss = new Fortis.SpriteShape("ss",new Fortis.Vector2(8,4),32);
     
     ssm = new Fortis.ImageMaterial("ss");
-    console.log(sss)
+    //console.log(sss)
     sse = new Fortis.Entity(sss,ssm);
     sse.pos = new Fortis.Vector2(150, 150);
     sss.setRepeat(500, null , [1,5]);
@@ -79,7 +86,7 @@ function Ready() {
     t1.pos = new Fortis.Vector2(150, 150);
     t1.shape.font.setStyle("italic");
     let hoge = Fortis.ImageLoader.getImg("sample");
-    console.log(hoge)
+    //console.log(hoge)
     i1 = new Fortis.ImageMaterial("sample");
     is = new Fortis.Entity(new Fortis.ImageShape("sample"),i1);
     i1.globalAlpha = 0.5
@@ -102,7 +109,7 @@ function Ready() {
 let tkey;
 function Update(delta) {
     t1.angle++;
-    console.log(sse.shape.nowFrame)
+    //console.log(sse.shape.nowFrame)
     //console.log(sound2.gain.gain.value)
     if(Fortis.Game.mouse.fFrameatClick){
         if(tkey !== undefined && Fortis.TransitionManager.get(tkey) != false){
