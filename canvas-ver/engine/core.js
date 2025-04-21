@@ -90,6 +90,8 @@ let Fortis = {
     //クラス
     Vector2: null,//二次元配列(x,y)の形-vector.js
 
+    Camera: null,//カメラ-scene.js
+
     Timer: null,//タイマー-timer.js
 
     //シーン関係+α-scene.js
@@ -180,6 +182,8 @@ Fortis.Game = {
         loop: true,//ゲームループをするか
     },
     canvasCfg: {
+        initialSize: null,
+        displayScaleRatio: null,
         aspect: null,
         size: null,
         autoResize: true,
@@ -246,6 +250,10 @@ Fortis.Game = {
         if (this.canvasCfg.size.y < this.canvasCfg.minSize.y) this.canvasCfg.size.y = this.canvasCfg.minSize.y;
         if (this.canvasCfg.size.x > this.canvasCfg.maxSize.x) this.canvasCfg.size.x = this.canvasCfg.maxSize.x;
         if (this.canvasCfg.size.y > this.canvasCfg.maxSize.y) this.canvasCfg.size.y = this.canvasCfg.maxSize.y;
+
+        this.canvasCfg.initialSize = this.canvasCfg.size.copy();
+
+        this.canvasCfg.displayScaleRatio = new Fortis.Vector2(1,1);
 
         //キャンバスのサイズ
         this.canvas.width = this.canvasCfg.size.x;
@@ -330,9 +338,9 @@ Fortis.Game = {
         this.winSize.y = winY;
         if (this.canvasCfg.autoResize) {
             if (this.canvasCfg.keepAspect) {
-                let tmpx = this.winSize.y * this.canvasCfg.aspect.x / this.canvasCfg.aspect.y;
-                if (tmpx > this.canvasCfg.size.x) {
-                    let y = this.winSize.x * this.canvasCfg.aspect.y / this.canvasCfg.aspect.x;
+                let tmpx = winY * this.canvasCfg.aspect.x / this.canvasCfg.aspect.y;
+                if (tmpx > winX) {
+                    let y = winX * this.canvasCfg.aspect.y / this.canvasCfg.aspect.x;
                     this.canvasCfg.size.x = winX;
                     this.canvasCfg.size.y = y;
                 } else {
@@ -343,11 +351,17 @@ Fortis.Game = {
                 this.canvasCfg.size.x = winX;
                 this.canvasCfg.size.y = winY;
             }
+            this.canvasCfg.displayScaleRatio.x = this.canvasCfg.size.x/this.canvasCfg.initialSize.x;
+            this.canvasCfg.displayScaleRatio.y = this.canvasCfg.size.y/this.canvasCfg.initialSize.y;
         }
+        
+        //console.log(this.canvasCfg.displayScaleRatio)
         //this.canvas.width = this.canvasCfg.size.x;
         //this.canvas.height = this.canvasCfg.size.y;
         this.finalCanvas.width = this.canvasCfg.size.x;
         this.finalCanvas.height = this.canvasCfg.size.y;
+        //console.log("win:",this.winSize)
+        //console.log("canvas:",this.canvasCfg.size)
     },
     setScene(scene) {//シーン設定
         if (scene == null) return Fortis.error.ArgNotExists();

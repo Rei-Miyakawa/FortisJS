@@ -201,3 +201,24 @@ Fortis.CRFunction = class{
         return this.id;
     }
 }
+
+Fortis.Camera = class{
+    get type() {
+        return "Camera";
+    }
+    constructor() {
+        this.pos = new Fortis.Vector2();
+        this.displayRange = Fortis.Game.canvasCfg.initialSize.copy();
+        this.id = Fortis.util.randomID();
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+}
