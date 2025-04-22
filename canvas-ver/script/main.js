@@ -32,8 +32,8 @@ function Ready() {
     scene = new Fortis.Scene();
     let bgc = new Fortis.Color("black");
     bg = new Fortis.Entity(new Fortis.RectShape(10000,10000),new Fortis.ColorMaterial(bgc));
-    bgl = scene.getBG();
-    bgl.add(bg);
+    //bgl = scene.getBG();
+    //bgl.add(bg);
 
     sound2 = new Fortis.NormalSound("dededon");
     sound2.volume = 0.5;
@@ -48,7 +48,6 @@ function Ready() {
     
     color = new Fortis.Color("blue");
     color2 = new Fortis.Color("red");
-    scene.bg = bg;
     Fortis.Game.scene = scene;
     material = new Fortis.ColorMaterial(null,color);
     material.setThick(10);

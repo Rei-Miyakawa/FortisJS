@@ -11,7 +11,6 @@ Fortis.Color = class {
         } else if (g == null && b == null) {//カラーコード判定
             if (Fortis.util.checkType(hexOrR, "string", "#")) {//＃がついていたらかつ7文字ならカラーコードだとみなす
                 if (hexOrR.length == 7) {
-                    if (parseInt(hexOrR, 16)) return Fortis.error.NotColorCode();
                     let RGB = Fortis.util.hexToRGB(hexOrR);
                     this.r = RGB.r;
                     this.g = RGB.g;

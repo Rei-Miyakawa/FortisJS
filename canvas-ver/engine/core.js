@@ -190,7 +190,7 @@ Fortis.Game = {
         keepAspect: true,
         minSize: null,
         maxSize: null,
-        BGColor: "000000"
+        BGColor: null,
     },
     fpsCtrl: null,//fps.js
     scene: null,//シーン
@@ -253,7 +253,11 @@ Fortis.Game = {
 
         this.canvasCfg.initialSize = this.canvasCfg.size.copy();
 
-        this.canvasCfg.displayScaleRatio = new Fortis.Vector2(1,1);
+        this.canvasCfg.displayScaleRatio = new Fortis.Vector2(1, 1);
+
+        if (this.canvasCfg.BGColor == null) {
+            this.canvasCfg.BGColor = new Fortis.Color("#252525");
+        }
 
         //キャンバスのサイズ
         this.canvas.width = this.canvasCfg.size.x;
@@ -351,10 +355,10 @@ Fortis.Game = {
                 this.canvasCfg.size.x = winX;
                 this.canvasCfg.size.y = winY;
             }
-            this.canvasCfg.displayScaleRatio.x = this.canvasCfg.size.x/this.canvasCfg.initialSize.x;
-            this.canvasCfg.displayScaleRatio.y = this.canvasCfg.size.y/this.canvasCfg.initialSize.y;
+            this.canvasCfg.displayScaleRatio.x = this.canvasCfg.size.x / this.canvasCfg.initialSize.x;
+            this.canvasCfg.displayScaleRatio.y = this.canvasCfg.size.y / this.canvasCfg.initialSize.y;
         }
-        
+
         //console.log(this.canvasCfg.displayScaleRatio)
         //this.canvas.width = this.canvasCfg.size.x;
         //this.canvas.height = this.canvasCfg.size.y;

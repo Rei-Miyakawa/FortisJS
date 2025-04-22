@@ -78,7 +78,7 @@ Fortis.util.checkType = function (variable, varType, type) {
 Fortis.util.hexToRGB = function (hex) {
     if (!Fortis.util.checkType(hex, "string", "#")) return Fortis.error.NotColorCode();
     if (hex.length != 7) return Fortis.error.NotColorCode();
-    if (isNaN(parseInt(hex, 16))) return Fortis.error.NotColorCode();
+    if (isNaN(parseInt(hex.replace("#",""), 16))) return Fortis.error.NotColorCode();
     let rgb = {};
     rgb.r = parseInt(hex.slice(1, 3), 16);
     rgb.g = parseInt(hex.slice(3, 5), 16);
@@ -129,7 +129,7 @@ Fortis.util.RGBToHex = function (rgb) {
     let code_text = "#";
     let RGB = { r: rgb.r, g: rgb.g, b: rgb.b }
     for (let element in RGB) {
-        let parsed = parseInt(RGB[element], 16).toString();
+        let parsed = RGB[element].toString(16);
         if (parsed.length == 1) {
             code_text += "0";
         }

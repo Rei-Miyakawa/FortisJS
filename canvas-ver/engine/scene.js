@@ -94,6 +94,7 @@ Fortis.Layer = class {
         this.entity = [];
         this.ids = {};
         this.id = Fortis.util.randomID();
+        this.camera = new Fortis.Camera();
     }
     getType() {//タイプ取得
         return this.type;
@@ -210,6 +211,7 @@ Fortis.Camera = class{
         this.pos = new Fortis.Vector2();
         this.displayRange = Fortis.Game.canvasCfg.initialSize.copy();
         this.id = Fortis.util.randomID();
+        this.data = null;
     }
     getType() {//タイプ取得
         return this.type;
@@ -220,5 +222,31 @@ Fortis.Camera = class{
                 this[key] = null;
             }
         }
+    }
+    getPos(){//位置を取得
+        return this.pos;
+    }
+    setPos(vec){
+        if(vec == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
+        this.pos = vec;
+        return vec;
+    }
+    getDisplayRange(){//位置を取得
+        return this.displayRange;
+    }
+    setDisplayRange(vec){
+        if(vec == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
+        this.displayRange = vec;
+        return vec;
+    }
+    shot(){
+        this.data = Fortis.Game.context.getImageData(this.pos.x,this.pos.y,this.displayRange.x,this.displayRange.y)
+        console.log(this.data)
+    return this.data;
+    }
+    getData(){
+        return this.data;
     }
 }

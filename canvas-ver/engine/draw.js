@@ -8,6 +8,8 @@ Fortis.Game.draw = function (delta) {
 
     //実際に表示されるキャンバスの処理
     Fortis.Game.finalContext.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
+    Fortis.Game.finalContext.fillStyle = Fortis.Game.canvasCfg.BGColor.toHex();
+    Fortis.Game.finalContext.fillRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
     Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0,Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
     
     function repeatIdentifyingEntity(array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
