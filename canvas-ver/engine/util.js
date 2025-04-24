@@ -18,6 +18,7 @@ Fortis.error = {
     ArgTypeWrong() { Fortis.util.console("Error", "引数の型もしくはタイプが間違っています。") },
     NotColorCode() { Fortis.util.console("Error", "カラーコードは「#」と16進数6文字を足した計7文字で入力してください") },
     ArgIncorrectVarRange() { Fortis.util.console("Error", "引数の値の範囲が正しくありません。") },
+    SceneNotSet() { Fortis.util.console("Error", "シーンがセットされていません") },
     EntityAlreadyExists() { Fortis.util.console("Error", "そのエンティティは既に存在しています。") },
     EntityNotExists() { Fortis.util.console("Error", "そのエンティティは存在していません。") },
     LayerAlreadyExists() { Fortis.util.console("Error", "そのレイヤーは既に存在しています。") },
@@ -78,7 +79,7 @@ Fortis.util.checkType = function (variable, varType, type) {
 Fortis.util.hexToRGB = function (hex) {
     if (!Fortis.util.checkType(hex, "string", "#")) return Fortis.error.NotColorCode();
     if (hex.length != 7) return Fortis.error.NotColorCode();
-    if (isNaN(parseInt(hex.replace("#",""), 16))) return Fortis.error.NotColorCode();
+    if (isNaN(parseInt(hex.replace("#", ""), 16))) return Fortis.error.NotColorCode();
     let rgb = {};
     rgb.r = parseInt(hex.slice(1, 3), 16);
     rgb.g = parseInt(hex.slice(3, 5), 16);
@@ -204,7 +205,7 @@ Fortis.util.degreeToRadian = function (degree) {
 Fortis.util.radianToDegree = function (radian) {
     if (radian == null) return Fortis.error.ArgNotExists();
     if (!Fortis.util.checkType(radian, "number")) return Fortis.error.ArgTypeWrong();
-    return radian * (180 / Math.PI);
+    return (radian * 180) / Math.PI;
 }
 
 Fortis.util.getPointOnCircle = function (pos, radius, degree) {

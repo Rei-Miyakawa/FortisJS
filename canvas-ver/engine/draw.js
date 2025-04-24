@@ -1,21 +1,28 @@
 Fortis.Game.draw = function (delta) {
+    if (Fortis.Game.scene == null) return Fortis.error.SceneNotSet();//シーンが設定されているか
     Fortis.Game.context.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);//オフスクリーンキャンバスの初期化
-    if (Fortis.Game.scene != null) {//シーンが設定されているか
-        Fortis.Game.scene.layer.forEach(layer => {
-            repeatIdentifyingEntity(layer, false);
-        });
-    }
+    Fortis.Game.scene.layer.forEach(layer => {
+        //Fortis.Game.context.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);//オフスクリーンキャンバスの初期化
+        //Fortis.Game.canvas.width = layer.camera.displayRange.x;
+        //Fortis.Game.canvas.height = layer.camera.displayRange.y;
+        repeatIdentifyingEntity(layer, false);
+        //layer.camera.shot();
+    });
 
     //実際に表示されるキャンバスの処理
     Fortis.Game.finalContext.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
     Fortis.Game.finalContext.fillStyle = Fortis.Game.canvasCfg.BGColor.toHex();
     Fortis.Game.finalContext.fillRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
-    Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0,Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
-    
+    //Fortis.Game.scene.layer.forEach(layer => {
+        //Fortis.Game.finalContext.drawImage(layer.camera.getData(), layer.camera.pos.x, layer.camera.pos.y, layer.camera.displayRange.x*layer.camera.scale.x, layer.camera.displayRange.y*layer.camera.scale.y);
+    //});
+
+    Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
+
     function repeatIdentifyingEntity(array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
         array.entity.forEach(tmpEntity => {
             let entity = tmpEntity;
-            if (entity.alpha !==undefined && entity.alpha != 0) {
+            if (entity.alpha !== undefined && entity.alpha != 0) {
                 Fortis.Game.context.save();
                 if (mode) {
                     entity = tmpEntity["entity"];
@@ -27,8 +34,11 @@ Fortis.Game.draw = function (delta) {
                     repeatIdentifyingEntity(entity, true);
                 } else {
                     Fortis.Game.context.globalAlpha = entity.alpha;
-                    Fortis.Game.context.translate(entity.pos.x, entity.pos.y);
-                    Fortis.Game.context.rotate(Fortis.util.degreeToRadian(entity.angle));
+                    let degree = Fortis.util.radianToDegree(Math.atan2(entity.pos.y,entity.pos.x));
+                    console.log(degree+array.camera.angle)
+                    Fortis.Game.context.translate(entity.pos.x*array.camera.scale.x*Math.cos(Fortis.util.degreeToRadian(degree+array.camera.angle)) + array.camera.pos.x, entity.pos.y*array.camera.scale.y*Math.sin(Fortis.util.degreeToRadian(degree+array.camera.angle)) + array.camera.pos.y);
+                    Fortis.Game.context.rotate(Fortis.util.degreeToRadian(entity.angle+array.camera.angle));
+                    Fortis.Game.context.scale(array.camera.scale.x,array.camera.scale.y);
                     switch (entity.shape.type) {
                         case "LineShape":
                             Fortis.draw.line(entity);
@@ -60,7 +70,7 @@ Fortis.Game.draw = function (delta) {
                     }
                     Fortis.Game.context.restore();
                 }
-            }else{
+            } else {
                 entity.func(delta);
             }
         });
@@ -71,7 +81,7 @@ Fortis.draw.line = function (entity) {
     if (entity.material.stroke != false) {
         Fortis.Game.context.beginPath();
         Fortis.Game.context.moveTo(entity.shape.distance.x, entity.shape.distance.y);
-        Fortis.Game.context.lineTo(entity.shape.distance.x+entity.shape.length * entity.scale.x, 0);
+        Fortis.Game.context.lineTo(entity.shape.distance.x + entity.shape.length * entity.scale.x, 0);
         Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick * entity.scale.x;
         Fortis.Game.context.stroke();
@@ -85,12 +95,12 @@ Fortis.draw.rect = function (entity) {
     size.y *= entity.scale.x;
     if (entity.material.fill != false) {
         Fortis.draw.setFillColor(entity.material.fill);
-        Fortis.Game.context.fillRect(entity.shape.distance.x-size.x / 2, entity.shape.distance.y-size.y / 2, size.x, size.y);
+        Fortis.Game.context.fillRect(entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     }
     if (entity.material.stroke != false) {
         Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick;
-        Fortis.Game.context.strokeRect(entity.shape.distance.x-size.x / 2, entity.shape.distance.y-size.y / 2, size.x, size.y);
+        Fortis.Game.context.strokeRect(entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     }
 }
 
@@ -136,9 +146,9 @@ Fortis.draw.regPolygon = function (entity) {
     let vertice_count = 0;
     vertices.forEach(vertice => {
         if (vertice_count == 0) {
-            Fortis.Game.context.moveTo(entity.shape.distance.x+vertice.x * entity.scale.x, entity.shape.distance.y+vertice.y * entity.scale.y);
+            Fortis.Game.context.moveTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
         } else {
-            Fortis.Game.context.lineTo(entity.shape.distance.x+vertice.x * entity.scale.x, entity.shape.distance.y+vertice.y * entity.scale.y);
+            Fortis.Game.context.lineTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
         }
         vertice_count++;
     });
@@ -148,7 +158,7 @@ Fortis.draw.regPolygon = function (entity) {
         Fortis.Game.context.fill();
     }
     if (entity.material.stroke != false) {
-        Fortis.Game.context.lineTo(entity.shape.distance.x+vertices[0].x * entity.scale.x, entity.shape.distance.y+vertices[0].y * entity.scale.y);
+        Fortis.Game.context.lineTo(entity.shape.distance.x + vertices[0].x * entity.scale.x, entity.shape.distance.y + vertices[0].y * entity.scale.y);
         Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick * entity.scale.x;
         Fortis.Game.context.closePath();
@@ -163,9 +173,9 @@ Fortis.draw.polygon = function (entity) {
     let vertice_count = 0;
     vertices.forEach(vertice => {
         if (vertice_count == 0) {
-            Fortis.Game.context.moveTo(entity.shape.distance.x+vertice.x * entity.scale.x, entity.shape.distance.y+vertice.y * entity.scale.y);
+            Fortis.Game.context.moveTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
         } else {
-            Fortis.Game.context.lineTo(entity.shape.distance.x+vertice.x * entity.scale.x, entity.shape.distance.y+vertice.y * entity.scale.y);
+            Fortis.Game.context.lineTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
         }
         vertice_count++;
     });
@@ -176,7 +186,7 @@ Fortis.draw.polygon = function (entity) {
         Fortis.Game.context.fill();
     }
     if (entity.material.stroke != false) {
-        Fortis.Game.context.lineTo(entity.shape.distance.x+vertices[0].x * entity.scale.x, entity.shape.distance.y+vertices[0].y * entity.scale.y);
+        Fortis.Game.context.lineTo(entity.shape.distance.x + vertices[0].x * entity.scale.x, entity.shape.distance.y + vertices[0].y * entity.scale.y);
         Fortis.draw.setStrokeColor(entity.material.stroke);
         Fortis.Game.context.lineWidth = entity.material.thick * entity.scale.x;
         Fortis.Game.context.closePath();
@@ -204,11 +214,11 @@ Fortis.draw.image = function (entity, sprite) {
     size.x *= entity.scale.x;
     size.y *= entity.scale.x;
     if (sprite) {
-        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipSize.x * ((entity.shape.nowFrame - 1) % entity.shape.aspect.x), entity.shape.clipSize.y * Math.floor((entity.shape.nowFrame - 1) / entity.shape.aspect.x), entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x-size.x / 2, entity.shape.distance.y-size.y / 2, size.x, size.y);
+        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipSize.x * ((entity.shape.nowFrame - 1) % entity.shape.aspect.x), entity.shape.clipSize.y * Math.floor((entity.shape.nowFrame - 1) / entity.shape.aspect.x), entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     } else if (entity.shape.clipPos === undefined) {
-        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.distance.x-size.x / 2, entity.shape.distance.y-size.y / 2, size.x, size.y);
+        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     } else {
-        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipPos.x, entity.shape.clipPos.y, entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x-size.x / 2, entity.shape.distance.y-size.y / 2, size.x, size.y);
+        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipPos.x, entity.shape.clipPos.y, entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     }
 }
 

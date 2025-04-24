@@ -208,8 +208,13 @@ Fortis.Camera = class{
         return "Camera";
     }
     constructor() {
-        this.pos = new Fortis.Vector2();
-        this.displayRange = Fortis.Game.canvasCfg.initialSize.copy();
+        this.pos = new Fortis.Vector2();//最終的にキャンバスに描画するときの座標(左上が(0,0))
+        this.scale = new Fortis.Vector2(1,1);//最終的にキャンバスに描画するときのこの画像データの倍率
+        this.angle = 0;//最終的にキャンバスに描画するときの角度
+        //this.centerPos = new Fortis.Vector2();//最終的にキャンバスに描画するときの中心点
+        this.startPos = new Fortis.Vector2();//切り取る基準となる座標
+        this.displayRange = Fortis.Game.canvasCfg.initialSize.copy();//切り取るサイズ
+        this.opacity;//透明度s
         this.id = Fortis.util.randomID();
         this.data = null;
     }
@@ -223,6 +228,24 @@ Fortis.Camera = class{
             }
         }
     }
+    getAngle(){//切り取り開始位置を取得
+        return this.angle;
+    }
+    setAngle(value){
+        if(value == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(value,"number"))return Fortis.error.ArgTypeWrong();
+        this.angle = value;
+        return value;
+    }
+    getStartPos(){//切り取り開始位置を取得
+        return this.startPos;
+    }
+    setStartPos(vec){
+        if(vec == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
+        this.startPos = vec;
+        return vec;
+    }
     getPos(){//位置を取得
         return this.pos;
     }
@@ -230,6 +253,26 @@ Fortis.Camera = class{
         if(vec == null)return Fortis.error.ArgNotExists();
         if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
         this.pos = vec;
+        return vec;
+    }
+    /*
+    getCenterPos(){//中心位置を取得
+        return this.centerPos;
+    }
+    setCenterPos(vec){
+        if(vec == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
+        this.centerPos = vec;
+        return vec;
+    }
+    */
+    getScale(){//倍率を取得
+        return this.startPos;
+    }
+    setScale(vec){
+        if(vec == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
+        this.scale = vec;
         return vec;
     }
     getDisplayRange(){//位置を取得
@@ -242,8 +285,7 @@ Fortis.Camera = class{
         return vec;
     }
     shot(){
-        this.data = Fortis.Game.context.getImageData(this.pos.x,this.pos.y,this.displayRange.x,this.displayRange.y)
-        console.log(this.data)
+        this.data = Fortis.Game.canvas.transferToImageBitmap();
     return this.data;
     }
     getData(){
