@@ -30,6 +30,7 @@ function Init() {
 let Sound, sound2;
 let rects = [];
 let uil;
+let mousePos
 function Ready() {
     scene = new Fortis.Scene();
     let bgc = new Fortis.Color("black");
@@ -67,7 +68,7 @@ function Ready() {
     container.add(e1);
     container.add(e2, "source-in");
     */
-    layer.add(e2);
+    //layer.add(e2);
     //layer.add(e1);
 
 
@@ -90,30 +91,38 @@ function Ready() {
     //console.log(hoge)
     i1 = new Fortis.ImageMaterial("sample");
     is = new Fortis.Entity(new Fortis.ImageShape("sample"), i1);
+    is.pos = new Fortis.Vector2(200,200)
+    is.alpha = 0.5
     i1.globalAlpha = 0.5
     t1.shape.distance = new Fortis.Vector2(100, 100);
     //is.pos = new Fortis.Vector2(300, 300);
-    bgl.add(t1)
+    //bgl.add(t1)
     //layer.add(t1);
     //layer.add(is);
 
     uil = scene.getUI();
-    uil.camera.scale = new Fortis.Vector2(0.5,0.5);
-    uil.camera.pos = new Fortis.Vector2(100,100)
+    let fullbg = new Fortis.Entity(new Fortis.RectShape(10000,10000),new Fortis.ColorMaterial(new Fortis.Color("yellow")))
+    uil.add(fullbg)
+    //uil.camera.scale = new Fortis.Vector2(0.5,0.5);
+    uil.camera.size = new Fortis.Vector2(400,225)
+    uil.camera.pos = new Fortis.Vector2(100,100);
+    //uil.camera.centerPos = new Fortis.Vector2(45,45);
+    //uil.camera.startPos = new Fortis.Vector2(100,100)
+    //uil.camera.setDisplayRange(new Fortis.Vector2(160,90))
     for (let i = 0; i < 3; i++) {
         let rect = (new Fortis.Entity(new Fortis.RectShape(),new Fortis.ColorMaterial(new Fortis.Color("green"))))
-        rect.pos = new Fortis.Vector2();
+        rect.pos = new Fortis.Vector2(0,0);
         rects.push(rect);
         uil.add(rect)
         //let nl = new Fortis.Layer();
         //nl.add(rect);
         //scene.add(nl)
     }
-    for(let i = 1; i<3; i++){
-        let vec = new Fortis.Vector2(Math.random()*500,Math.random()*200);
-        console.log(vec)
-        rects[i].pos = vec
-    }
+    
+    let vec = new Fortis.Vector2(150,150);
+    rects[1].pos = vec;
+    vec2 = new Fortis.Vector2(45,45);
+    rects[2].pos = vec2;
 
     scene.add(layer);
     let ttimer = Fortis.Timer.add(100,true,Test);
@@ -125,11 +134,16 @@ function Ready() {
     let tmpf = new Fortis.CRFunction(Test);
     layer.add(tmpf);
     */
+
+    mousePos = new Fortis.Entity(new Fortis.TextShape(new Fortis.Font(null, 30), "こんにちは"), new Fortis.ColorMaterial(new Fortis.Color("red")));
+    mousePos.pos = new Fortis.Vector2(200,200);
+    layer.add(mousePos)
 }
 
 let tkey;
 function Update(delta) {
-    uil.camera.angle += 1
+    mousePos.shape.text = "x:"+Fortis.Game.mouse.pos.x+",y:"+Fortis.Game.mouse.pos.y
+    //uil.camera.angle += 1
     t1.angle++;
     //console.log(sse.shape.nowFrame)
     //console.log(sound2.gain.gain.value)

@@ -1,11 +1,28 @@
 Fortis.Game.draw = function (delta) {
     if (Fortis.Game.scene == null) return Fortis.error.SceneNotSet();//シーンが設定されているか
-    Fortis.Game.context.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);//オフスクリーンキャンバスの初期化
+    //camera.context.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);//オフスクリーンキャンバスの初期化
     Fortis.Game.scene.layer.forEach(layer => {
-        //Fortis.Game.context.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);//オフスクリーンキャンバスの初期化
+        layer.camera.context.clearRect(0, 0, layer.camera.canvas.width, layer.camera.canvas.height);//オフスクリーンキャンバスの初期化
         //Fortis.Game.canvas.width = layer.camera.displayRange.x;
         //Fortis.Game.canvas.height = layer.camera.displayRange.y;
-        repeatIdentifyingEntity(layer, false);
+        /*
+        camera.context.save();
+        camera.context.globalCompositeOperation = "source-in"
+        Fortis.draw.setFillColor(camera,new Fortis.Color(0,0,0,1));
+        camera.context.fillRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);//オフスクリーンキャンバスの初期化
+        camera.context.restore();
+        */
+        repeatIdentifyingEntity(layer.camera, layer, false);
+        /*
+        layer.camera.context.save();
+        layer.camera.context.globalCompositeOperation = "destination-in";
+        layer.camera.context.translate(layer.camera.startPos.x+layer.camera.canvas.width/2-layer.camera.centerPos.x*layer.camera.scale.x, layer.camera.startPos.y+layer.camera.canvas.height/2-layer.camera.centerPos.y*layer.camera.scale.y);
+        layer.camera.context.rotate(Fortis.util.degreeToRadian(layer.camera.angle));
+        //layer.camera.context.scale(layer.camera.scale.x, layer.camera.scale.y);
+        Fortis.draw.setFillColor(layer.camera,new Fortis.Color(0,0,0,1));
+        //layer.camera.context.fillRect(layer.camera.startPos.x,layer.camera.startPos.y,layer.camera.displayRange.x,layer.camera.displayRange.y);
+        layer.camera.context.restore();
+        */
         //layer.camera.shot();
     });
 
@@ -13,62 +30,67 @@ Fortis.Game.draw = function (delta) {
     Fortis.Game.finalContext.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
     Fortis.Game.finalContext.fillStyle = Fortis.Game.canvasCfg.BGColor.toHex();
     Fortis.Game.finalContext.fillRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
-    //Fortis.Game.scene.layer.forEach(layer => {
-        //Fortis.Game.finalContext.drawImage(layer.camera.getData(), layer.camera.pos.x, layer.camera.pos.y, layer.camera.displayRange.x*layer.camera.scale.x, layer.camera.displayRange.y*layer.camera.scale.y);
-    //});
+    Fortis.Game.scene.layer.forEach(layer => {
+        //console.log(-layer.camera.canvas.width/2)
+        Fortis.Game.finalContext.save();
+        Fortis.Game.finalContext.translate(layer.camera.pos.x + layer.camera.centerPos.x, layer.camera.pos.y + layer.camera.centerPos.y);
+        Fortis.Game.finalContext.rotate(Fortis.util.degreeToRadian(layer.camera.angle));
+        Fortis.Game.finalContext.drawImage(layer.camera.canvas, layer.camera.startPos.x * layer.camera.scale.x, layer.camera.startPos.y * layer.camera.scale.y, layer.camera.displayRange.x, layer.camera.displayRange.y, -layer.camera.centerPos.x, -layer.camera.centerPos.y, layer.camera.size.x * layer.camera.scale.x, layer.camera.size.y * layer.camera.scale.y);
+        Fortis.Game.finalContext.restore();
+    });
 
-    Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
+    //Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
 
-    function repeatIdentifyingEntity(array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
+    function repeatIdentifyingEntity(camera, array, mode) {//arrayにlayerもしくはContainer、modeにtrueかfalse(containerならtrue)
         array.entity.forEach(tmpEntity => {
             let entity = tmpEntity;
             if (entity.alpha !== undefined && entity.alpha != 0) {
-                Fortis.Game.context.save();
+                camera.context.save();
                 if (mode) {
                     entity = tmpEntity["entity"];
-                    Fortis.Game.context.globalCompositeOperation = tmpEntity["composite"];
+                    camera.context.globalCompositeOperation = tmpEntity["composite"];
                 } else {
-                    Fortis.Game.context.globalCompositeOperation = "source-over";
+                    camera.context.globalCompositeOperation = "source-over";
                 }
                 if (entity.type == "EntityContainer") {
                     repeatIdentifyingEntity(entity, true);
                 } else {
-                    Fortis.Game.context.globalAlpha = entity.alpha;
-                    let degree = Fortis.util.radianToDegree(Math.atan2(entity.pos.y,entity.pos.x));
-                    console.log(degree+array.camera.angle)
-                    Fortis.Game.context.translate(entity.pos.x*array.camera.scale.x*Math.cos(Fortis.util.degreeToRadian(degree+array.camera.angle)) + array.camera.pos.x, entity.pos.y*array.camera.scale.y*Math.sin(Fortis.util.degreeToRadian(degree+array.camera.angle)) + array.camera.pos.y);
-                    Fortis.Game.context.rotate(Fortis.util.degreeToRadian(entity.angle+array.camera.angle));
-                    Fortis.Game.context.scale(array.camera.scale.x,array.camera.scale.y);
+                    camera.context.globalAlpha = entity.alpha;
+                    //console.log(length)
+                    //console.log(length * Math.sin(Fortis.util.degreeToRadian(degree + array.camera.angle))+ array.camera.pos.x+array.camera.canvas.width/2)
+                    camera.context.translate(entity.pos.x, entity.pos.y);
+                    camera.context.rotate(Fortis.util.degreeToRadian(entity.angle));
+                    camera.context.scale(entity.scale.x, entity.scale.y);
                     switch (entity.shape.type) {
                         case "LineShape":
-                            Fortis.draw.line(entity);
+                            Fortis.draw.line(camera, entity);
                             break
                         case "RectShape":
-                            Fortis.draw.rect(entity);
+                            Fortis.draw.rect(camera, entity);
                             break
                         case "CircleShape":
-                            Fortis.draw.circle(entity);
+                            Fortis.draw.circle(camera, entity);
                             break
                         case "EllipseShape":
-                            Fortis.draw.ellipse(entity);
+                            Fortis.draw.ellipse(camera, entity);
                             break
                         case "RegPolygonShape":
-                            Fortis.draw.regPolygon(entity);
+                            Fortis.draw.regPolygon(camera, entity);
                             break
                         case "PolygonShape":
-                            Fortis.draw.polygon(entity);
+                            Fortis.draw.polygon(camera, entity);
                             break
                         case "TextShape":
-                            Fortis.draw.text(entity);
+                            Fortis.draw.text(camera, entity);
                             break
                         case "ImageShape":
-                            Fortis.draw.image(entity);
+                            Fortis.draw.image(camera, entity);
                             break
                         case "SpriteShape":
-                            Fortis.draw.image(entity, true);
+                            Fortis.draw.image(camera, entity, true);
                             break
                     }
-                    Fortis.Game.context.restore();
+                    camera.context.restore();
                 }
             } else {
                 entity.func(delta);
@@ -77,65 +99,66 @@ Fortis.Game.draw = function (delta) {
     }
 }
 
-Fortis.draw.line = function (entity) {
+Fortis.draw.line = function (camera, entity) {
     if (entity.material.stroke != false) {
-        Fortis.Game.context.beginPath();
-        Fortis.Game.context.moveTo(entity.shape.distance.x, entity.shape.distance.y);
-        Fortis.Game.context.lineTo(entity.shape.distance.x + entity.shape.length * entity.scale.x, 0);
-        Fortis.draw.setStrokeColor(entity.material.stroke);
-        Fortis.Game.context.lineWidth = entity.material.thick * entity.scale.x;
-        Fortis.Game.context.stroke();
-        Fortis.Game.context.closePath();
+        camera.context.beginPath();
+        camera.context.moveTo(entity.shape.distance.x, entity.shape.distance.y);
+        camera.context.lineTo(entity.shape.distance.x + entity.shape.length * entity.scale.x, 0);
+        Fortis.draw.setStrokeColor(camera, entity.material.stroke);
+        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.stroke();
+        camera.context.closePath();
     }
 }
 
-Fortis.draw.rect = function (entity) {
+Fortis.draw.rect = function (camera, entity) {
     let size = entity.shape.size.copy();
     size.x *= entity.scale.x;
     size.y *= entity.scale.x;
+    //console.log(entity.shape.distance.x - size.x / 2)
     if (entity.material.fill != false) {
-        Fortis.draw.setFillColor(entity.material.fill);
-        Fortis.Game.context.fillRect(entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
+        Fortis.draw.setFillColor(camera, entity.material.fill);
+        camera.context.fillRect(entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     }
     if (entity.material.stroke != false) {
-        Fortis.draw.setStrokeColor(entity.material.stroke);
-        Fortis.Game.context.lineWidth = entity.material.thick;
-        Fortis.Game.context.strokeRect(entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
+        Fortis.draw.setStrokeColor(camera, entity.material.stroke);
+        camera.context.lineWidth = entity.material.thick;
+        camera.context.strokeRect(entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     }
 }
 
-Fortis.draw.circle = function (entity) {
-    Fortis.Game.context.beginPath();
-    Fortis.Game.context.arc(entity.shape.distance.x, entity.shape.distance.y, entity.shape.radius * entity.scale.x, 0, Fortis.util.degreeToRadian(entity.shape.degree));
+Fortis.draw.circle = function (camera, entity) {
+    camera.context.beginPath();
+    camera.context.arc(entity.shape.distance.x, entity.shape.distance.y, entity.shape.radius * entity.scale.x, 0, Fortis.util.degreeToRadian(entity.shape.degree));
     if (entity.material.fill != false) {
-        Fortis.draw.setFillColor(entity.material.fill);
-        Fortis.Game.context.fill();
+        Fortis.draw.setFillColor(camera, entity.material.fill);
+        camera.context.fill();
     }
     if (entity.material.stroke != false) {
-        Fortis.draw.setStrokeColor(entity.material.stroke);
-        Fortis.Game.context.lineWidth = entity.material.thick * entity.scale.x;
-        Fortis.Game.context.stroke();
+        Fortis.draw.setStrokeColor(camera, entity.material.stroke);
+        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.stroke();
     }
-    Fortis.Game.context.closePath();
+    camera.context.closePath();
 }
 
-Fortis.draw.ellipse = function (entity) {
-    Fortis.Game.context.beginPath();
-    Fortis.Game.context.ellipse(entity.shape.distance.x, entity.shape.distance.y, entity.shape.radSize.x * entity.scale.x, entity.shape.radSize.y * entity.scale.y, 0, 0, Fortis.util.degreeToRadian(entity.shape.degree));
+Fortis.draw.ellipse = function (camera, entity) {
+    camera.context.beginPath();
+    camera.context.ellipse(entity.shape.distance.x, entity.shape.distance.y, entity.shape.radSize.x * entity.scale.x, entity.shape.radSize.y * entity.scale.y, 0, 0, Fortis.util.degreeToRadian(entity.shape.degree));
     if (entity.material.fill != false) {
-        Fortis.draw.setFillColor(entity.material.fill);
-        Fortis.Game.context.fill();
+        Fortis.draw.setFillColor(camera, entity.material.fill);
+        camera.context.fill();
     }
     if (entity.material.stroke != false) {
-        Fortis.draw.setStrokeColor(entity.material.stroke);
-        Fortis.Game.context.lineWidth = entity.material.thick * entity.scale.x;
-        Fortis.Game.context.stroke();
+        Fortis.draw.setStrokeColor(camera, entity.material.stroke);
+        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.stroke();
     }
-    Fortis.Game.context.closePath();
+    camera.context.closePath();
 }
 
-Fortis.draw.regPolygon = function (entity) {
-    Fortis.Game.context.beginPath();
+Fortis.draw.regPolygon = function (camera, entity) {
+    camera.context.beginPath();
 
     let vertices;
     if (entity.shape.vertices == false) {
@@ -146,95 +169,95 @@ Fortis.draw.regPolygon = function (entity) {
     let vertice_count = 0;
     vertices.forEach(vertice => {
         if (vertice_count == 0) {
-            Fortis.Game.context.moveTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
+            camera.context.moveTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
         } else {
-            Fortis.Game.context.lineTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
+            camera.context.lineTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
         }
         vertice_count++;
     });
     if (entity.material.fill != false) {
-        Fortis.draw.setFillColor(entity.material.fill);
-        Fortis.Game.context.closePath();
-        Fortis.Game.context.fill();
+        Fortis.draw.setFillColor(camera, entity.material.fill);
+        camera.context.closePath();
+        camera.context.fill();
     }
     if (entity.material.stroke != false) {
-        Fortis.Game.context.lineTo(entity.shape.distance.x + vertices[0].x * entity.scale.x, entity.shape.distance.y + vertices[0].y * entity.scale.y);
-        Fortis.draw.setStrokeColor(entity.material.stroke);
-        Fortis.Game.context.lineWidth = entity.material.thick * entity.scale.x;
-        Fortis.Game.context.closePath();
-        Fortis.Game.context.stroke();
+        camera.context.lineTo(entity.shape.distance.x + vertices[0].x * entity.scale.x, entity.shape.distance.y + vertices[0].y * entity.scale.y);
+        Fortis.draw.setStrokeColor(camera, entity.material.stroke);
+        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.closePath();
+        camera.context.stroke();
     }
 }
 
-Fortis.draw.polygon = function (entity) {
-    Fortis.Game.context.beginPath();
+Fortis.draw.polygon = function (camera, entity) {
+    camera.context.beginPath();
 
     let vertices = entity.shape.vertices
     let vertice_count = 0;
     vertices.forEach(vertice => {
         if (vertice_count == 0) {
-            Fortis.Game.context.moveTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
+            camera.context.moveTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
         } else {
-            Fortis.Game.context.lineTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
+            camera.context.lineTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
         }
         vertice_count++;
     });
 
     if (entity.material.fill != false) {
-        Fortis.draw.setFillColor(entity.material.fill);
-        Fortis.Game.context.closePath();
-        Fortis.Game.context.fill();
+        Fortis.draw.setFillColor(camera, entity.material.fill);
+        camera.context.closePath();
+        camera.context.fill();
     }
     if (entity.material.stroke != false) {
-        Fortis.Game.context.lineTo(entity.shape.distance.x + vertices[0].x * entity.scale.x, entity.shape.distance.y + vertices[0].y * entity.scale.y);
-        Fortis.draw.setStrokeColor(entity.material.stroke);
-        Fortis.Game.context.lineWidth = entity.material.thick * entity.scale.x;
-        Fortis.Game.context.closePath();
-        Fortis.Game.context.stroke();
+        camera.context.lineTo(entity.shape.distance.x + vertices[0].x * entity.scale.x, entity.shape.distance.y + vertices[0].y * entity.scale.y);
+        Fortis.draw.setStrokeColor(camera, entity.material.stroke);
+        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.closePath();
+        camera.context.stroke();
     }
 }
 
-Fortis.draw.text = function (entity) {
-    Fortis.Game.context.textAlign = "center";
-    Fortis.Game.context.textBaseline = "middle";
-    Fortis.Game.context.font = entity.shape.font.output(entity.scale.x);
-    Fortis.Game.context.direction = entity.shape.direction;
+Fortis.draw.text = function (camera, entity) {
+    camera.context.textAlign = "center";
+    camera.context.textBaseline = "middle";
+    camera.context.font = entity.shape.font.output(entity.scale.x);
+    camera.context.direction = entity.shape.direction;
     if (entity.material.fill != false) {
-        Fortis.draw.setFillColor(entity.material.fill);
-        Fortis.Game.context.fillText(entity.shape.text, entity.shape.distance.x, entity.shape.distance.y);
+        Fortis.draw.setFillColor(camera, entity.material.fill);
+        camera.context.fillText(entity.shape.text, entity.shape.distance.x, entity.shape.distance.y);
     }
     if (entity.material.stroke != false) {
-        Fortis.draw.setStrokeColor(entity.material.stroke);
-        Fortis.Game.context.strokeText(entity.shape.text, entity.shape.distance.x, entity.shape.distance.y);
+        Fortis.draw.setStrokeColor(camera, entity.material.stroke);
+        camera.context.strokeText(entity.shape.text, entity.shape.distance.x, entity.shape.distance.y);
     }
 }
 
-Fortis.draw.image = function (entity, sprite) {
+Fortis.draw.image = function (camera, entity, sprite) {
     let size = entity.shape.size.copy();
     size.x *= entity.scale.x;
     size.y *= entity.scale.x;
     if (sprite) {
-        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipSize.x * ((entity.shape.nowFrame - 1) % entity.shape.aspect.x), entity.shape.clipSize.y * Math.floor((entity.shape.nowFrame - 1) / entity.shape.aspect.x), entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
+        camera.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipSize.x * ((entity.shape.nowFrame - 1) % entity.shape.aspect.x), entity.shape.clipSize.y * Math.floor((entity.shape.nowFrame - 1) / entity.shape.aspect.x), entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     } else if (entity.shape.clipPos === undefined) {
-        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
+        camera.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     } else {
-        Fortis.Game.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipPos.x, entity.shape.clipPos.y, entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
+        camera.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipPos.x, entity.shape.clipPos.y, entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     }
 }
 
-Fortis.draw.setFillColor = function (color) {
+Fortis.draw.setFillColor = function (camera, color) {
     if (color.type.indexOf("Gradation") == -1) {
-        Fortis.Game.context.fillStyle = color.toRGBA();
+        camera.context.fillStyle = color.toRGBA();
     } else {
-        Fortis.Game.context.fillStyle = color.gradation;
+        camera.context.fillStyle = color.gradation;
     }
 }
 
-Fortis.draw.setStrokeColor = function (color) {
+Fortis.draw.setStrokeColor = function (camera, color) {
     if (color.type.indexOf("Gradation") == -1) {
-        Fortis.Game.context.strokeStyle = color.toRGBA();
+        camera.context.strokeStyle = color.toRGBA();
     } else {
-        Fortis.Game.context.strokeStyle = color.gradation;
+        camera.context.strokeStyle = color.gradation;
 
     }
 }

@@ -208,9 +208,9 @@ Fortis.Game = {
 
     //関数
     init() {//初期化
-        document.body.style.margin = "0";
-        document.body.style.padding = "0";
-        document.body.style.overflow = "hidden";
+        //document.body.style.margin = "0";
+        //document.body.style.padding = "0";
+        //document.body.style.overflow = "hidden";
 
         //オフスクリーンキャンバス
         this.canvas = new OffscreenCanvas(100, 100);

@@ -211,12 +211,14 @@ Fortis.Camera = class{
         this.pos = new Fortis.Vector2();//最終的にキャンバスに描画するときの座標(左上が(0,0))
         this.scale = new Fortis.Vector2(1,1);//最終的にキャンバスに描画するときのこの画像データの倍率
         this.angle = 0;//最終的にキャンバスに描画するときの角度
-        //this.centerPos = new Fortis.Vector2();//最終的にキャンバスに描画するときの中心点
+        this.centerPos = new Fortis.Vector2();//最終的にキャンバスに描画するときの中心点
         this.startPos = new Fortis.Vector2();//切り取る基準となる座標
         this.displayRange = Fortis.Game.canvasCfg.initialSize.copy();//切り取るサイズ
-        this.opacity;//透明度s
+        this.size = this.displayRange.copy();
         this.id = Fortis.util.randomID();
         this.data = null;
+        this.canvas = new OffscreenCanvas(this.displayRange.x,this.displayRange.y);
+        this.context = this.canvas.getContext("2d");
     }
     getType() {//タイプ取得
         return this.type;
@@ -255,7 +257,6 @@ Fortis.Camera = class{
         this.pos = vec;
         return vec;
     }
-    /*
     getCenterPos(){//中心位置を取得
         return this.centerPos;
     }
@@ -265,7 +266,6 @@ Fortis.Camera = class{
         this.centerPos = vec;
         return vec;
     }
-    */
     getScale(){//倍率を取得
         return this.startPos;
     }
@@ -275,20 +275,25 @@ Fortis.Camera = class{
         this.scale = vec;
         return vec;
     }
-    getDisplayRange(){//位置を取得
+    getDisplayRange(){//切り取りのサイズを取得
         return this.displayRange;
     }
     setDisplayRange(vec){
         if(vec == null)return Fortis.error.ArgNotExists();
         if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
+        console.log(vec)
         this.displayRange = vec;
+        this.canvas.width = vec.x;
+        this.canvas.height = vec.y;
         return vec;
     }
-    shot(){
-        this.data = Fortis.Game.canvas.transferToImageBitmap();
-    return this.data;
+    getSize(){//表示サイズを取得
+        return this.size;
     }
-    getData(){
-        return this.data;
+    setSize(vec){
+        if(vec == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
+        this.size = vec;
+        return vec;
     }
 }
