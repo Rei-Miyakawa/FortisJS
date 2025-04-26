@@ -31,7 +31,11 @@ let Sound, sound2;
 let rects = [];
 let uil;
 let mousePos
+let colg,col
 function Ready() {
+    colg = new Fortis.ColliderGroup();
+    col = new Fortis.LineCollider();
+    colg.addList([col]);
     scene = new Fortis.Scene();
     let bgc = new Fortis.Color("black");
     bg = new Fortis.Entity(new Fortis.RectShape(10000, 10000), new Fortis.ColorMaterial(bgc));
@@ -53,13 +57,14 @@ function Ready() {
     color2 = new Fortis.Color("red");
     Fortis.Game.scene = scene;
     material = new Fortis.ColorMaterial(null, color);
-    material.setThick(10);
+    //material.setThick(10);
     mateiral2 = new Fortis.ColorMaterial(color2);
     layer = new Fortis.Layer();
 
     tf = new Fortis.Font("test");
-    e2 = new Fortis.Entity(new Fortis.LineShape(50), material);
-    e2.pos = new Fortis.Vector2(150, 150)
+    e2 = new Fortis.Entity(new Fortis.LineShape(new Fortis.Vector2(50,0)), material);
+    e2.pos = new Fortis.Vector2(15, 15)
+    layer.add(e2);
     e1 = new Fortis.Entity(new Fortis.RectShape(), mateiral2);
     e1.pos = new Fortis.Vector2(200, 200);
 

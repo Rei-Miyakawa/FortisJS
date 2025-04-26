@@ -103,7 +103,7 @@ Fortis.draw.line = function (camera, entity) {
     if (entity.material.stroke != false) {
         camera.context.beginPath();
         camera.context.moveTo(entity.shape.distance.x, entity.shape.distance.y);
-        camera.context.lineTo(entity.shape.distance.x + entity.shape.length * entity.scale.x, 0);
+        camera.context.lineTo(entity.shape.distance.x + entity.shape.vector.x, entity.shape.distance.y + entity.shape.vector.y);
         Fortis.draw.setStrokeColor(camera, entity.material.stroke);
         camera.context.lineWidth = entity.material.thick * entity.scale.x;
         camera.context.stroke();

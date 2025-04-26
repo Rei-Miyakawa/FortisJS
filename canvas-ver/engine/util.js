@@ -41,6 +41,8 @@ Fortis.error = {
     //LoadingImgIsFailed() { Fortis.util.console("Error", "画像の読み込みに失敗しました。") },
     TimerNotExists(name) { Fortis.util.console("Error", 'タイマー ID"' + name + '"は存在していません。') },
     TransitionNotExists(name) { Fortis.util.console("Error", 'トランジション ID"' + name + '"は存在していません。') },
+    ColliderNotExists(name) { Fortis.util.console("Error", 'コライダー ID"' + name + '"は存在していません。') },
+    ColliderAlreadyExists(name) { Fortis.util.console("Error", 'コライダー ID"' + name + '"は既に存在しています。') },
 }
 
 Fortis.info = {

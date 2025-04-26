@@ -123,6 +123,19 @@ let Fortis = {
     ImageShape: null,//画像
     SpriteShape: null,//スプライト(画像)
 
+    //当たり判定-hitbox.js
+    HitCalculator: null,//当たり判定を計算する
+    ColliderGroup: null,//複数のcolliderをまとめたもの。これの中にcolliderを入れて使う(colliderを単品では使えない)
+    //Collider
+    ProtoCollider: null,//プロトタイプ(これだけだと意味ない)
+    LineCollider: null,//線分
+    RectCollider: null,//矩形
+    CircleCollider: null,//円
+    EllipseCollider: null,//楕円
+    //CapsuleCollider: null,関数として作る？
+    RegTriangleCollider: null,//正三角形
+    RigTriangleCollider: null,//直角三角形
+
     //フォント
     FontLoader: null,//フォントの読み込み・保存-font.js
     Font: null,//フォントの管理
@@ -208,9 +221,9 @@ Fortis.Game = {
 
     //関数
     init() {//初期化
-        //document.body.style.margin = "0";
-        //document.body.style.padding = "0";
-        //document.body.style.overflow = "hidden";
+        document.body.style.margin = "0";
+        document.body.style.padding = "0";
+        document.body.style.overflow = "hidden";
 
         //オフスクリーンキャンバス
         this.canvas = new OffscreenCanvas(100, 100);

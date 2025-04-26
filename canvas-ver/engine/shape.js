@@ -2,13 +2,12 @@ Fortis.LineShape = class {
     get type() {
         return "LineShape";
     }
-    constructor(length, distance) {
-        if (length != null) {
-            if (!Fortis.util.checkType(length, "number")) return Fortis.error.ArgTypeWrong();
-            if (length < 0) return Fortis.error.ArgIncorrectVarRange();
-            this.length = length;
+    constructor(vec, distance) {
+        if (vec != null) {
+            if (!Fortis.util.checkType(vec, "object","Vector2")) return Fortis.error.ArgTypeWrong();
+            this.vector = vec;
         } else {
-            this.length = 50;
+            this.vector = new Fortis.Vector2(50,0);
         }
         if (distance == null) {
             this.distance = new Fortis.Vector2();
@@ -28,15 +27,14 @@ Fortis.LineShape = class {
             }
         }
     }
-    getLength() {//長さ取得
-        return this.length;
+    getVector() {
+        return this.vector;
     }
-    setLength(length) {//長さ指定
-        if (length == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(length, "number")) return Fortis.error.ArgTypeWrong();
-        if (length < 0) return Fortis.error.ArgIncorrectVarRange();
-        this.length = length;
-        return this.length;
+    setVector(vec) {
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "obejct", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.vector = vec;
+        return vec;
     }
     getDistance() {
         return this.distance;
@@ -54,19 +52,17 @@ Fortis.RectShape = class {
         return "RectShape";
     }
     constructor(width, height, distance) {
-        let tmpWidth = 30;
-        let tmpHeight = 30;
-        if (width != null) {
-            if (!Fortis.util.checkType(width, "number")) return Fortis.error.ArgTypeWrong();
-            if (width <= 0) return Fortis.error.ArgIncorrectVarRange();
-            tmpWidth = width;
+        this.size = new Fortis.Vector2(30,30);
+        if(width != null){
+            if(!Fortis.util.checkType(width,"number"))return Fortis.error.ArgTypeWrong();
+            if(width<=0)return Fortis.error.ArgIncorrectVarRange();
+            this.size.x = width;
         }
-        if (height != null) {
-            if (!Fortis.util.checkType(height, "number")) return Fortis.error.ArgTypeWrong();
-            if (height <= 0) return Fortis.error.ArgIncorrectVarRange();
-            tmpHeight = height;
+        if(height != null){
+            if(!Fortis.util.checkType(height,"number"))return Fortis.error.ArgTypeWrong();
+            if(height<=0)return Fortis.error.ArgIncorrectVarRange();
+            this.size.y = height;
         }
-        this.size = new Fortis.Vector2(tmpWidth, tmpHeight);
         if (distance == null) {
             this.distance = new Fortis.Vector2();
         } else if (Fortis.util.checkType(distance, "obejct", "Vector2")) {
@@ -85,25 +81,14 @@ Fortis.RectShape = class {
             }
         }
     }
-    getWidth() {//横幅取得
-        return this.size.x;
+    getSize() {
+        return this.size;
     }
-    setWidth(width) {//横幅変更
-        if (width == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(width, "number")) return Fortis.error.ArgTypeWrong();
-        if (width <= 0) return Fortis.error.ArgIncorrectVarRange();
-        this.size.x = width;
-        return width;
-    }
-    getHeight() {//縦幅取得
-        return this.size.y;
-    }
-    setHeight(height) {//横幅変更
-        if (height == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(height, "number")) return Fortis.error.ArgTypeWrong();
-        if (height <= 0) return Fortis.error.ArgIncorrectVarRange();
-        this.size.y = height;
-        return height;
+    setSize(vec) {
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "obejct", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.size = vec;
+        return vec;
     }
     getDistance() {
         return this.distance;
@@ -215,34 +200,14 @@ Fortis.EllipseShape = class {
             }
         }
     }
-    getRadius() {//半径取得
+    getRadSize() {
         return this.radSize;
     }
-    setRadius(radius) {//半径変更
-        if (radius == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(radius, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
-        this.radSize = radius;
-        return radius;
-    }
-    getRadiusX() {//長辺の半径取得
-        return this.radSize.x;
-    }
-    setRadiusX(radius) {//長辺の半径変更
-        if (radius == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
-        if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
-        this.radSize.x = radius;
-        return this.radSize.x;
-    }
-    getRadiusY() {//短辺の半径取得
-        return this.radSize.y;
-    }
-    setRadiusY(radius) {//短辺の半径変更
-        if (radius == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
-        if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
-        this.radSize.y = radius;
-        return this.radSize.y;
+    setRadSize(vec) {
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "obejct", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.radSize = vec;
+        return vec;
     }
     getDegree() {//弧の角度取得
         return this.degree;

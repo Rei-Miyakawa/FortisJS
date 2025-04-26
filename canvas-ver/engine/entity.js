@@ -50,8 +50,7 @@ Fortis.Entity = class {
         this.material = new_material;
         return this.material;
     }
-    getPos(normalize) {//位置取得
-        if (normalize) return new Fortis.Vector2(this.pos.x / Fortis.Game.size.x, this.pos.y / Fortis.Game.size.y);//正規化(画面のサイズと比べてどのくらいか)
+    getPos() {//位置取得
         return this.pos;
     }
     setPos(vec) {//位置設定
