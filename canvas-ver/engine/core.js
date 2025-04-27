@@ -130,11 +130,9 @@ let Fortis = {
     ProtoCollider: null,//プロトタイプ(これだけだと意味ない)
     LineCollider: null,//線分
     RectCollider: null,//矩形
-    CircleCollider: null,//円
-    EllipseCollider: null,//楕円
-    //CapsuleCollider: null,関数として作る？
-    RegTriangleCollider: null,//正三角形
-    RigTriangleCollider: null,//直角三角形
+    CircleCollider: null,//円(楕円)
+    RegPolygonCollider: null,//正n角形
+    PolygonCollider: null,//その他
 
     //フォント
     FontLoader: null,//フォントの読み込み・保存-font.js

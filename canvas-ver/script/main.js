@@ -62,8 +62,8 @@ function Ready() {
     layer = new Fortis.Layer();
 
     tf = new Fortis.Font("test");
-    e2 = new Fortis.Entity(new Fortis.LineShape(new Fortis.Vector2(50,0)), material);
-    e2.pos = new Fortis.Vector2(15, 15)
+    e2 = new Fortis.Entity(new Fortis.RegPolygonShape(null,50), material);
+    e2.pos = new Fortis.Vector2(150, 150)
     layer.add(e2);
     e1 = new Fortis.Entity(new Fortis.RectShape(), mateiral2);
     e1.pos = new Fortis.Vector2(200, 200);

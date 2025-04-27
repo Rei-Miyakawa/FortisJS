@@ -196,34 +196,6 @@ Fortis.CircleCollider = class extends Fortis.ProtoCollider{
     get type() {
         return "CircleCollider";
     }
-    constructor(radius, distance) {
-        super(distance);
-        this.radius = 20;
-        if(radius != null){
-            if(!Fortis.util.checkType(radius,"number"))return Fortis.error.ArgTypeWrong();
-            if(radius<=0)return Fortis.error.ArgIncorrectVarRange();
-            this.radius = radius;
-        }
-    }
-    getType() {//タイプ取得
-        return this.type;
-    }
-    getRadius() {//半径取得
-        return this.radius;
-    }
-    setRadius(radius) {//半径変更
-        if (radius == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
-        if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
-        this.radius = radius;
-        return radius;
-    }
-}
-
-Fortis.EllipseCollider = class extends Fortis.ProtoCollider{
-    get type() {
-        return "EllipseCollider";
-    }
     constructor(radX,radY, distance) {
         super(distance);
         this.radSize = Fortis.Vector2(40,20);
@@ -249,5 +221,94 @@ Fortis.EllipseCollider = class extends Fortis.ProtoCollider{
         if (!Fortis.util.checkType(vec, "obejct", "Vector2")) return Fortis.error.ArgTypeWrong();
         this.radSize = vec;
         return vec;
+    }
+}
+
+Fortis.RegPolygonCollider = class extends Fortis.ProtoCollider{
+    get type() {
+        return "RegPolygonCollider";
+    }
+    constructor(radius, sides, distance) {
+        super(distance);
+        this.radius = 25;
+        this.sides = 3;
+
+        if (radius != null) {
+            if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
+            if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
+            this.radius = radius;
+        }
+        if (sides != null) {
+            if (!Fortis.util.checkType(sides, "number")) return Fortis.error.ArgTypeWrong();
+            if (sides <= 2) return Fortis.error.ArgIncorrectVarRange();
+            this.sides = sides;
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    getRadius() {//中心からの距離を取得
+        return this.radius;
+    }
+    setRadius(raidus) {//中心からの距離を変更
+        if (raidus == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(raidus, "number")) return Fortis.error.ArgTypeWrong();
+        if (raidus <= 0) return Fortis.error.ArgIncorrectVarRange();
+        this.radius = raidus;
+        if (this.vertices != false) {
+            this.vertices = this.getPolyVertices();
+        }
+        return raidus;
+    }
+    getSides() {//頂点の数を取得
+        return this.sides;
+    }
+    setSides(sides) {//頂点の数を変更
+        if (sides == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(sides, "number")) return Fortis.error.ArgTypeWrong();
+        if (sides <= 2) return Fortis.error.ArgIncorrectVarRange();
+        this.sides = sides;
+        if (this.vertices != false) {
+            this.vertices = this.getPolyVertices();
+        }
+        return sides;
+    }
+}
+
+Fortis.PolygonCollider = class extends Fortis.ProtoCollider{
+    get type() {
+        return "PolygonCollider";
+    }
+    constructor(vertices, distance) {
+        super(distance);
+        if (vertices == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vertices, "object")) return Fortis.error.ArgTypeWrong();
+        this.vertices = vertices;
+        if (distance == null) {
+            this.distance = new Fortis.Vector2();
+        } else if (Fortis.util.checkType(distance, "obejct", "Vector2")) {
+            this.distance = distance;
+        } else {
+            Fortis.error.ArgTypeWrong();
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    getVertices() {//頂点を取得
+        return this.vertices;
+    }
+    setVertices(vertices) {//頂点を変更
+        if (vertices == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vertices, "object")) return Fortis.error.ArgTypeWrong();
+        this.vertices = vertices;
+        return vertices;
     }
 }
