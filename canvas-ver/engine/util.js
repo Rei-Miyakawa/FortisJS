@@ -43,6 +43,7 @@ Fortis.error = {
     TransitionNotExists(name) { Fortis.util.console("Error", 'トランジション ID"' + name + '"は存在していません。') },
     ColliderNotExists(name) { Fortis.util.console("Error", 'コライダー ID"' + name + '"は存在していません。') },
     ColliderAlreadyExists(name) { Fortis.util.console("Error", 'コライダー ID"' + name + '"は既に存在しています。') },
+    CollisionNotExists(name) { Fortis.util.console("Error", 'コリジョン ID"' + name + '"は存在していません。') },
 }
 
 Fortis.info = {
@@ -210,10 +211,45 @@ Fortis.util.radianToDegree = function (radian) {
     return (radian * 180) / Math.PI;
 }
 
-Fortis.util.getPointOnCircle = function (pos, radius, degree) {
+Fortis.util.getPointOnCircle = function (pos, radius, degree, digit) {
     if (pos == null || radius == null || degree == null) return Fortis.error.ArgNotExists();
     if (!Fortis.util.checkType(pos, "object", "Vector2") || !Fortis.util.checkType(radius, "number") || !Fortis.util.checkType(degree, "number")) return Fortis.error.ArgTypeWrong();
-    let x = Math.round((pos.x + radius * Math.cos(Fortis.util.degreeToRadian(degree))) * 100) / 100
-    let y = Math.round((pos.y + radius * Math.sin(Fortis.util.degreeToRadian(degree))) * 100) / 100
-    return new Fortis.Vector2(x, y);
+    let digits = 0;
+    if (digit != null) {
+        if (!Fortis.util.checkType(digit, "number")) return Fortis.error.ArgTypeWrong();
+        digits = digit;
+    }
+    let x = pos.x + radius * Math.cos(Fortis.util.degreeToRadian(degree));
+    let y = pos.y + radius * Math.sin(Fortis.util.degreeToRadian(degree));
+    return new Fortis.Vector2(x, y).cleanFloat(digits);
+}
+
+Fortis.util.cleanFloat = function (value, digit) {
+    if (value == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.util.checkType(value, "number")) return Fortis.error.ArgTypeWrong();
+    let digits = 0;
+    if (digit != null) {
+        if (!Fortis.util.checkType(digit, "number")) return Fortis.error.ArgTypeWrong();
+        digits = digit;
+    }
+    return Math.round(value * Math.pow(10, digits)) / Math.pow(10, digits);
+}
+
+Fortis.util.getLineSegment = function (p1, p2) {//pはpointの略
+    if (p1 == null || p2 == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.error.checkType(p1, "object", "Vector2") || !Fortis.error.checkType(p2, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+    /*情報 
+    傾き、切片
+    始点、終点
+    方向ベクトル、長さ
+    */
+    let LS = {};//LineSegmentの略
+    LS["start"] = p1.copy();
+    LS["end"] = p2.copy();
+    LS["direction"] = p2.copy().sub(p1);
+    LS["length"] = LS["direction"].mag();
+    LS["slope"] = Math.atan2(LS["direction"].y, LS["direction"].x);
+    LS["intercept"] = p1.y - LS["slop"] * p1.x;
+
+    return LS;
 }

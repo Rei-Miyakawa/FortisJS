@@ -36,15 +36,6 @@ Fortis.Timer = {
         this.list[id] = list;
         return id;
     },
-    addLists(lists) {//追加
-        if (lists == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(lists, "object")) return Fortis.error.ArgTypeWrong();
-        let ids = [];
-        for (let list in lists) {
-            ids.push(Fortis.Timer.add(list));
-        }
-        return ids;
-    },
     remove(id) {//削除
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
@@ -52,16 +43,11 @@ Fortis.Timer = {
         delete this.list[id];
         return this.list;
     },
-    removeLists(ids) {//複数削除
-        if (ids == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(ids, "object")) return Fortis.error.ArgTypeWrong();
-        for (let id in ids) {
-            Fortis.Timer.remove(id);
-        }
-        return this.list;
-    },
     getList() {//取得
         return this.list;
+    },
+    getID(){//IDを取得
+        return Object.keys(this.list);
     },
     getTimer(id) {//タイマー取得
         if (id == null) return Fortis.error.ArgNotExists();

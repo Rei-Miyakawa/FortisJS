@@ -35,7 +35,7 @@ Fortis.Game.draw = function (delta) {
         Fortis.Game.finalContext.save();
         Fortis.Game.finalContext.translate(layer.camera.pos.x + layer.camera.centerPos.x, layer.camera.pos.y + layer.camera.centerPos.y);
         Fortis.Game.finalContext.rotate(Fortis.util.degreeToRadian(layer.camera.angle));
-        Fortis.Game.finalContext.drawImage(layer.camera.canvas, layer.camera.startPos.x * layer.camera.scale.x, layer.camera.startPos.y * layer.camera.scale.y, layer.camera.displayRange.x, layer.camera.displayRange.y, -layer.camera.centerPos.x, -layer.camera.centerPos.y, layer.camera.size.x * layer.camera.scale.x, layer.camera.size.y * layer.camera.scale.y);
+        Fortis.Game.finalContext.drawImage(layer.camera.canvas, 0, 0, layer.camera.displayRange.x, layer.camera.displayRange.y, -layer.camera.centerPos.x, -layer.camera.centerPos.y, layer.camera.size.x * layer.camera.scale.x, layer.camera.size.y * layer.camera.scale.y);
         Fortis.Game.finalContext.restore();
     });
 
@@ -58,7 +58,7 @@ Fortis.Game.draw = function (delta) {
                     camera.context.globalAlpha = entity.alpha;
                     //console.log(length)
                     //console.log(length * Math.sin(Fortis.util.degreeToRadian(degree + array.camera.angle))+ array.camera.pos.x+array.camera.canvas.width/2)
-                    camera.context.translate(entity.pos.x, entity.pos.y);
+                    camera.context.translate(entity.pos.x-camera.startPos.x, entity.pos.y-camera.startPos.y);
                     camera.context.rotate(Fortis.util.degreeToRadian(entity.angle));
                     camera.context.scale(entity.scale.x, entity.scale.y);
                     switch (entity.shape.type) {

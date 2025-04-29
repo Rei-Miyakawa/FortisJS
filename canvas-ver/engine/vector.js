@@ -1,5 +1,5 @@
 Fortis.Vector2 = class {
-    get type(){
+    get type() {
         return "Vector2";
     }
     constructor(x, y) {
@@ -59,11 +59,15 @@ Fortis.Vector2 = class {
             this.x *= scale;
             this.y *= scale;
             return this;
+        } else if (Fortis.util.checkType(scale, "object", "Vector2")) {
+            this.x *= scale.x;
+            this.y *= scale.y;
+            return this;
         }
         return Fortis.error.ArgTypeWrong();
     }
     mag() {//大きさ、原点(左上)からの距離
-        return Math.sqrt(this.x ** 2 + this.y ** 2);
+        return Math.hypot(this.x, this.y);
     }
     normalize() {//単位ベクトルにする
         let mag = this.mag();
@@ -74,10 +78,34 @@ Fortis.Vector2 = class {
     distance(vec) {//2点間の距離
         if (vec == null) return Fortis.error.ArgNotExists();
         if (Fortis.util.checkType(vec, "object", "Vector2")) {
-            vec.sub(this);
-            return Math.sqrt(vec.x ** 2 + vec.y ** 2);
+            let distance = vec.copy();
+            distance.sub(this);
+            return Math.hypot(distance.x,distance.y);;
         }
         return Fortis.error.ArgTypeWrong();
+    }
+    getDegree() {//座標から角度を求める
+        return Fortis.util.radianToDegree(Math.atan2(this.y, this.x));
+    }
+    cleanFloat(digit) {
+        let digits = 0;
+        if (digit != null) {
+            if (!Fortis.util.checkType(digit, "number")) return Fortis.error.ArgTypeWrong();
+            digits = digit;
+        }
+        this.x = Fortis.util.cleanFloat(this.x, digits);
+        this.y = Fortis.util.cleanFloat(this.y, digits);
+        return this;
+    }
+    rotate(angle){//原点(0,0)を中心に回転
+        if(angle == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(angle,"number"))return Fortis.error.ArgTypeWrong();
+        let Angle = this.getDegree() + angle;
+        let Size = this.mag();
+        let vec = Fortis.util.getPointOnCircle(new Fortis.Vector2(), Size, Angle,4);
+        this.x = vec.x;
+        this.y = vec.y;
+        return vec;
     }
     copy() {//コピー
         return new Fortis.Vector2(this.x, this.y);

@@ -12,19 +12,19 @@
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-        return 1 - Math.cos(t * Math.PI / 2);
+        return Fortis.util.cleanFloat(1 - Math.cos(t * Math.PI / 2),4);
     }
     Fortis.util.easing.outTrig = function (t) {
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-        return Math.sin(t * Math.PI / 2);
+        return Fortis.util.cleanFloat(Math.sin(t * Math.PI / 2),4);
     }
     Fortis.util.easing.inOutTrig = function (t) {
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-        return (1 - Math.cos(t * Math.PI)) / 2;
+        return Fortis.util.cleanFloat((1 - Math.cos(t * Math.PI)) / 2,4);
     }
     Fortis.util.easing.outInTrig = function (t) {
         if (t == null) return Fortis.error.ArgNotExists();
@@ -59,7 +59,7 @@
                 }
             }
         }
-        return Math.pow(t, expo);
+        return Fortis.util.cleanFloat(Math.pow(t, expo),4);
     }
     Fortis.util.easing.outPower = function (t, n) {
         let expo = 2;
@@ -80,7 +80,7 @@
                 }
             }
         }
-        return 1 - Math.pow(1 - t, expo);
+        return Fortis.util.cleanFloat(1 - Math.pow(1 - t, expo),4);
     }
     Fortis.util.easing.inOutPower = function (t, n) {
         let expo = 2;
@@ -126,7 +126,7 @@
                 }
             }
         }
-        return (1 + Math.pow(2 * t - 1, expo)) / 2;
+        return Fortis.util.cleanFloat((1 + Math.pow(2 * t - 1, expo)) / 2,4);
     }
 }
 
@@ -154,8 +154,7 @@
         if (t == 0) {
             return 0;
         }
-        console.log(expo)
-        return Math.pow(2, expo * t - expo);
+        return Fortis.util.cleanFloat(Math.pow(2, expo * t - expo),4);
     }
     Fortis.util.easing.outExpo = function (t, n) {
         let expo = 10;
@@ -179,7 +178,7 @@
         if (t == 1) {
             return 1;
         }
-        return 1 - Math.pow(2, -expo * t);
+        return Fortis.util.cleanFloat(1 - Math.pow(2, -expo * t),4);
     }
     Fortis.util.easing.inOutExpo = function (t, n) {
         let expo = 10;
@@ -201,9 +200,9 @@
             }
         }
         if (t < 0.5) {
-            return Math.pow(2, expo * (2 * t - 1)) / 2;
+            return Fortis.util.cleanFloat(Math.pow(2, expo * (2 * t - 1)) / 2,4);
         } else {
-            return (2 - Math.pow(2, expo * (1 - 2 * t))) / 2;
+            return Fortis.util.cleanFloat((2 - Math.pow(2, expo * (1 - 2 * t))) / 2,4);
         }
     }
     Fortis.util.easing.outInExpo = function (t, n) {
@@ -226,9 +225,9 @@
             }
         }
         if (t < 0.5) {
-            return (1 - Math.pow(2, -2 * expo * t)) / 2;
+            return Fortis.util.cleanFloat((1 - Math.pow(2, -2 * expo * t)) / 2,4);
         } else {
-            return (1 + Math.pow(2, 2 * expo * (t - 1))) / 2;
+            return Fortis.util.cleanFloat((1 + Math.pow(2, 2 * expo * (t - 1))) / 2,4);
         }
     }
 }
@@ -284,7 +283,7 @@
                 coe = a;
             }
         }
-        return coe * Math.pow(t, expo1) - (coe - 1) * Math.pow(t, expo2);
+        return Fortis.util.cleanFloat(coe * Math.pow(t, expo1) - (coe - 1) * Math.pow(t, expo2),4);
     }
     Fortis.util.easing.outBack = function (t, n, m, a) {
         let expo1 = 3;
@@ -335,7 +334,7 @@
                 coe = a;
             }
         }
-        return 1 + coe * Math.pow(t - 1, expo1) + (coe - 1) * Math.pow(t - 1, expo2);
+        return Fortis.util.cleanFloat(1 + coe * Math.pow(t - 1, expo1) + (coe - 1) * Math.pow(t - 1, expo2),4);
     }
     Fortis.util.easing.inOutBack = function (t, n, m, a) {
         if (t == null) return Fortis.error.ArgNotExists();
@@ -365,13 +364,13 @@
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-        return 1 - Math.sqrt(1 - t ** 2);
+        return Fortis.util.cleanFloat(1 - Math.sqrt(1 - t ** 2),4);
     }
     Fortis.util.easing.outCirc = function (t) {
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-        return Math.sqrt(-1 * t ** 2 + 2 * t);
+        return Fortis.util.cleanFloat(Math.sqrt(-1 * t ** 2 + 2 * t),4);
     }
     Fortis.util.easing.inOutCirc = function (t) {
         if (t == null) return Fortis.error.ArgNotExists();
@@ -410,16 +409,16 @@
         const n1 = 7.5625;
         const n2 = 2.75;
         if (t < 1 / n2) {
-            return n1 * t * t;
+            return Fortis.util.cleanFloat(n1 * t * t,4);
         } else if (t < 2 / n2) {
             t -= 1.5 / n2
-            return n1 * t * t + 0.75;
+            return Fortis.util.cleanFloat(n1 * t * t + 0.75,4);
         } else if (t < 2.5 / n2) {
             t -= 2.25 / n2
-            return n1 * t * t + 0.9375;
+            return Fortis.util.cleanFloat(n1 * t * t + 0.9375,4);
         } else {
             t -= 2.625 / n2
-            return n1 * t * t + 0.984375;
+            return Fortis.util.cleanFloat(n1 * t * t + 0.984375,4);
         }
     }
     Fortis.util.easing.inOutBounce = function (t) {
@@ -450,22 +449,22 @@
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-        return -Math.pow(2, 10 * t - 10) * Math.sin((t * 10 - 10.75) * 2 / 3 * Math.PI);
+        return Fortis.util.cleanFloat(-Math.pow(2, 10 * t - 10) * Math.sin((t * 10 - 10.75) * 2 / 3 * Math.PI),4);
     }
     Fortis.util.easing.outSpring = function (t) {
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
-        return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * 2 / 3 * Math.PI) + 1;
+        return Fortis.util.cleanFloat(Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * 2 / 3 * Math.PI) + 1,4);
     }
     Fortis.util.easing.inOutSpring = function (t) {
         if (t == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (t < 0.5) {
-            return -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2;
+            return Fortis.util.cleanFloat(-(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2,4);
         } else {
-            return (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2 + 1;
+            return Fortis.util.cleanFloat((Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * 2 / 4.5 * Math.PI)) / 2 + 1,4);
         }
     }
     Fortis.util.easing.outInSpring = function (t) {
@@ -473,9 +472,9 @@
         if (!Fortis.util.checkType(t, "number")) return Fortis.error.ArgTypeWrong();
         if (t < 0 || t > 1) return Fortis.error.ArgIncorrectVarRange();
         if (t < 0.5) {
-            return (1 + Math.pow(2, -20 * t) * Math.sin((20 * t - 1.125) * 2 / 4.5 * Math.PI)) / 2;
+            return Fortis.util.cleanFloat((1 + Math.pow(2, -20 * t) * Math.sin((20 * t - 1.125) * 2 / 4.5 * Math.PI)) / 2,4);
         } else {
-            return (1 - Math.pow(2, 20 * t - 20) * Math.sin((20 * t - 21.125) * 2 / 4.5 * Math.PI)) / 2;
+            return Fortis.util.cleanFloat((1 - Math.pow(2, 20 * t - 20) * Math.sin((20 * t - 21.125) * 2 / 4.5 * Math.PI)) / 2,4);
         }
     }
 }

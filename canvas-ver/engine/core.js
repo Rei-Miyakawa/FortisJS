@@ -4,7 +4,7 @@ let Fortis = {
     TransitionManager: null,//エンティティのモーション(フェードなど)-animation.js
     InputKey: {},//キーインプット
 
-    //便利なやつをまとめたもの-util.js
+    //便利なやつをまとめたもの-util.js(基本的に)
     util: {
         //変数
         namedColors: null,//名前付き色
@@ -17,6 +17,8 @@ let Fortis = {
         radianToDegree: null,//弧度法から度数法
         getPointOnCircle: null,//任意の座標を中心として任意の半径の円周上の任意の角度の点の座標を取得
         argAdjustmentWithDelta: null,//deltaを使って引数の時間に処理を完了するように調整する
+        cleanFloat: null,//値の指定の小数点以下を切り捨てる(整理)
+        getLineSegment: null,//2点の座標からそれを結んだ線分の情報を返す
 
         //色
         hexToRGB: null,//カラーコードをRGBに
@@ -124,7 +126,7 @@ let Fortis = {
     SpriteShape: null,//スプライト(画像)
 
     //当たり判定-hitbox.js
-    HitCalculator: null,//当たり判定を計算する
+    CollisionManager: null,//どのグループ同士の当たり判定を計算するかを管理(グループ3つ以上同時は不可)
     ColliderGroup: null,//複数のcolliderをまとめたもの。これの中にcolliderを入れて使う(colliderを単品では使えない)
     //Collider
     ProtoCollider: null,//プロトタイプ(これだけだと意味ない)
@@ -403,6 +405,7 @@ Fortis.Game = {
     loop() {
         let delta = this.fpsCtrl.update();
         Update(delta);//更新
+        Fortis.CollisionManager.detectCollision(delta);
         Fortis.Timer.update(delta);//タイマーの更新
         Fortis.TransitionManager.update(delta);//モーションマネージャーの更新
         this.draw(delta);

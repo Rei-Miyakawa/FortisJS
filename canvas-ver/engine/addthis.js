@@ -10,7 +10,7 @@ let files = [
     "material",
     "shape",
     "entity",
-    "hitbox",
+    "collision",
     "draw",
     "timer",
     "transition",

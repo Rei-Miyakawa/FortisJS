@@ -34,7 +34,10 @@ let mousePos
 let colg,col
 function Ready() {
     colg = new Fortis.ColliderGroup();
-    col = new Fortis.LineCollider();
+    col = new Fortis.RectCollider();
+    //col.distance = new Fortis.Vector2(10,10);
+    //col.angle = 45;
+    console.log(col.getVertices(new Fortis.Vector2(10,10),45,new Fortis.Vector2(10,10)))
     colg.addList([col]);
     scene = new Fortis.Scene();
     let bgc = new Fortis.Color("black");
@@ -147,6 +150,7 @@ function Ready() {
 
 let tkey;
 function Update(delta) {
+    //uil.camera.startPos = Fortis.Game.mouse.pos.copy().add(new Fortis.Vector2(-600,-450));
     mousePos.shape.text = "x:"+Fortis.Game.mouse.pos.x+",y:"+Fortis.Game.mouse.pos.y
     //uil.camera.angle += 1
     t1.angle++;

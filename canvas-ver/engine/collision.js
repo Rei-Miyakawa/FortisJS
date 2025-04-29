@@ -1,0 +1,539 @@
+Fortis.CollisionManager = {
+    list: {},//{id: {entity: [e1, e2], result: boolean}}
+    add(e1,e2){//eはentityの略
+        if(e1 == null || e2 == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.error.checkType(e1,"object","Entity") || !Fortis.error.checkType(e2,"object","Entity"))return Fortis.error.ArgTypeWrong();
+        let id = Fortis.util.randomID();
+        this.list[id] = {"entity":[e1,e2],"result":false};
+        return id;
+    },
+    addList(array){
+        if(array == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(array,"object"))return Fortis.error.ArgTypeWrong();
+        let ids = [];
+        for(index in array){
+            ids.push(Fortis.CollisionManager.add(array[index][0],array[index][1]));
+        }
+        return ids;
+    },
+    remove(id){
+        if (id == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
+        if (this.list[id] === undefined) return Fortis.error.CollisionNotExists(id);
+        delete this.list[id];
+        return this.list;
+    },
+    getList(){
+        return this.list;
+    },
+    get(id) {
+        if (id == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
+        if (this.list[id] === undefined) return false
+        return this.list[id];
+    },
+    getID(){
+        return Object.keys(this.list)
+    },
+    detectCollision(delta){//ここで計算する
+
+    }
+}
+
+Fortis.ColliderGroup = class {
+    get type() {
+        return "ColliderGroup";
+    }
+    constructor() {
+        this.id = Fortis.util.randomID();
+        this.pos = new Fortis.Vector2();
+        this.scale = new Fortis.Vector2(1, 1);
+        this.angle = 0;
+        this.colliders = {};
+        this.entity = null;
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    getID() {
+        return this.id;
+    }
+    getPos() {//位置取得
+        return this.pos;
+    }
+    setPos(vec) {//位置設定
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        return this.pos = vec.copy();
+    }
+    getScale() {//拡大縮小率を取得
+        return this.scale;
+    }
+    setScale(value) {//拡大縮小率を変更
+        if (value == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(value, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        if (value.x < 0 || value.y < 0) return Fortis.error.ArgIncorrectVarRange();
+        this.scale = value;
+        return this.scale;
+    }
+    getAngle() {//角度取得
+        return this.angle;
+    }
+    setAngle(new_angle) {//角度を変える
+        if (new_angle == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(new_angle, "number")) return Fortis.error.ArgTypeWrong();
+        this.angle = new_angle;
+        return this.angle;
+    }
+    add(collider) {
+        if (collider == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(collider, "object", "Collider")) return Fortis.error.ArgTypeWrong();
+        if (this.colliders[collider.id] !== undefined) return Fortis.error.ColliderAlreadyExists(collider.id);
+        this.colliders[collider.id] = collider;
+        return collider;
+    }
+    addList(list) {
+        if (list == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(list, "object")) return Fortis.error.ArgTypeWrong();
+        for (col in list) {
+            this.add(list[col]);
+        }
+    }
+    remove(collider) {
+        if (collider == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(collider, "object", "Collider")) return Fortis.error.ArgTypeWrong();
+        if (this.colliders[collider.id] === undefined) return Fortis.error.ColliderNotExists(collider.id);
+        this.colliders[collider.id] = null;
+        delete this.colliders[collider.id];
+        return collider;
+    }
+    removeList(list) {
+        if (list == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(list, "object")) return Fortis.error.ArgTypeWrong();
+        for (col in list) {
+            this.remove(list[col]);
+        }
+    }
+    get(collider) {
+        if (collider == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(collider, "object", "Collider")) return Fortis.error.ArgTypeWrong();
+        if (this.colliders[collider.id] === undefined) return false;
+        return this.colliders[collider.id]
+    }
+    getAll() {
+        return this.colliders;
+    }
+    link(entity){
+        if(entity == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(entity,"object","Entity"))return Fortis.error.ArgTypeWrong();
+        this.entity = entity;
+        return entity;
+    }
+    unlink(entity){
+        if(entity == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(entity,"object","Entity"))return Fortis.error.ArgTypeWrong();
+        if(entity.id != this.entity.id)return false;
+        this.entity = null;
+    }
+}
+
+Fortis.ProtoCollider = class {
+    constructor(distance) {
+        this.id = Fortis.util.randomID();
+        if (distance == null) {
+            this.distance = new Fortis.Vector2();
+        } else if (Fortis.util.checkType(distance, "object", "Vector2")) {
+            this.distance = distance;
+        } else {
+            Fortis.error.ArgTypeWrong();
+        }
+        this.activity = true;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    getDistance() {
+        return this.distance;
+    }
+    setDistance(vec) {
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.distance = vec;
+        return vec;
+    }
+    getActivity() {
+        return this.activity;
+    }
+    reverseAvtivity() {
+        if (this.activity) {
+            this.activity = false;
+        } else {
+            this.activity = true;
+        }
+        return this.activity;
+    }
+    getID() {
+        return this.id;
+    }
+}
+
+Fortis.LineCollider = class extends Fortis.ProtoCollider {
+    get type() {
+        return "LineCollider";
+    }
+    constructor(vec, distance) {
+        super(distance);
+        if (vec != null) {
+            if (!Fortis.util.checkType(vec, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            this.vector = vec;
+        } else {
+            this.vector = new Fortis.Vector2(50, 0);
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    getVector() {
+        return this.vector;
+    }
+    setVector(vec) {
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.vector = vec;
+        return vec;
+    }
+    getVertices(pos, angle, scale) {
+        let Pos = new Fortis.Vector2();
+        let Angle = 0;
+        let Scale = new Fortis.Vector2(1, 1);
+        if (pos != null) {
+            if (!Fortis.util.checkType(pos, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Pos = pos.copy();
+        }
+        if (angle != null) {
+            if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+            Angle = angle;
+        }
+        if (scale != null) {
+            if (!Fortis.util.checkType(scale, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Scale = scale.copy();
+        }
+
+        let fVertice = this.distance.copy();
+        fVertice.mul(Scale);
+        fVertice.rotate(Angle);
+        fVertice.add(Pos);
+
+        let sVertice = this.vector.copy().add(this.distance);
+        sVertice.mul(Scale);
+        sVertice.rotate(Angle);
+        sVertice.add(Pos);
+
+        return [fVertice,sVertice];
+    }
+}
+
+Fortis.RectCollider = class extends Fortis.ProtoCollider {
+    get type() {
+        return "RectCollider";
+    }
+    constructor(width, height,angle, distance) {
+        super(distance);
+        this.size = new Fortis.Vector2(30, 30);
+        this.angle = 0;
+        if (width != null) {
+            if (!Fortis.util.checkType(width, "number")) return Fortis.error.ArgTypeWrong();
+            if (width <= 0) return Fortis.error.ArgIncorrectVarRange();
+            this.size.x = width;
+        }
+        if (height != null) {
+            if (!Fortis.util.checkType(height, "number")) return Fortis.error.ArgTypeWrong();
+            if (height <= 0) return Fortis.error.ArgIncorrectVarRange();
+            this.size.y = height;
+        }
+        if (angle != null) {
+            if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+            this.angle = angle;
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    getSize() {
+        return this.size;
+    }
+    setSize(vec) {
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.size = vec;
+        return vec;
+    }
+    getAngle() {
+        return this.angle;
+    }
+    setAnlge(angle) {
+        if (angle == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+        this.angle = angle;
+        return angle;
+    }
+    getVertices(pos, angle, scale){
+        let Pos = new Fortis.Vector2();
+        let Angle = 0;
+        let Scale = new Fortis.Vector2(1, 1);
+        if (pos != null) {
+            if (!Fortis.util.checkType(pos, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Pos = pos.copy();
+        }
+        if (angle != null) {
+            if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+            Angle = angle;
+        }
+        if (scale != null) {
+            if (!Fortis.util.checkType(scale, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Scale = scale.copy();
+        }
+
+        let tmpLUVPos = this.size.copy().mul(-0.5);
+        tmpLUVPos.rotate(this.angle);//矩形自体の回転
+        tmpLUVPos.add(this.distance);
+        tmpLUVPos.rotate(Angle);//グループの回転
+        let LUVertice = Pos.copy().add(tmpLUVPos.mul(Scale));
+
+        let tmpLDVPos = this.size.copy().mul(new Fortis.Vector2(-0.5,0.5));
+        tmpLDVPos.rotate(this.angle);//矩形自体の回転
+        tmpLDVPos.add(this.distance);
+        tmpLDVPos.rotate(Angle);//グループの回転
+        let LDVertice =  Pos.copy().add(tmpLDVPos.mul(Scale));
+
+        let tmpRDVPos = this.size.copy().mul(0.5);
+        tmpRDVPos.rotate(this.angle);//矩形自体の回転
+        tmpRDVPos.add(this.distance);
+        tmpRDVPos.rotate(Angle);//グループの回転
+        let RDVertice = Pos.copy().add(tmpRDVPos.mul(Scale));
+
+        let tmpRUVPos = this.size.copy().mul(new Fortis.Vector2(0.5,-0.5));
+        tmpRUVPos.rotate(this.angle);//矩形自体の回転
+        tmpRUVPos.add(this.distance);
+        tmpRUVPos.rotate(Angle);//グループの回転
+        let RUVertice =  Pos.copy().add(tmpRUVPos.mul(Scale));
+
+        return [LUVertice,LDVertice,RDVertice,RUVertice];
+    }
+}
+
+Fortis.CircleCollider = class extends Fortis.ProtoCollider {
+    get type() {
+        return "CircleCollider";
+    }
+    constructor(radX, radY, distance) {
+        super(distance);
+        this.radSize = Fortis.Vector2(40, 20);
+        if (radX != null) {
+            if (!Fortis.util.checkType(radX, "number")) return Fortis.error.ArgTypeWrong();
+            if (radX <= 0) return Fortis.error.ArgIncorrectVarRange();
+            this.radSize.x = radX;
+        }
+        if (radY != null) {
+            if (!Fortis.util.checkType(radY, "number")) return Fortis.error.ArgTypeWrong();
+            if (radY <= 0) return Fortis.error.ArgIncorrectVarRange();
+            this.radSize.y = radY;
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    getRadSize() {
+        return this.radSize;
+    }
+    setRadSize(vec) {
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        this.radSize = vec;
+        return vec;
+    }
+}
+
+Fortis.RegPolygonCollider = class extends Fortis.ProtoCollider {
+    get type() {
+        return "RegPolygonCollider";
+    }
+    constructor(radius, sides,angle, distance) {
+        super(distance);
+        this.radius = 25;
+        this.sides = 3;
+        this.angle = 0;
+
+        if (radius != null) {
+            if (!Fortis.util.checkType(radius, "number")) return Fortis.error.ArgTypeWrong();
+            if (radius <= 0) return Fortis.error.ArgIncorrectVarRange();
+            this.radius = radius;
+        }
+        if (sides != null) {
+            if (!Fortis.util.checkType(sides, "number")) return Fortis.error.ArgTypeWrong();
+            if (sides <= 2) return Fortis.error.ArgIncorrectVarRange();
+            this.sides = sides;
+        }
+        if (angle != null) {
+            if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+            this.angle = angle;
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    getRadius() {//中心からの距離を取得
+        return this.radius;
+    }
+    setRadius(raidus) {//中心からの距離を変更
+        if (raidus == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(raidus, "number")) return Fortis.error.ArgTypeWrong();
+        if (raidus <= 0) return Fortis.error.ArgIncorrectVarRange();
+        this.radius = raidus;
+        if (this.vertices != false) {
+            this.vertices = this.getPolyVertices();
+        }
+        return raidus;
+    }
+    getSides() {//頂点の数を取得
+        return this.sides;
+    }
+    setSides(sides) {//頂点の数を変更
+        if (sides == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(sides, "number")) return Fortis.error.ArgTypeWrong();
+        if (sides <= 2) return Fortis.error.ArgIncorrectVarRange();
+        this.sides = sides;
+        if (this.vertices != false) {
+            this.vertices = this.getPolyVertices();
+        }
+        return sides;
+    }
+    getAngle() {
+        return this.angle;
+    }
+    setAnlge(angle) {
+        if (angle == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+        this.angle = angle;
+        return angle;
+    }
+    getVertices(pos, _angle, scale) {//正多角形の頂点の相対的な座標を出力
+        let Pos = new Fortis.Vector2();
+        let Angle = 0;
+        let Scale = new Fortis.Vector2(1, 1);
+        if (pos != null) {
+            if (!Fortis.util.checkType(pos, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Pos = pos.copy();
+        }
+        if (_angle != null) {
+            if (!Fortis.util.checkType(_angle, "number")) return Fortis.error.ArgTypeWrong();
+            Angle = _angle;
+        }
+        if (scale != null) {
+            if (!Fortis.util.checkType(scale, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Scale = scale.copy();
+        }
+
+        let vertices = [];
+        let angle_increment = 360 / this.sides;
+        let a = angle_increment;
+        let b = 360;
+        while (b !== 0) {
+            let temp = b;
+            b = a % b;
+            a = temp;
+        }
+        let gcd = a;
+        let lcm = (angle_increment * 360) / gcd;
+        let points = lcm / angle_increment;
+        let angle = 270+this.angle;
+
+        for(let i = 0; i <points; i++){
+            let tmpVertice = Fortis.util.getPointOnCircle(this.distance.copy(), this.radius, angle,4);
+            tmpVertice.rotate(Angle);
+            vertices.push(Pos.copy().add(tmpVertice.mul(Scale)));
+            angle += angle_increment;
+        }
+        return vertices;
+    }
+}
+
+Fortis.PolygonCollider = class extends Fortis.ProtoCollider {
+    get type() {
+        return "PolygonCollider";
+    }
+    constructor(vertices,angle, distance) {
+        super(distance);
+        if (vertices == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vertices, "object")) return Fortis.error.ArgTypeWrong();
+        this.vertices = vertices;
+        this.angle = 0;
+        if (angle != null) {
+            if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+            this.angle = angle;
+        }
+    }
+    getType() {//タイプ取得
+        return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    getAngle() {
+        return this.angle;
+    }
+    setAnlge(angle) {
+        if (angle == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+        this.angle = angle;
+        return angle;
+    }
+    getVertices(pos, _angle, scale) {//頂点を取得
+        let Pos = new Fortis.Vector2();
+        let Angle = 0;
+        let Scale = new Fortis.Vector2(1, 1);
+        if (pos != null) {
+            if (!Fortis.util.checkType(pos, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Pos = pos.copy();
+        }
+        if (_angle != null) {
+            if (!Fortis.util.checkType(_angle, "number")) return Fortis.error.ArgTypeWrong();
+            Angle = _angle;
+        }
+        if (scale != null) {
+            if (!Fortis.util.checkType(scale, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Scale = scale.copy();
+        }
+        
+        let nOfVertices =this.vertices.length;
+        for(let i = 0; i<nOfVertices; i++){
+            this.vertices[i].rotate(this.angle);
+            this.vertices[i].add(this.distance);
+            this.vertices[i].rotate(Angle);
+            this.vertices[i].mul(Scale).add(Pos);
+        }
+
+        return this.vertices;
+    }
+    setVertices(vertices) {//頂点を変更
+        if (vertices == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vertices, "object")) return Fortis.error.ArgTypeWrong();
+        this.vertices = vertices;
+        return vertices;
+    }
+}
