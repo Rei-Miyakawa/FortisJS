@@ -19,6 +19,8 @@ let Fortis = {
         argAdjustmentWithDelta: null,//deltaを使って引数の時間に処理を完了するように調整する
         cleanFloat: null,//値の指定の小数点以下を切り捨てる(整理)
         getLineSegment: null,//2点の座標からそれを結んだ線分の情報を返す
+        getLineIntersection: null,//交点を求める(その中でも線と線、線と円など分岐する)
+        
 
         //色
         hexToRGB: null,//カラーコードをRGBに

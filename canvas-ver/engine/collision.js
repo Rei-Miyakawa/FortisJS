@@ -1,29 +1,30 @@
 Fortis.CollisionManager = {
     list: {},//{id: {entity: [e1, e2], result: boolean}}
-    add(e1,e2){//eはentityの略
-        if(e1 == null || e2 == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.error.checkType(e1,"object","Entity") || !Fortis.error.checkType(e2,"object","Entity"))return Fortis.error.ArgTypeWrong();
+    alreadyUpdatedList: [],//すでにアップデートされた(ID)
+    add(e1, e2) {//eはentityの略
+        if (e1 == null || e2 == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.error.checkType(e1, "object", "Entity") || !Fortis.error.checkType(e2, "object", "Entity")) return Fortis.error.ArgTypeWrong();
         let id = Fortis.util.randomID();
-        this.list[id] = {"entity":[e1,e2],"result":false};
+        this.list[id] = { "entity": [e1, e2], "result": false };
         return id;
     },
-    addList(array){
-        if(array == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(array,"object"))return Fortis.error.ArgTypeWrong();
+    addList(array) {
+        if (array == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(array, "object")) return Fortis.error.ArgTypeWrong();
         let ids = [];
-        for(index in array){
-            ids.push(Fortis.CollisionManager.add(array[index][0],array[index][1]));
+        for (index in array) {
+            ids.push(Fortis.CollisionManager.add(array[index][0], array[index][1]));
         }
         return ids;
     },
-    remove(id){
+    remove(id) {
         if (id == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
         if (this.list[id] === undefined) return Fortis.error.CollisionNotExists(id);
         delete this.list[id];
         return this.list;
     },
-    getList(){
+    getList() {
         return this.list;
     },
     get(id) {
@@ -32,11 +33,103 @@ Fortis.CollisionManager = {
         if (this.list[id] === undefined) return false
         return this.list[id];
     },
-    getID(){
+    getID() {
         return Object.keys(this.list)
     },
-    detectCollision(delta){//ここで計算する
+    detectCollision(delta) {//ここで計算する
+        this.alreadyUpdatedList = [];
+        for (let key in this.list) {
+            let c1 = this.list[key]["entity"][0];
+            if (this.alreadyUpdatedList.indexOf(c1.id) == -1) {
+                c1.update();
+                this.alreadyUpdatedList.push(c1.id);
+            }
 
+            let c2 = this.list[key]["entity"][1];
+            if (this.alreadyUpdatedList.indexOf(c2.id) == -1) {
+                c2.update();
+                this.alreadyUpdatedList.push(c2.id);
+            }
+
+            for(let c1Key in c1.colliders){
+                let c1c = c1.colliders[c1Key];
+                for(let c2Key in c2.colliders){
+                    let c2c = c2.colliders[c2Key];
+                    switch(c1c.type){
+                        case "LineCollider":
+                            switch(c2c.type){
+                                case "LineCollider":
+                                    break;
+                                case "RectCollider":
+                                    break;
+                                case "CircleCollider":
+                                    break;
+                                case "RegPolygonCollider":
+                                    break;
+                                case "PolygonCollider":
+                                    break;
+                            }
+                            break;
+                        case "RectCollider":
+                            switch(c2c.type){
+                                case "LineCollider":
+                                    break;
+                                case "RectCollider":
+                                    break;
+                                case "CircleCollider":
+                                    break;
+                                case "RegPolygonCollider":
+                                    break;
+                                case "PolygonCollider":
+                                    break;
+                            }
+                            break;
+                        case "CircleCollider":
+                            switch(c2c.type){
+                                case "LineCollider":
+                                    break;
+                                case "RectCollider":
+                                    break;
+                                case "CircleCollider":
+                                    break;
+                                case "RegPolygonCollider":
+                                    break;
+                                case "PolygonCollider":
+                                    break;
+                            }
+                            break;
+                        case "RegPolygonCollider":
+                            switch(c2c.type){
+                                case "LineCollider":
+                                    break;
+                                case "RectCollider":
+                                    break;
+                                case "CircleCollider":
+                                    break;
+                                case "RegPolygonCollider":
+                                    break;
+                                case "PolygonCollider":
+                                    break;
+                            }
+                            break;
+                        case "PolygonCollider":
+                            switch(c2c.type){
+                                case "LineCollider":
+                                    break;
+                                case "RectCollider":
+                                    break;
+                                case "CircleCollider":
+                                    break;
+                                case "RegPolygonCollider":
+                                    break;
+                                case "PolygonCollider":
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -130,16 +223,23 @@ Fortis.ColliderGroup = class {
     getAll() {
         return this.colliders;
     }
-    link(entity){
-        if(entity == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(entity,"object","Entity"))return Fortis.error.ArgTypeWrong();
+    link(entity) {
+        if (entity == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(entity, "object", "Entity")) return Fortis.error.ArgTypeWrong();
         this.entity = entity;
         return entity;
     }
-    unlink(entity){
-        if(entity == null)return Fortis.error.ArgNotExists();
-        if(!Fortis.util.checkType(entity,"object","Entity"))return Fortis.error.ArgTypeWrong();
-        if(entity.id != this.entity.id)return false;
+    update() {
+        if (this.entity != null) {
+            this.angle = this.entity.angle;
+            this.pos = this.entity.pos.copy();
+            this.scale = this.entity.scale.copy();
+        }
+    }
+    unlink(entity) {
+        if (entity == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(entity, "object", "Entity")) return Fortis.error.ArgTypeWrong();
+        if (entity.id != this.entity.id) return false;
         this.entity = null;
     }
 }
@@ -240,7 +340,7 @@ Fortis.LineCollider = class extends Fortis.ProtoCollider {
         sVertice.rotate(Angle);
         sVertice.add(Pos);
 
-        return [fVertice,sVertice];
+        return [fVertice, sVertice];
     }
 }
 
@@ -248,7 +348,7 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
     get type() {
         return "RectCollider";
     }
-    constructor(width, height,angle, distance) {
+    constructor(width, height, angle, distance) {
         super(distance);
         this.size = new Fortis.Vector2(30, 30);
         this.angle = 0;
@@ -288,7 +388,7 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
         this.angle = angle;
         return angle;
     }
-    getVertices(pos, angle, scale){
+    getVertices(pos, angle, scale) {
         let Pos = new Fortis.Vector2();
         let Angle = 0;
         let Scale = new Fortis.Vector2(1, 1);
@@ -311,11 +411,11 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
         tmpLUVPos.rotate(Angle);//グループの回転
         let LUVertice = Pos.copy().add(tmpLUVPos.mul(Scale));
 
-        let tmpLDVPos = this.size.copy().mul(new Fortis.Vector2(-0.5,0.5));
+        let tmpLDVPos = this.size.copy().mul(new Fortis.Vector2(-0.5, 0.5));
         tmpLDVPos.rotate(this.angle);//矩形自体の回転
         tmpLDVPos.add(this.distance);
         tmpLDVPos.rotate(Angle);//グループの回転
-        let LDVertice =  Pos.copy().add(tmpLDVPos.mul(Scale));
+        let LDVertice = Pos.copy().add(tmpLDVPos.mul(Scale));
 
         let tmpRDVPos = this.size.copy().mul(0.5);
         tmpRDVPos.rotate(this.angle);//矩形自体の回転
@@ -323,13 +423,13 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
         tmpRDVPos.rotate(Angle);//グループの回転
         let RDVertice = Pos.copy().add(tmpRDVPos.mul(Scale));
 
-        let tmpRUVPos = this.size.copy().mul(new Fortis.Vector2(0.5,-0.5));
+        let tmpRUVPos = this.size.copy().mul(new Fortis.Vector2(0.5, -0.5));
         tmpRUVPos.rotate(this.angle);//矩形自体の回転
         tmpRUVPos.add(this.distance);
         tmpRUVPos.rotate(Angle);//グループの回転
-        let RUVertice =  Pos.copy().add(tmpRUVPos.mul(Scale));
+        let RUVertice = Pos.copy().add(tmpRUVPos.mul(Scale));
 
-        return [LUVertice,LDVertice,RDVertice,RUVertice];
+        return [LUVertice, LDVertice, RDVertice, RUVertice];
     }
 }
 
@@ -369,7 +469,7 @@ Fortis.RegPolygonCollider = class extends Fortis.ProtoCollider {
     get type() {
         return "RegPolygonCollider";
     }
-    constructor(radius, sides,angle, distance) {
+    constructor(radius, sides, angle, distance) {
         super(distance);
         this.radius = 25;
         this.sides = 3;
@@ -457,10 +557,10 @@ Fortis.RegPolygonCollider = class extends Fortis.ProtoCollider {
         let gcd = a;
         let lcm = (angle_increment * 360) / gcd;
         let points = lcm / angle_increment;
-        let angle = 270+this.angle;
+        let angle = 270 + this.angle;
 
-        for(let i = 0; i <points; i++){
-            let tmpVertice = Fortis.util.getPointOnCircle(this.distance.copy(), this.radius, angle,4);
+        for (let i = 0; i < points; i++) {
+            let tmpVertice = Fortis.util.getPointOnCircle(this.distance.copy(), this.radius, angle, 4);
             tmpVertice.rotate(Angle);
             vertices.push(Pos.copy().add(tmpVertice.mul(Scale)));
             angle += angle_increment;
@@ -473,7 +573,7 @@ Fortis.PolygonCollider = class extends Fortis.ProtoCollider {
     get type() {
         return "PolygonCollider";
     }
-    constructor(vertices,angle, distance) {
+    constructor(vertices, angle, distance) {
         super(distance);
         if (vertices == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(vertices, "object")) return Fortis.error.ArgTypeWrong();
@@ -519,9 +619,9 @@ Fortis.PolygonCollider = class extends Fortis.ProtoCollider {
             if (!Fortis.util.checkType(scale, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
             Scale = scale.copy();
         }
-        
-        let nOfVertices =this.vertices.length;
-        for(let i = 0; i<nOfVertices; i++){
+
+        let nOfVertices = this.vertices.length;
+        for (let i = 0; i < nOfVertices; i++) {
             this.vertices[i].rotate(this.angle);
             this.vertices[i].add(this.distance);
             this.vertices[i].rotate(Angle);
