@@ -214,11 +214,11 @@ Fortis.ColliderGroup = class {
             this.remove(list[col]);
         }
     }
-    get(collider) {
-        if (collider == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.util.checkType(collider, "object", "Collider")) return Fortis.error.ArgTypeWrong();
-        if (this.colliders[collider.id] === undefined) return false;
-        return this.colliders[collider.id]
+    get(id) {
+        if (id == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(id, "string")) return Fortis.error.ArgTypeWrong();
+        if (this.colliders[id] === undefined) return false;
+        return this.colliders[id]
     }
     getAll() {
         return this.colliders;
@@ -304,6 +304,13 @@ Fortis.LineCollider = class extends Fortis.ProtoCollider {
     getType() {//タイプ取得
         return this.type;
     }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
     getVector() {
         return this.vector;
     }
@@ -335,9 +342,10 @@ Fortis.LineCollider = class extends Fortis.ProtoCollider {
         fVertice.rotate(Angle);
         fVertice.add(Pos);
 
-        let sVertice = this.vector.copy().add(this.distance);
+        let sVertice = this.vector.copy();
         sVertice.mul(Scale);
         sVertice.rotate(Angle);
+        sVertice.add(fVertice);
         sVertice.add(Pos);
 
         return [fVertice, sVertice];
@@ -370,6 +378,13 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
     getType() {//タイプ取得
         return this.type;
     }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
     getSize() {
         return this.size;
     }
@@ -387,6 +402,25 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
         if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
         this.angle = angle;
         return angle;
+    }
+    getInfo(pos, angle, scale){
+        let Pos = new Fortis.Vector2();
+        let Angle = 0;
+        let Scale = new Fortis.Vector2(1, 1);
+        if (pos != null) {
+            if (!Fortis.util.checkType(pos, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Pos = pos.copy();
+        }
+        if (angle != null) {
+            if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+            Angle = angle;
+        }
+        if (scale != null) {
+            if (!Fortis.util.checkType(scale, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Scale = scale.copy();
+        }
+        let cPos = Pos.add(this.distance.copy().mul(Scale).rotate(this.angle)).add(Angle);
+        return {"size":this.size,"pos":cPos};
     }
     getVertices(pos, angle, scale) {
         let Pos = new Fortis.Vector2();
@@ -437,9 +471,10 @@ Fortis.CircleCollider = class extends Fortis.ProtoCollider {
     get type() {
         return "CircleCollider";
     }
-    constructor(radX, radY, distance) {
+    constructor(radX, radY, angle, distance) {
         super(distance);
         this.radSize = Fortis.Vector2(40, 20);
+        this.angle = 0;
         if (radX != null) {
             if (!Fortis.util.checkType(radX, "number")) return Fortis.error.ArgTypeWrong();
             if (radX <= 0) return Fortis.error.ArgIncorrectVarRange();
@@ -450,9 +485,29 @@ Fortis.CircleCollider = class extends Fortis.ProtoCollider {
             if (radY <= 0) return Fortis.error.ArgIncorrectVarRange();
             this.radSize.y = radY;
         }
+        if (angle != null) {
+            if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+            this.angle = angle;
+        }
     }
     getType() {//タイプ取得
         return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
+    }
+    getAngle() {
+        return this.angle;
+    }
+    setAnlge(angle) {
+        if (angle == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+        this.angle = angle;
+        return angle;
     }
     getRadSize() {
         return this.radSize;
@@ -462,6 +517,35 @@ Fortis.CircleCollider = class extends Fortis.ProtoCollider {
         if (!Fortis.util.checkType(vec, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
         this.radSize = vec;
         return vec;
+    }
+    getInfo(pos, angle, scale){
+        let Pos = new Fortis.Vector2();
+        let Angle = 0;
+        let Scale = new Fortis.Vector2(1, 1);
+        if (pos != null) {
+            if (!Fortis.util.checkType(pos, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Pos = pos.copy();
+        }
+        if (angle != null) {
+            if (!Fortis.util.checkType(angle, "number")) return Fortis.error.ArgTypeWrong();
+            Angle = angle;
+        }
+        if (scale != null) {
+            if (!Fortis.util.checkType(scale, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+            Scale = scale.copy();
+        }
+        let cInfo = {};
+        cInfo["pos"] = Pos.copy().add(this.distance.copy().rotate(this.angle).mul(Scale)).rotate(Angle);
+        cInfo["angle"] = Angle+this.angle;
+        cInfo["radius"] = this.radSize.copy().mul(Scale);
+        /*
+        let radiusPS = Math.pow(cInfo["radius"].x*cInfo["radius"]*y,2);
+        cInfo["formula"] = {//=1の形
+                            "x2":Math.pow(cInfo["radius"].y*Math.cos(Fortis.util.degreeToRadian(cInfo["angle"])),2)+Math.pow(cInfo["radius"].x*Math.sin(Fortis.util.degreeToRadian(cInfo["angle"])),2)/radiusPS,
+                            "xy":Math.sin(2*Fortis.util.degreeToRadian(cInfo["angle"]))*(Math.pow(cInfo["radius"].x,2)-Math.pow(cInfo["radius"].y,2))/radiusPS,
+                            "y2":Math.pow(cInfo["radius"].x*Math.cos(Fortis.util.degreeToRadian(cInfo["angle"])),2)+Math.pow(cInfo["radius"].y*Math.sin(Fortis.util.degreeToRadian(cInfo["angle"])),2)/radiusPS,
+                        }
+        */
     }
 }
 
@@ -492,6 +576,13 @@ Fortis.RegPolygonCollider = class extends Fortis.ProtoCollider {
     }
     getType() {//タイプ取得
         return this.type;
+    }
+    delete() {//削除
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = null;
+            }
+        }
     }
     getRadius() {//中心からの距離を取得
         return this.radius;

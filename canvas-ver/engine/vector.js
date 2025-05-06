@@ -87,7 +87,7 @@ Fortis.Vector2 = class {
     getDegree() {//座標から角度を求める
         return Fortis.util.radianToDegree(Math.atan2(this.y, this.x));
     }
-    cleanFloat(digit) {
+    cleanFloat(digit) {//小数点整理
         let digits = 0;
         if (digit != null) {
             if (!Fortis.util.checkType(digit, "number")) return Fortis.error.ArgTypeWrong();
@@ -100,14 +100,18 @@ Fortis.Vector2 = class {
     rotate(angle){//原点(0,0)を中心に回転
         if(angle == null)return Fortis.error.ArgNotExists();
         if(!Fortis.util.checkType(angle,"number"))return Fortis.error.ArgTypeWrong();
-        let Angle = this.getDegree() + angle;
-        let Size = this.mag();
-        let vec = Fortis.util.getPointOnCircle(new Fortis.Vector2(), Size, Angle,4);
-        this.x = vec.x;
-        this.y = vec.y;
+        let nowAngle = this.getDegree();
+        let vec = this.copy();
+        this.x = vec.x*Math.cos(Fortis.util.degreeToRadian(angle+nowAngle))-vec.y*Math.sin(Fortis.util.degreeToRadian(angle+nowAngle));
+        this.y = vec.x*Math.sin(Fortis.util.degreeToRadian(angle+nowAngle))+vec.y*Math.cos(Fortis.util.degreeToRadian(angle+nowAngle));
+        this.cleanFloat(7);
         return vec;
     }
     copy() {//コピー
         return new Fortis.Vector2(this.x, this.y);
+    }
+    getNormal(){//法線ベクトルを取得
+        let norm = this.normalize();
+        return new Fortis.Vector2(-norm.y,norm.x);
     }
 }

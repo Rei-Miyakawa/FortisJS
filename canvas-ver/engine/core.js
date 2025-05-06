@@ -19,8 +19,12 @@ let Fortis = {
         argAdjustmentWithDelta: null,//deltaを使って引数の時間に処理を完了するように調整する
         cleanFloat: null,//値の指定の小数点以下を切り捨てる(整理)
         getLineSegment: null,//2点の座標からそれを結んだ線分の情報を返す
-        getLineIntersection: null,//交点を求める(その中でも線と線、線と円など分岐する)
-        
+        checkLinesCollide: null,//線分同士に交点があるかを求める
+        checkEllipseAndLineCollide: null,//円と線分に交点があるかを求める
+        checkCircleAndLineCollide: null,//円と線分に交点があるかを求める
+        checkPolygonsCollide: null,//多角形の当たり判定(SATを使う)
+        checkRectsCollide: null,//回転なしの矩形の当たり判定
+        checkCirclesCollide: null,//円同士の当たり判定
 
         //色
         hexToRGB: null,//カラーコードをRGBに

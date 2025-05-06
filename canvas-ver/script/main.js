@@ -150,7 +150,7 @@ function Ready() {
 
 let tkey;
 function Update(delta) {
-    //uil.camera.startPos = Fortis.Game.mouse.pos.copy().add(new Fortis.Vector2(-600,-450));
+    uil.camera.startPos = Fortis.Game.mouse.pos.copy().add(new Fortis.Vector2(-600,-450));
     mousePos.shape.text = "x:"+Fortis.Game.mouse.pos.x+",y:"+Fortis.Game.mouse.pos.y
     //uil.camera.angle += 1
     t1.angle++;

@@ -221,7 +221,7 @@ Fortis.util.getPointOnCircle = function (pos, radius, degree, digit) {
     }
     let x = pos.x + radius * Math.cos(Fortis.util.degreeToRadian(degree));
     let y = pos.y + radius * Math.sin(Fortis.util.degreeToRadian(degree));
-    return new Fortis.Vector2(x, y).cleanFloat(digits);
+    return new Fortis.Vector2(x, y).cleanFloat(digits, 7);
 }
 
 Fortis.util.cleanFloat = function (value, digit) {
@@ -247,10 +247,10 @@ Fortis.util.getLineSegment = function (p1, p2) {//pはpointの略
     let LS = {};//LineSegmentの略
     LS["start"] = p1.copy();
     LS["end"] = p2.copy();
-    LS["fDomain"] = [Math.min(p1.x, p2.x), Math.max(p1.x, p2.x)];
-    LS["vDomain"] = [Math.min(p1.y, p2.y), Math.max(p1.y, p2.y)];;
+    LS["fDomain"] = [Math.min(p1.x, p2.x), Math.max(p1.x, p2.x)];//定義域
+    LS["vDomain"] = [Math.min(p1.y, p2.y), Math.max(p1.y, p2.y)];//値域
     LS["direction"] = p2.copy().sub(p1);
-    LS["special"] = { "x": null, "y": null }
+    LS["special"] = { "x": null, "y": null };
     if (LS["direction"].x == 0) {
         LS["special"]["x"] = p1.x;
     }
@@ -258,58 +258,118 @@ Fortis.util.getLineSegment = function (p1, p2) {//pはpointの略
         LS["special"]["y"] = p1.y;
     }
     LS["length"] = LS["direction"].mag();
-    LS["slope"] = Fortis.util.cleanFloat(Math.atan2(LS["direction"].y, LS["direction"].x), 4);
+    if (LS["length"] == 0) return false;//長さが0ならfalse
+    LS["slope"] = Fortis.util.cleanFloat(Math.atan2(LS["direction"].y, LS["direction"].x), 7);
     LS["intercept"] = p1.y - LS["slop"] * p1.x;
 
     return LS;
 }
 
-Fortis.util.getLineIntersection = function (l1, l2) {//lはlineの略。getLinSegmentの値をそのまま持ってくる
+Fortis.util.checkLinesCollide = function (l1, l2) {//lはlineの略。getLineSegmentの値をそのまま持ってくる
     if (l1 == null || l2 == null) return Fortis.error.ArgNotExists();
     if (!Fortis.error.checkType(l1, "object") || !Fortis.error.checkType(l2, "object")) return Fortis.error.ArgTypeWrong();
 
     //交点の有無をbooleanで返す
-
     //判定
-    if (l1["special"]["x"] != null) {//x=の形
-        if (l2["special"]["x"] != null) {//平行
-            return false;
-        } else if (l2["special"]["y"] != null) {//垂直
-            if (l2["fDomain"][0] <= l1["special"]["x"] && l1["special"]["x"] <= l2["fDomain"][1] && l1["vDomain"][0] <= l2["special"]["y"] && l2["special"]["y"] <= l1["vDomain"][1]) return true;
-        } else {
-            if (l2["fDomain"][0] <= l1["special"]["x"] && l1["special"]["x"] <= l2["fDomain"][1]) {
-                let intersectionY = l2["slope"] * l1["special"]["x"] + l2["intercept"];//y座標を求める
-                if (l1["vDomain"][0] <= intersectionY && intersectionY <= l1["vDomain"][1]) return true;
-            }
-        }
-    } else if (l1["special"]["y"] != null) {//y=定数の形
-        if (l2["special"]["x"] != null) {//垂直
-            if (l1["fDomain"][0] <= l2["special"]["x"] && l2["special"]["x"] <= l1["fDomain"][1] && l2["vDomain"][0] <= l1["special"]["y"] && l1["special"]["y"] <= l2["vDomain"][1]) return true;
-        } else if (l2["special"]["y"] != null) {//平行
-            return false;
-        } else {
-            if (l2["vDomain"][0] <= l1["special"]["y"] && l1["special"]["y"] <= l2["vDomain"][1]) {
-                let intersectionX = (l1["special"]["y"] - l2["intercept"]) / l2["slope"];//x座標を求める
-                if (l1["fDomain"][0] <= intersectionX && intersectionX <= l1["fDomain"][1]) return true;
-            }
-        }
+    let d1 = l1["direction"].copy();
+    let d2 = l2["direction"].copy();
+    let sd = l2["start"].coyp().sub(l1["start"]);
+    let pj = Fortis.util.cleanFloat(d1.x * d2.y - d1.y * d2.x, 7);//平行または同一直線状にあるか判定
+    if (pj == 0) {//平行もしくは同一直線上
+        if (l1["intercept"] == l2["intercept"] && ((l1["fDomain"][0] <= l2["fDomain"][0] && l2["fDomain"][0] <= l1["fDomain"][1]) || (l1["fDomain"][0] <= l2["fDomain"][1] && l2["fDomain"][1] <= l1["fDomain"][1]))) return true;//y切片が同じかつ、定義域が被っているなら同一直線状
     } else {
-        if (l2["special"]["x"] != null) {
-            if (l1["fDomain"][0] <= l2["special"]["x"] && l2["special"]["x"] <= l1["fDomain"][1]) {
-                let intersectionY = l1["slope"] * l2["special"]["x"] + l1["intercept"];//y座標を求める
-                if (l2["vDomain"][0] <= intersectionY && intersectionY <= l2["vDomain"][1]) return true;
-            }
-        } else if (l2["special"]["y"] != null) {
-            if (l1["vDomain"][0] <= l2["special"]["y"] && l2["special"]["y"] <= l1["vDomain"][1]) {
-                let intersectionX = (l1["special"]["y"] - l2["intercept"]) / l1["slope"];//x座標を求める
-                if (l2["fDomain"][0] <= intersectionX && intersectionX <= l2["fDomain"][1]) return true;
-            }
-        } else {
-            if (l1["slope"] == l2["slope"]) return false;
-            let intersectionX = (l2["intercept"] - l1["intercept"]) / (l1["slope"] - l2["slope"]);//x座標を求める
-            let intersection = new Fortis.Vector2(intersectionX,l1["slope"] * intersectionX + l1["intercept"]);//y座標を求め、vector2に入れる
-            
-        }
+        let t = Fortis.util.cleanFloat((sd.x * d2.y - sd.y * d2.x) / pj, 7);
+        let s = Fortis.util.cleanFloat((sd.x * d1.y - sd.y * d1.x) / pj, 7);
+        if (0 <= t && t <= 1 && 0 <= s && s <= 1) return true;
     }
     return false;
+}
+
+Fortis.util.checkEllipseAndLineCollide = function (l, e) {//lはlineの略。eはellipseの略。lineはgetLineSegmentから、ellipseはCircleCollider.getInfoから(円に変形してgetCircleAndLineCollideへ)
+    if (l == null || e == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.error.checkType(l, "object") || !Fortis.error.checkType(e, "object")) return Fortis.error.ArgTypeWrong();
+    let newLSP = l["start"].copy().sub(e["pos"]).rotate(-e["angle"]);
+    let newLEP = l["end"].copy().sub(e["pos"]).rotate(-e["angle"]);
+    let rotatedL = Fortis.util.getLineSegment(newLSP, newLEP);//楕円の角度分逆向きに線分を回転させる(楕円の座標を(0,0)にする)
+    let c = { "pos": new Fortis.Vector2(), "radius": e["radius"].x };
+    if (e["radius"].x != e["radius"].y) {//eが楕円
+        let tmlStart = rotatedL["start"].copy();
+        tmlStart.y *= e["radius"].x / e["radius"].y;
+        let tmlEnd = rotatedL["end"].copy();
+        tmlEnd.y *= e["radius"].x / e["radius"].y;
+        return Fortis.util.checkCircleAndLineCollide(Fortis.util.getLineSegment(tmlStart, tmlEnd), c);
+    }
+    return Fortis.util.checkCircleAndLineCollide(rotatedL, c);
+}
+
+Fortis.util.checkCircleAndLineCollide = function (l, c) {//lはlineの略。cはcircleの略。lineはgetLineSegmentから、circleはcheckEllipseAndLineCollideから
+    if (l == null || c == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.error.checkType(l, "object") || !Fortis.error.checkType(c, "object")) return Fortis.error.ArgTypeWrong();
+    //https://yttm-work.jp/collision/collision_0006.html
+    //これを使う
+    let lSToC = l["start"].copy().mul(-1);
+    let normLVec = l["direction"].copy().normalize();
+    let minDis = Fortis.util.cleanFloat(lSToC.x * normLVec.y - lSToC.y * normLVec.x, 7);//円の中心と直線の最短距離
+    if (c["radius"] >= minDis) {//最短距離が円の半径未満
+        let sRadSign = Math.sign(Math.acos(Fortis.util.cleanFloat((lSToC.x * l["direction"].x + lSToC.y * l["direction"].y) / lSToC.mag() * l["direction"].mag(), 7)));
+        let lEToC = l["end"].copy().mul(-1);
+        let eRadSign = Math.sign(Math.acos(Fortis.util.cleanFloat((lEToC.x * l["direction"].x + lEToC.y * l["direction"].y) / lEToC.mag() * l["direction"].mag(), 7)));
+        if (sRadSign != eRadSign) return true;//符号が違う
+        if (sRadSign == 0) return true;//直角
+        if (Math.min(lSToC.mug(), lEToC.mug()) <= c["radius"]) return true;
+    }
+    return false;
+}
+
+Fortis.util.checkPolygonsCollide = function (v1, v2) {//vはverticesの略
+    if (v1 == null || v2 == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.error.checkType(v1, "object") || !Fortis.error.checkType(v2, "object")) return Fortis.error.ArgTypeWrong();
+
+    let axes = [];
+    let v1l = v1.length;
+    let v2l = v2.length;
+    for (let i = 0; i < v1l; i++) {
+        let line = Fortis.util.getLineSegment(v1[i], v1[i + 1 % vil]);
+        axes.push(line["direction"].getNormal());
+    }
+
+    for (let i = 0; i < v2l; i++) {
+        let line = Fortis.util.getLineSegment(v2[i], v2[i + 1 % v2l]);
+        axes.push(line["direction"].getNormal());
+    }
+
+    for (let axis of axes) {
+        let d1 = getShadowRange(axis, v1);
+        let d2 = getShadowRange(axis, v2);
+        if (!(d1[1] >= d2[0] && d2[1] >= d1[0])) return false;//共通範囲がない
+    }
+
+    return true;//共通範囲がある
+
+    function getShadowRange(axis, v) {
+        let min = Infinity;
+        let max = -Infinity;
+        for (let p of v) {
+            let cp = Fortis.util.cleanFloat(p.x * axis.x + p.y * axis.y,7);//内積
+            min = min < cp ? cp : min;
+            max = max > cp ? cp : max;
+        }
+        return [min, max];
+    }
+}
+
+Fortis.util.checkRectsCollide = function(r1,r2){//rはRectの略。RectColliderのgetInfoから
+    if (r1 == null || r2 == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.error.checkType(r1, "object") || !Fortis.error.checkType(r2, "object")) return Fortis.error.ArgTypeWrong();
+    let distance = r1["pos"].copy().sub(r2["pos"]);
+    let sizeSum = r1["size"].copy().add(r2["size"]).mul(0.5);
+    return Math.abs(distance.x)<=sizeSum.x && Math.abs(distance.y)<=sizeSum.y;
+}
+
+Fortis.util.checkCirclesCollide = function(c1,c2){//cはcircleの略。CircleColliderのgetInfoから
+    if (c1 == null || c2 == null) return Fortis.error.ArgNotExists();
+    if (!Fortis.error.checkType(c1, "object") || !Fortis.error.checkType(c2, "object")) return Fortis.error.ArgTypeWrong();
+    let distance = c1["pos"].distance(c2["pos"]);
+    let radSum = c1["radius"].x+ c2["radius"].x;
+    return distance <= radSum
 }
