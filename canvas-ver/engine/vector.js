@@ -97,13 +97,12 @@ Fortis.Vector2 = class {
         this.y = Fortis.util.cleanFloat(this.y, digits);
         return this;
     }
-    rotate(angle){//原点(0,0)を中心に回転
+    rotate(angle,test){//現在の角度+angle度回転
         if(angle == null)return Fortis.error.ArgNotExists();
         if(!Fortis.util.checkType(angle,"number"))return Fortis.error.ArgTypeWrong();
-        let nowAngle = this.getDegree();
         let vec = this.copy();
-        this.x = vec.x*Math.cos(Fortis.util.degreeToRadian(angle+nowAngle))-vec.y*Math.sin(Fortis.util.degreeToRadian(angle+nowAngle));
-        this.y = vec.x*Math.sin(Fortis.util.degreeToRadian(angle+nowAngle))+vec.y*Math.cos(Fortis.util.degreeToRadian(angle+nowAngle));
+        this.x = vec.x*Math.cos(Fortis.util.degreeToRadian(angle))-vec.y*Math.sin(Fortis.util.degreeToRadian(angle));
+        this.y = vec.x*Math.sin(Fortis.util.degreeToRadian(angle))+vec.y*Math.cos(Fortis.util.degreeToRadian(angle));
         this.cleanFloat(7);
         return vec;
     }

@@ -237,7 +237,7 @@ Fortis.util.cleanFloat = function (value, digit) {
 
 Fortis.util.getLineSegment = function (p1, p2) {//pはpointの略
     if (p1 == null || p2 == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.error.checkType(p1, "object", "Vector2") || !Fortis.error.checkType(p2, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+    if (!Fortis.util.checkType(p1, "object", "Vector2") || !Fortis.util.checkType(p2, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
     /*情報 
     傾き、切片
     始点、終点
@@ -267,13 +267,12 @@ Fortis.util.getLineSegment = function (p1, p2) {//pはpointの略
 
 Fortis.util.checkLinesCollide = function (l1, l2) {//lはlineの略。getLineSegmentの値をそのまま持ってくる
     if (l1 == null || l2 == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.error.checkType(l1, "object") || !Fortis.error.checkType(l2, "object")) return Fortis.error.ArgTypeWrong();
-
+    if (!Fortis.util.checkType(l1, "object") || !Fortis.util.checkType(l2, "object")) return Fortis.error.ArgTypeWrong();
     //交点の有無をbooleanで返す
     //判定
     let d1 = l1["direction"].copy();
     let d2 = l2["direction"].copy();
-    let sd = l2["start"].coyp().sub(l1["start"]);
+    let sd = l2["start"].copy().sub(l1["start"]);
     let pj = Fortis.util.cleanFloat(d1.x * d2.y - d1.y * d2.x, 7);//平行または同一直線状にあるか判定
     if (pj == 0) {//平行もしくは同一直線上
         if (l1["intercept"] == l2["intercept"] && ((l1["fDomain"][0] <= l2["fDomain"][0] && l2["fDomain"][0] <= l1["fDomain"][1]) || (l1["fDomain"][0] <= l2["fDomain"][1] && l2["fDomain"][1] <= l1["fDomain"][1]))) return true;//y切片が同じかつ、定義域が被っているなら同一直線状
@@ -287,7 +286,7 @@ Fortis.util.checkLinesCollide = function (l1, l2) {//lはlineの略。getLineSeg
 
 Fortis.util.checkEllipseAndLineCollide = function (l, e) {//lはlineの略。eはellipseの略。lineはgetLineSegmentから、ellipseはCircleCollider.getInfoから(円に変形してgetCircleAndLineCollideへ)
     if (l == null || e == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.error.checkType(l, "object") || !Fortis.error.checkType(e, "object")) return Fortis.error.ArgTypeWrong();
+    if (!Fortis.util.checkType(l, "object") || !Fortis.util.checkType(e, "object")) return Fortis.error.ArgTypeWrong();
     let newLSP = l["start"].copy().sub(e["pos"]).rotate(-e["angle"]);
     let newLEP = l["end"].copy().sub(e["pos"]).rotate(-e["angle"]);
     let rotatedL = Fortis.util.getLineSegment(newLSP, newLEP);//楕円の角度分逆向きに線分を回転させる(楕円の座標を(0,0)にする)
@@ -304,7 +303,7 @@ Fortis.util.checkEllipseAndLineCollide = function (l, e) {//lはlineの略。e�
 
 Fortis.util.checkCircleAndLineCollide = function (l, c) {//lはlineの略。cはcircleの略。lineはgetLineSegmentから、circleはcheckEllipseAndLineCollideから
     if (l == null || c == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.error.checkType(l, "object") || !Fortis.error.checkType(c, "object")) return Fortis.error.ArgTypeWrong();
+    if (!Fortis.util.checkType(l, "object") || !Fortis.util.checkType(c, "object")) return Fortis.error.ArgTypeWrong();
     //https://yttm-work.jp/collision/collision_0006.html
     //これを使う
     let lSToC = l["start"].copy().mul(-1);
@@ -323,23 +322,40 @@ Fortis.util.checkCircleAndLineCollide = function (l, c) {//lはlineの略。cは
 
 Fortis.util.checkPolygonsCollide = function (v1, v2) {//vはverticesの略
     if (v1 == null || v2 == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.error.checkType(v1, "object") || !Fortis.error.checkType(v2, "object")) return Fortis.error.ArgTypeWrong();
+    if (!Fortis.util.checkType(v1, "object") || !Fortis.util.checkType(v2, "object")) return Fortis.error.ArgTypeWrong();
 
     let axes = [];
     let v1l = v1.length;
     let v2l = v2.length;
-    for (let i = 0; i < v1l; i++) {
-        let line = Fortis.util.getLineSegment(v1[i], v1[i + 1 % vil]);
+    //console.log(v1[0],v1[1])
+    if(v1l == 2){
+        let line = Fortis.util.getLineSegment(v1[0], v1[1]);
+        //console.log(line["direction"].getNormal())
+        axes.push(line["direction"].getNormal());
+    }else{
+        for (let i = 0; i < v1l; i++) {
+        let line = Fortis.util.getLineSegment(v1[i], v1[(i + 1) % v1l]);
+        //console.log(line["direction"].getNormal())
         axes.push(line["direction"].getNormal());
     }
-
-    for (let i = 0; i < v2l; i++) {
-        let line = Fortis.util.getLineSegment(v2[i], v2[i + 1 % v2l]);
+    }
+    
+    if(v2l == 2){
+        let line = Fortis.util.getLineSegment(v2[0], v2[1]);
+        //console.log(line["direction"].getNormal())
+        axes.push(line["direction"].getNormal());
+    }else{
+        for (let i = 0; i < v2l; i++) {
+        let line = Fortis.util.getLineSegment(v2[i], v2[(i + 1) % v2l]);
+        //console.log(line["direction"].getNormal())
         axes.push(line["direction"].getNormal());
     }
+    }
+    
 
     for (let axis of axes) {
         let d1 = getShadowRange(axis, v1);
+        //console.log(d1)
         let d2 = getShadowRange(axis, v2);
         if (!(d1[1] >= d2[0] && d2[1] >= d1[0])) return false;//共通範囲がない
     }
@@ -351,8 +367,8 @@ Fortis.util.checkPolygonsCollide = function (v1, v2) {//vはverticesの略
         let max = -Infinity;
         for (let p of v) {
             let cp = Fortis.util.cleanFloat(p.x * axis.x + p.y * axis.y,7);//内積
-            min = min < cp ? cp : min;
-            max = max > cp ? cp : max;
+            min = min > cp ? cp : min;
+            max = max < cp ? cp : max;
         }
         return [min, max];
     }
@@ -360,7 +376,7 @@ Fortis.util.checkPolygonsCollide = function (v1, v2) {//vはverticesの略
 
 Fortis.util.checkRectsCollide = function(r1,r2){//rはRectの略。RectColliderのgetInfoから
     if (r1 == null || r2 == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.error.checkType(r1, "object") || !Fortis.error.checkType(r2, "object")) return Fortis.error.ArgTypeWrong();
+    if (!Fortis.util.checkType(r1, "object") || !Fortis.util.checkType(r2, "object")) return Fortis.error.ArgTypeWrong();
     let distance = r1["pos"].copy().sub(r2["pos"]);
     let sizeSum = r1["size"].copy().add(r2["size"]).mul(0.5);
     return Math.abs(distance.x)<=sizeSum.x && Math.abs(distance.y)<=sizeSum.y;
@@ -368,7 +384,7 @@ Fortis.util.checkRectsCollide = function(r1,r2){//rはRectの略。RectCollider�
 
 Fortis.util.checkCirclesCollide = function(c1,c2){//cはcircleの略。CircleColliderのgetInfoから
     if (c1 == null || c2 == null) return Fortis.error.ArgNotExists();
-    if (!Fortis.error.checkType(c1, "object") || !Fortis.error.checkType(c2, "object")) return Fortis.error.ArgTypeWrong();
+    if (!Fortis.util.checkType(c1, "object") || !Fortis.util.checkType(c2, "object")) return Fortis.error.ArgTypeWrong();
     let distance = c1["pos"].distance(c2["pos"]);
     let radSum = c1["radius"].x+ c2["radius"].x;
     return distance <= radSum

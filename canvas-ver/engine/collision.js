@@ -51,41 +51,43 @@ Fortis.CollisionManager = {
                 this.alreadyUpdatedList.push(c2.id);
             }
 
-            for(let c1Key in c1.colliders){
+            for (let c1Key in c1.colliders) {
                 let c1c = c1.colliders[c1Key];
-                for(let c2Key in c2.colliders){
+                for (let c2Key in c2.colliders) {
                     let c2c = c2.colliders[c2Key];
-                    switch(c1c.type){
+                    switch (c1c.type) {
                         case "LineCollider":
-                            switch(c2c.type){
+                            switch (c2c.type) {
                                 case "LineCollider":
-                                    break;
-                                case "RectCollider":
+                                    let c1v = c1c.getVertices(c1.pos, c1.angle, c1.scale);
+                                    let c2v = c2c.getVertices(c2.pos, c2.angle, c2.scale)
+                                    if (Fortis.util.checkLinesCollide(Fortis.util.getLineSegment(c1v[0],c1v[1]),Fortis.util.getLineSegment(c2v[0],c2v[1])))return true;
                                     break;
                                 case "CircleCollider":
                                     break;
-                                case "RegPolygonCollider":
-                                    break;
-                                case "PolygonCollider":
-                                    break;
+                                default:
+                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
+                                        break;
                             }
                             break;
                         case "RectCollider":
-                            switch(c2c.type){
-                                case "LineCollider":
-                                    break;
+                            switch (c2c.type) {
                                 case "RectCollider":
+                                    if((c1.angle+c1c.angle)%90 == 0 && (c2.angle+c2c.angle)%90 == 0){
+                                        if(Fortis.util.checkRectsCollide(c1c.getInfo(c1.pos, c1.angle, c1.scale),c2c.getInfo(c2.pos, c2.angle, c2.scale)))return true;
+                                    }else{
+                                        if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
+                                    }
                                     break;
                                 case "CircleCollider":
                                     break;
-                                case "RegPolygonCollider":
-                                    break;
-                                case "PolygonCollider":
-                                    break;
+                                default:
+                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
+                                    break
                             }
                             break;
                         case "CircleCollider":
-                            switch(c2c.type){
+                            switch (c2c.type) {
                                 case "LineCollider":
                                     break;
                                 case "RectCollider":
@@ -99,36 +101,27 @@ Fortis.CollisionManager = {
                             }
                             break;
                         case "RegPolygonCollider":
-                            switch(c2c.type){
-                                case "LineCollider":
-                                    break;
-                                case "RectCollider":
-                                    break;
+                            switch (c2c.type) {
                                 case "CircleCollider":
                                     break;
-                                case "RegPolygonCollider":
-                                    break;
-                                case "PolygonCollider":
+                                default:
+                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
                                     break;
                             }
                             break;
                         case "PolygonCollider":
-                            switch(c2c.type){
-                                case "LineCollider":
-                                    break;
-                                case "RectCollider":
-                                    break;
+                            switch (c2c.type) {
                                 case "CircleCollider":
                                     break;
-                                case "RegPolygonCollider":
-                                    break;
-                                case "PolygonCollider":
+                                default:
+                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
                                     break;
                             }
                             break;
                     }
                 }
             }
+            return false;//衝突してない
         }
     }
 }
@@ -195,7 +188,7 @@ Fortis.ColliderGroup = class {
     addList(list) {
         if (list == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(list, "object")) return Fortis.error.ArgTypeWrong();
-        for (col in list) {
+        for (let col in list) {
             this.add(list[col]);
         }
     }
@@ -346,7 +339,6 @@ Fortis.LineCollider = class extends Fortis.ProtoCollider {
         sVertice.mul(Scale);
         sVertice.rotate(Angle);
         sVertice.add(fVertice);
-        sVertice.add(Pos);
 
         return [fVertice, sVertice];
     }
@@ -403,7 +395,7 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
         this.angle = angle;
         return angle;
     }
-    getInfo(pos, angle, scale){
+    getInfo(pos, angle, scale) {
         let Pos = new Fortis.Vector2();
         let Angle = 0;
         let Scale = new Fortis.Vector2(1, 1);
@@ -420,7 +412,14 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
             Scale = scale.copy();
         }
         let cPos = Pos.add(this.distance.copy().mul(Scale).rotate(this.angle)).add(Angle);
-        return {"size":this.size,"pos":cPos};
+        
+        let size = this.size.copy();
+        if((Angle+this.angle)%180 != 0 && (Angle+this.angle)%90 == 0){
+            let tmpSize = size.copy();
+            size.x = tmpSize.y;
+            size.y = tmpSize.x;
+        }
+        return { "size": size, "pos": cPos };
     }
     getVertices(pos, angle, scale) {
         let Pos = new Fortis.Vector2();
@@ -441,13 +440,16 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
 
         let tmpLUVPos = this.size.copy().mul(-0.5);
         tmpLUVPos.rotate(this.angle);//矩形自体の回転
+        //console.log(tmpLUVPos)
         tmpLUVPos.add(this.distance);
         tmpLUVPos.rotate(Angle);//グループの回転
         let LUVertice = Pos.copy().add(tmpLUVPos.mul(Scale));
+        console.log(Scale)
 
         let tmpLDVPos = this.size.copy().mul(new Fortis.Vector2(-0.5, 0.5));
         tmpLDVPos.rotate(this.angle);//矩形自体の回転
         tmpLDVPos.add(this.distance);
+        //console.log(this.distance)
         tmpLDVPos.rotate(Angle);//グループの回転
         let LDVertice = Pos.copy().add(tmpLDVPos.mul(Scale));
 
@@ -518,7 +520,7 @@ Fortis.CircleCollider = class extends Fortis.ProtoCollider {
         this.radSize = vec;
         return vec;
     }
-    getInfo(pos, angle, scale){
+    getInfo(pos, angle, scale) {
         let Pos = new Fortis.Vector2();
         let Angle = 0;
         let Scale = new Fortis.Vector2(1, 1);
@@ -536,7 +538,7 @@ Fortis.CircleCollider = class extends Fortis.ProtoCollider {
         }
         let cInfo = {};
         cInfo["pos"] = Pos.copy().add(this.distance.copy().rotate(this.angle).mul(Scale)).rotate(Angle);
-        cInfo["angle"] = Angle+this.angle;
+        cInfo["angle"] = Angle + this.angle;
         cInfo["radius"] = this.radSize.copy().mul(Scale);
         /*
         let radiusPS = Math.pow(cInfo["radius"].x*cInfo["radius"]*y,2);

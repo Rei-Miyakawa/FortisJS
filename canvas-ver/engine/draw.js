@@ -56,8 +56,8 @@ Fortis.Game.draw = function (delta) {
                     repeatIdentifyingEntity(entity, true);
                 } else {
                     camera.context.globalAlpha = entity.alpha;
-                    //console.log(length)
                     //console.log(length * Math.sin(Fortis.util.degreeToRadian(degree + array.camera.angle))+ array.camera.pos.x+array.camera.canvas.width/2)
+                    //console.log(entity)
                     camera.context.translate(entity.pos.x-camera.startPos.x, entity.pos.y-camera.startPos.y);
                     camera.context.rotate(Fortis.util.degreeToRadian(entity.angle));
                     camera.context.scale(entity.scale.x, entity.scale.y);
@@ -105,7 +105,7 @@ Fortis.draw.line = function (camera, entity) {
         camera.context.moveTo(entity.shape.distance.x, entity.shape.distance.y);
         camera.context.lineTo(entity.shape.distance.x + entity.shape.vector.x, entity.shape.distance.y + entity.shape.vector.y);
         Fortis.draw.setStrokeColor(camera, entity.material.stroke);
-        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.lineWidth = entity.material.thick;
         camera.context.stroke();
         camera.context.closePath();
     }
@@ -113,8 +113,6 @@ Fortis.draw.line = function (camera, entity) {
 
 Fortis.draw.rect = function (camera, entity) {
     let size = entity.shape.size.copy();
-    size.x *= entity.scale.x;
-    size.y *= entity.scale.x;
     //console.log(entity.shape.distance.x - size.x / 2)
     if (entity.material.fill != false) {
         Fortis.draw.setFillColor(camera, entity.material.fill);
@@ -129,14 +127,14 @@ Fortis.draw.rect = function (camera, entity) {
 
 Fortis.draw.circle = function (camera, entity) {
     camera.context.beginPath();
-    camera.context.arc(entity.shape.distance.x, entity.shape.distance.y, entity.shape.radius * entity.scale.x, 0, Fortis.util.degreeToRadian(entity.shape.degree));
+    camera.context.arc(entity.shape.distance.x, entity.shape.distance.y, entity.shape.radius, 0, Fortis.util.degreeToRadian(entity.shape.degree));
     if (entity.material.fill != false) {
         Fortis.draw.setFillColor(camera, entity.material.fill);
         camera.context.fill();
     }
     if (entity.material.stroke != false) {
         Fortis.draw.setStrokeColor(camera, entity.material.stroke);
-        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.lineWidth = entity.material.thick;
         camera.context.stroke();
     }
     camera.context.closePath();
@@ -144,14 +142,14 @@ Fortis.draw.circle = function (camera, entity) {
 
 Fortis.draw.ellipse = function (camera, entity) {
     camera.context.beginPath();
-    camera.context.ellipse(entity.shape.distance.x, entity.shape.distance.y, entity.shape.radSize.x * entity.scale.x, entity.shape.radSize.y * entity.scale.y, 0, 0, Fortis.util.degreeToRadian(entity.shape.degree));
+    camera.context.ellipse(entity.shape.distance.x, entity.shape.distance.y, entity.shape.radSize.x, entity.shape.radSize.y, 0, 0, Fortis.util.degreeToRadian(entity.shape.degree));
     if (entity.material.fill != false) {
         Fortis.draw.setFillColor(camera, entity.material.fill);
         camera.context.fill();
     }
     if (entity.material.stroke != false) {
         Fortis.draw.setStrokeColor(camera, entity.material.stroke);
-        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.lineWidth = entity.material.thick;
         camera.context.stroke();
     }
     camera.context.closePath();
@@ -169,9 +167,9 @@ Fortis.draw.regPolygon = function (camera, entity) {
     let vertice_count = 0;
     vertices.forEach(vertice => {
         if (vertice_count == 0) {
-            camera.context.moveTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
+            camera.context.moveTo(entity.shape.distance.x + vertice.x, entity.shape.distance.y + vertice.y);
         } else {
-            camera.context.lineTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
+            camera.context.lineTo(entity.shape.distance.x + vertice.x, entity.shape.distance.y + vertice.y);
         }
         vertice_count++;
     });
@@ -181,9 +179,9 @@ Fortis.draw.regPolygon = function (camera, entity) {
         camera.context.fill();
     }
     if (entity.material.stroke != false) {
-        camera.context.lineTo(entity.shape.distance.x + vertices[0].x * entity.scale.x, entity.shape.distance.y + vertices[0].y * entity.scale.y);
+        camera.context.lineTo(entity.shape.distance.x + vertices[0].x, entity.shape.distance.y + vertices[0].y);
         Fortis.draw.setStrokeColor(camera, entity.material.stroke);
-        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.lineWidth = entity.material.thick;
         camera.context.closePath();
         camera.context.stroke();
     }
@@ -196,9 +194,9 @@ Fortis.draw.polygon = function (camera, entity) {
     let vertice_count = 0;
     vertices.forEach(vertice => {
         if (vertice_count == 0) {
-            camera.context.moveTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
+            camera.context.moveTo(entity.shape.distance.x + vertice.x, entity.shape.distance.y + vertice.y);
         } else {
-            camera.context.lineTo(entity.shape.distance.x + vertice.x * entity.scale.x, entity.shape.distance.y + vertice.y * entity.scale.y);
+            camera.context.lineTo(entity.shape.distance.x + vertice.x, entity.shape.distance.y + vertice.y);
         }
         vertice_count++;
     });
@@ -209,9 +207,9 @@ Fortis.draw.polygon = function (camera, entity) {
         camera.context.fill();
     }
     if (entity.material.stroke != false) {
-        camera.context.lineTo(entity.shape.distance.x + vertices[0].x * entity.scale.x, entity.shape.distance.y + vertices[0].y * entity.scale.y);
+        camera.context.lineTo(entity.shape.distance.x + vertices[0].x, entity.shape.distance.y + vertices[0].y);
         Fortis.draw.setStrokeColor(camera, entity.material.stroke);
-        camera.context.lineWidth = entity.material.thick * entity.scale.x;
+        camera.context.lineWidth = entity.material.thick;
         camera.context.closePath();
         camera.context.stroke();
     }
@@ -220,7 +218,7 @@ Fortis.draw.polygon = function (camera, entity) {
 Fortis.draw.text = function (camera, entity) {
     camera.context.textAlign = "center";
     camera.context.textBaseline = "middle";
-    camera.context.font = entity.shape.font.output(entity.scale.x);
+    camera.context.font = entity.shape.font.output();
     camera.context.direction = entity.shape.direction;
     if (entity.material.fill != false) {
         Fortis.draw.setFillColor(camera, entity.material.fill);
@@ -234,8 +232,6 @@ Fortis.draw.text = function (camera, entity) {
 
 Fortis.draw.image = function (camera, entity, sprite) {
     let size = entity.shape.size.copy();
-    size.x *= entity.scale.x;
-    size.y *= entity.scale.x;
     if (sprite) {
         camera.context.drawImage(Fortis.ImageLoader.getImg(entity.material.key), entity.shape.clipSize.x * ((entity.shape.nowFrame - 1) % entity.shape.aspect.x), entity.shape.clipSize.y * Math.floor((entity.shape.nowFrame - 1) / entity.shape.aspect.x), entity.shape.clipSize.x, entity.shape.clipSize.y, entity.shape.distance.x - size.x / 2, entity.shape.distance.y - size.y / 2, size.x, size.y);
     } else if (entity.shape.clipPos === undefined) {
