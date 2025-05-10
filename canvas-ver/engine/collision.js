@@ -3,7 +3,7 @@ Fortis.CollisionManager = {
     alreadyUpdatedList: [],//すでにアップデートされた(ID)
     add(e1, e2) {//eはentityの略
         if (e1 == null || e2 == null) return Fortis.error.ArgNotExists();
-        if (!Fortis.error.checkType(e1, "object", "Entity") || !Fortis.error.checkType(e2, "object", "Entity")) return Fortis.error.ArgTypeWrong();
+        if (!Fortis.util.checkType(e1, "object", "ColliderGroup") || !Fortis.util.checkType(e2, "object", "ColliderGroup")) return Fortis.error.ArgTypeWrong();
         let id = Fortis.util.randomID();
         this.list[id] = { "entity": [e1, e2], "result": false };
         return id;
@@ -39,6 +39,7 @@ Fortis.CollisionManager = {
     detectCollision(delta) {//ここで計算する
         this.alreadyUpdatedList = [];
         for (let key in this.list) {
+            this.list[key]["result"] = false;
             let c1 = this.list[key]["entity"][0];
             if (this.alreadyUpdatedList.indexOf(c1.id) == -1) {
                 c1.update();
@@ -51,74 +52,144 @@ Fortis.CollisionManager = {
                 this.alreadyUpdatedList.push(c2.id);
             }
 
+            let judge = false;
             for (let c1Key in c1.colliders) {
                 let c1c = c1.colliders[c1Key];
                 for (let c2Key in c2.colliders) {
                     let c2c = c2.colliders[c2Key];
+                    let c1v = [];
                     switch (c1c.type) {
                         case "LineCollider":
+                            c1v = c1c.getVertices(c1.pos, c1.angle, c1.scale);
                             switch (c2c.type) {
                                 case "LineCollider":
-                                    let c1v = c1c.getVertices(c1.pos, c1.angle, c1.scale);
-                                    let c2v = c2c.getVertices(c2.pos, c2.angle, c2.scale)
-                                    if (Fortis.util.checkLinesCollide(Fortis.util.getLineSegment(c1v[0],c1v[1]),Fortis.util.getLineSegment(c2v[0],c2v[1])))return true;
+                                    let c2v = c2c.getVertices(c2.pos, c2.angle, c2.scale);
+                                    if (Fortis.util.checkLinesCollide(Fortis.util.getLineSegment(c1v[0], c1v[1]), Fortis.util.getLineSegment(c2v[0], c2v[1]))) {
+                                        this.list[key]["result"] = true;
+                                        judge = true;
+                                    };
                                     break;
                                 case "CircleCollider":
+                                    if (Fortis.util.checkEllipseAndLineCollide(Fortis.util.getLineSegment(c1v[0], c1v[1]), c2c.getInfo(c2.pos, c2.angle, c2.scale))) {
+                                        this.list[key]["result"] = true;
+                                        judge = true;
+                                    };
                                     break;
                                 default:
-                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
-                                        break;
+                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale))) {
+                                        this.list[key]["result"] = true;
+                                        judge = true;
+                                    };
+                                    break;
                             }
                             break;
                         case "RectCollider":
+                            c1v = c1c.getVertices(c1.pos, c1.angle, c1.scale)
                             switch (c2c.type) {
                                 case "RectCollider":
-                                    if((c1.angle+c1c.angle)%90 == 0 && (c2.angle+c2c.angle)%90 == 0){
-                                        if(Fortis.util.checkRectsCollide(c1c.getInfo(c1.pos, c1.angle, c1.scale),c2c.getInfo(c2.pos, c2.angle, c2.scale)))return true;
-                                    }else{
-                                        if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
+                                    let c1n = (c1.angle + c1c.angle) % 360;
+                                    let c2n = (c2.angle + c2c.angle) % 360;
+                                    if (c1n % 90 == 0 && c2n % 90 == 0) {
+                                        let c1Angle = c1n - c1n % 90;
+                                        let c2Angle = c2n - c2n % 90;
+                                        let c1Judge = false;
+                                        let c2Judge = false;
+                                        if (c1Angle % 180 == 0) c1Judge = true;
+                                        if (c2Angle % 180 == 0) c2Judge = true;
+                                        if (Fortis.util.checkRectsCollide(c1c.getInfo(c1.pos, c1.angle, c1.scale, c1Judge), c2c.getInfo(c2.pos, c2.angle, c2.scale, c2Judge))) {
+                                            this.list[key]["result"] = true;
+                                            judge = true;
+                                        };
+                                    } else {
+                                        if (Fortis.util.checkPolygonsCollide(c1v, c2c.getVertices(c2.pos, c2.angle, c2.scale))) {
+                                            this.list[key]["result"] = true;
+                                            judge = true;
+                                        };
                                     }
                                     break;
                                 case "CircleCollider":
+                                    let rl = 4;//頂点の数
+                                    let lines = [];
+                                    for (let i = 0; i < rl; i++) {
+                                        lines.push(Fortis.util.getLineSegment(c1v[i], c1v[(i + 1) % rl]));
+                                    }
+                                    for (let line of lines) {
+                                        if (Fortis.util.checkEllipseAndLineCollide(line, c2c.getInfo(c2.pos, c2.angle, c2.scale))) {
+                                            this.list[key]["result"] = true;
+                                            judge = true;
+                                            break;
+                                        };
+                                    }
+
                                     break;
                                 default:
-                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
+                                    if (Fortis.util.checkPolygonsCollide(c1v, c2c.getVertices(c2.pos, c2.angle, c2.scale))) {
+                                        this.list[key]["result"] = true;
+                                        judge = true;
+                                    };
                                     break
                             }
                             break;
                         case "CircleCollider":
                             switch (c2c.type) {
-                                case "LineCollider":
-                                    break;
-                                case "RectCollider":
-                                    break;
                                 case "CircleCollider":
+                                    let c1cInfo = c1c.getInfo(c1.pos, c1.angle, c1.scale);
+                                    let c2cInfo = c2c.getInfo(c2.pos, c2.angle, c2.scale);
+                                    let radiusRot1 = Fortis.util.cleanFloat(c1cInfo["radius"].x/c1cInfo["radius"].y,7);
+                                    let radiusRot2 = Fortis.util.cleanFloat(c2cInfo["radius"].x/c2cInfo["radius"].y,7);
+                                    if(radiusRot1 == radiusRot2){
+                                        
+                                    }
                                     break;
-                                case "RegPolygonCollider":
-                                    break;
-                                case "PolygonCollider":
+                                default:
+                                    let c2v = c2c.getVertices(c2.pos, c2.angle, c2.scale);
+                                    let vl = c2v.length;//頂点の数
+                                    let lines = [];
+                                    for (let i = 0; i < vl; i++) {
+                                        lines.push(Fortis.util.getLineSegment(c2v[i], c2v[(i + 1) % vl]));
+                                    }
+                                    for (let line of lines) {
+                                        if (Fortis.util.checkEllipseAndLineCollide(line, c1c.getInfo(c1.pos, c1.angle, c1.scale))) {
+                                            this.list[key]["result"] = true;
+                                            judge = true;
+                                            break;
+                                        };
+                                    }
                                     break;
                             }
                             break;
-                        case "RegPolygonCollider":
+                        default://その他(polygonたち2つ)
+                            c1v = c1c.getVertices(c1.pos, c1.angle, c1.scale);
                             switch (c2c.type) {
                                 case "CircleCollider":
+                                    let vl = c1v.length;//頂点の数
+                                    let lines = [];
+                                    for (let i = 0; i < vl; i++) {
+                                        lines.push(Fortis.util.getLineSegment(c1v[i], c1v[(i + 1) % vl]));
+                                    }
+                                    for (let line of lines) {
+                                        if (Fortis.util.checkEllipseAndLineCollide(line, c2c.getInfo(c2.pos, c2.angle, c2.scale))) {
+                                            this.list[key]["result"] = true;
+                                            judge = true;
+                                            break;
+                                        };
+                                    }
                                     break;
                                 default:
-                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
-                                    break;
-                            }
-                            break;
-                        case "PolygonCollider":
-                            switch (c2c.type) {
-                                case "CircleCollider":
-                                    break;
-                                default:
-                                    if (Fortis.util.checkPolygonsCollide(c1c.getVertices(c1.pos, c1.angle, c1.scale), c2c.getVertices(c2.pos, c2.angle, c2.scale)))return true;
+                                    if (Fortis.util.checkPolygonsCollide(c1v, c2c.getVertices(c2.pos, c2.angle, c2.scale))) {
+                                        this.list[key]["result"] = true;
+                                        judge = true;
+                                    };
                                     break;
                             }
                             break;
                     }
+                    if (judge) {
+                        break;
+                    }
+                }
+                if (judge) {
+                    break;
                 }
             }
             return false;//衝突してない
@@ -395,7 +466,7 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
         this.angle = angle;
         return angle;
     }
-    getInfo(pos, angle, scale) {
+    getInfo(pos, angle, scale, direction) {//directionはboolean。falseでサイズをそのまま返し、trueで逆にする
         let Pos = new Fortis.Vector2();
         let Angle = 0;
         let Scale = new Fortis.Vector2(1, 1);
@@ -411,10 +482,16 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
             if (!Fortis.util.checkType(scale, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
             Scale = scale.copy();
         }
-        let cPos = Pos.add(this.distance.copy().mul(Scale).rotate(this.angle)).add(Angle);
-        
+        let cPos = Pos.copy().add(this.distance.copy().mul(Scale).rotate(this.angle)).rotate(Angle);
+
+        let d = false;
+        if (direction != null) {
+            if (!Fortis.util.checkType(direction, "boolean")) return Fortis.error.ArgTypeWrong();
+            d = direction;
+        }
+
         let size = this.size.copy();
-        if((Angle+this.angle)%180 != 0 && (Angle+this.angle)%90 == 0){
+        if (d) {
             let tmpSize = size.copy();
             size.x = tmpSize.y;
             size.y = tmpSize.x;
@@ -444,7 +521,6 @@ Fortis.RectCollider = class extends Fortis.ProtoCollider {
         tmpLUVPos.add(this.distance);
         tmpLUVPos.rotate(Angle);//グループの回転
         let LUVertice = Pos.copy().add(tmpLUVPos.mul(Scale));
-        console.log(Scale)
 
         let tmpLDVPos = this.size.copy().mul(new Fortis.Vector2(-0.5, 0.5));
         tmpLDVPos.rotate(this.angle);//矩形自体の回転
@@ -475,7 +551,7 @@ Fortis.CircleCollider = class extends Fortis.ProtoCollider {
     }
     constructor(radX, radY, angle, distance) {
         super(distance);
-        this.radSize = Fortis.Vector2(40, 20);
+        this.radSize = new Fortis.Vector2(40, 20);
         this.angle = 0;
         if (radX != null) {
             if (!Fortis.util.checkType(radX, "number")) return Fortis.error.ArgTypeWrong();
@@ -548,6 +624,7 @@ Fortis.CircleCollider = class extends Fortis.ProtoCollider {
                             "y2":Math.pow(cInfo["radius"].x*Math.cos(Fortis.util.degreeToRadian(cInfo["angle"])),2)+Math.pow(cInfo["radius"].y*Math.sin(Fortis.util.degreeToRadian(cInfo["angle"])),2)/radiusPS,
                         }
         */
+        return cInfo;
     }
 }
 
