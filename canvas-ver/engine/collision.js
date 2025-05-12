@@ -135,11 +135,20 @@ Fortis.CollisionManager = {
                                 case "CircleCollider":
                                     let c1cInfo = c1c.getInfo(c1.pos, c1.angle, c1.scale);
                                     let c2cInfo = c2c.getInfo(c2.pos, c2.angle, c2.scale);
+                                    if(Fortis.util.checkEllipsesCollide(c1cInfo,c2cInfo)){
+                                        this.list[key]["result"] = true;
+                                            judge = true;
+                                            break;
+                                    }
+                                    //console.log("a")
+                                    /*
+                                    
                                     let radiusRot1 = Fortis.util.cleanFloat(c1cInfo["radius"].x/c1cInfo["radius"].y,7);
                                     let radiusRot2 = Fortis.util.cleanFloat(c2cInfo["radius"].x/c2cInfo["radius"].y,7);
                                     if(radiusRot1 == radiusRot2){
-                                        
+
                                     }
+                                    */
                                     break;
                                 default:
                                     let c2v = c2c.getVertices(c2.pos, c2.angle, c2.scale);
@@ -730,7 +739,7 @@ Fortis.RegPolygonCollider = class extends Fortis.ProtoCollider {
         let angle = 270 + this.angle;
 
         for (let i = 0; i < points; i++) {
-            let tmpVertice = Fortis.util.getPointOnCircle(this.distance.copy(), this.radius, angle, 4);
+            let tmpVertice = Fortis.util.getPointOnCircle(this.distance.copy(), this.radius, angle, 5);
             tmpVertice.rotate(Angle);
             vertices.push(Pos.copy().add(tmpVertice.mul(Scale)));
             angle += angle_increment;

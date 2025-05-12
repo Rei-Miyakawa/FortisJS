@@ -24,6 +24,7 @@ let Fortis = {
         checkCircleAndLineCollide: null,//円と線分に交点があるかを求める
         checkPolygonsCollide: null,//多角形の当たり判定(SATを使う)
         checkRectsCollide: null,//回転なしの矩形の当たり判定
+        checkEllipsesCollide: null,//円同士の当たり判定
         checkCirclesCollide: null,//円同士の当たり判定
 
         //色

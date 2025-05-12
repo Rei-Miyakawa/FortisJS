@@ -345,6 +345,7 @@ Fortis.PolygonShape = class {
         if (vertices == null) return Fortis.error.ArgNotExists();
         if (!Fortis.util.checkType(vertices, "object")) return Fortis.error.ArgTypeWrong();
         this.vertices = vertices;
+        console.log(vertices)
         if (distance == null) {
             this.distance = new Fortis.Vector2();
         } else if (Fortis.util.checkType(distance, "obejct", "Vector2")) {

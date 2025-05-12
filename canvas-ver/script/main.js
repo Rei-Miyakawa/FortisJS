@@ -23,8 +23,8 @@ function Init() {
     })
 }
 
-let colg, colR;
-let colG, colL;
+let col2, colR;
+let col1, colL;
 
 let testL;
 let testR;
@@ -33,36 +33,38 @@ let testls;
 let testRVs = [];
 let result
 function Ready() {
-    colg = new Fortis.ColliderGroup();
-    colG = new Fortis.ColliderGroup();
+    col2 = new Fortis.ColliderGroup();
+    col1 = new Fortis.ColliderGroup();
     //colR = new Fortis.RectCollider(50);
-    colR = new Fortis.RegPolygonCollider(null, 6);
+    //colR = new Fortis.RegPolygonCollider(null, 6);
     //colR = new Fortis.LineCollider();
     //colL = new Fortis.LineCollider();
     //colR = new Fortis.CircleCollider(20,20);
-    //colR = new Fortis.CircleCollider();
-    colL = new Fortis.RectCollider();
+    colR = new Fortis.CircleCollider();
+    //colL = new Fortis.RectCollider();
+    colL = new Fortis.CircleCollider();
     //colL = new Fortis.RegPolygonCollider(null, 6);
 
-    colg.addList([colR]);
-    colG.addList([colL]);
+    col2.addList([colR]);
+    col1.addList([colL]);
 
     layer = new Fortis.Layer();
 
 
     //testL = new Fortis.Entity(new Fortis.LineShape(), new Fortis.ColorMaterial(null, new Fortis.Color("blue")));
-    testL = new Fortis.Entity(new Fortis.RectShape(),new Fortis.ColorMaterial(new Fortis.Color("blue")));
+    //testL = new Fortis.Entity(new Fortis.RectShape(),new Fortis.ColorMaterial(new Fortis.Color("blue")));
+    testL = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(new Fortis.Color("red")));
     layer.add(testL);
-    colG.link(testL)
+    col1.link(testL)
 
     //let testRd = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(new Fortis.Color("green")));
-    //testR = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(new Fortis.Color("blue")));
-    testR = new Fortis.Entity(new Fortis.RegPolygonShape(null,null,6), new Fortis.ColorMaterial(new Fortis.Color("blue")));
+    testR = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(new Fortis.Color("green")));
+    //testR = new Fortis.Entity(new Fortis.RegPolygonShape(null,null,6), new Fortis.ColorMaterial(new Fortis.Color("blue")));
     //testR = new Fortis.Entity(new Fortis.RectShape(50),new Fortis.ColorMaterial(new Fortis.Color("blue")));
     //testR = new Fortis.Entity(new Fortis.RegPolygonShape(null,null,6),new Fortis.ColorMaterial(new Fortis.Color("blue")));
     //testR = new Fortis.Entity(new Fortis.LineShape(),new Fortis.ColorMaterial(null,new Fortis.Color("blue")));
     layer.add(testR);
-    colg.link(testR);
+    col2.link(testR);
     testR.pos = new Fortis.Vector2(100, 100);
     //layer.add(testRd);
     //testRd.alpha = 0.5
@@ -72,12 +74,12 @@ function Ready() {
     scene.add(layer);
     Fortis.Game.setScene(scene);
 
-    testls = new Fortis.Entity(new Fortis.CircleShape(3), new Fortis.ColorMaterial(new Fortis.Color("green")));
+    testls = new Fortis.Entity(new Fortis.CircleShape(3), new Fortis.ColorMaterial(new Fortis.Color("red")));
     testls.alpha = 0.5;
     layer.add(testls)
 
-    for (let i = 0; i < 4; i++) {
-        let rv = new Fortis.Entity(new Fortis.CircleShape(3), new Fortis.ColorMaterial(new Fortis.Color("green")));
+    for (let i = 0; i < 36; i++) {
+        let rv = new Fortis.Entity(new Fortis.CircleShape(3), new Fortis.ColorMaterial(new Fortis.Color("purple")));
         rv.alpha = 0.5;
         testRVs.push(rv)
         layer.add(rv)
@@ -88,24 +90,23 @@ function Ready() {
     layer.add(mousePos)
     //colL.distance = new Fortis.Vector2(10,10);
     //testL.shape.distance = colL.distance
-    result = Fortis.CollisionManager.add(colG, colg);
+    result = Fortis.CollisionManager.add(col1, col2);
 }
-
 
 function Update(delta) {
     mousePos.shape.text = "x:" + Fortis.Game.mouse.pos.x + ",y:" + Fortis.Game.mouse.pos.y
 
-    colG.update();
-    colg.update();
+    col1.update();
+    col2.update();
 
     //console.log(colL.getVertices());
-    let v = colL.getVertices(colG.pos, colG.angle, colG.scale);
-    let aaa = colR.getVertices(colg.pos, colg.angle, colg.scale)
-    //let rv = colR.getVertices(colg.pos,colg.angle,colg.scale);
-    //console.log(colg.scale)
+    //let v = colL.getVertices(col1.pos, col1.angle, col1.scale);
+    //let aaa = colR.getVertices(col2.pos, col2.angle, col2.scale)
+    //let rv = colR.getVertices(col2.pos,col2.angle,col2.scale);
+    //console.log(col2.scale)
     //console.log(v[0])
 
-    testls.pos = v[0];
+    //testls.pos = v[0];
     //testRVs[0].pos = aaa.pos
     for (let i = 0; i < 4; i++) {
         //testRVs[i].pos = rv[i] 
@@ -129,10 +130,13 @@ if(Fortis.util.checkLinesCollide(Fortis.util.getLineSegment(v[0],v[1]),Fortis.ut
     mousePos.material.fill = new Fortis.Color("red");
 }*/
 
-    //console.log(colG.pos)
+    //console.log(col1.pos)
     testL.pos = Fortis.Game.mouse.pos;
-    //testR.angle+=0.2;
-    testR.angle++;
+    //testL.pos = new Fortis.Vector2(75,75)
+    //testL.angle = 30;
+    testL.angle++;
+    //testRVs[0].pos = testL.pos;
+    //testRVs[1].pos = testR.pos;
 }
 
 function EngineLoaded() { }
