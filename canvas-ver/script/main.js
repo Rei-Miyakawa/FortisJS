@@ -40,9 +40,9 @@ function Ready() {
     //colR = new Fortis.LineCollider();
     //colL = new Fortis.LineCollider();
     //colR = new Fortis.CircleCollider(20,20);
-    colR = new Fortis.CircleCollider();
+    colR = new Fortis.CircleCollider(50,50);
     //colL = new Fortis.RectCollider();
-    colL = new Fortis.CircleCollider();
+    colL = new Fortis.CircleCollider(20,20);
     //colL = new Fortis.RegPolygonCollider(null, 6);
 
     col2.addList([colR]);
@@ -53,12 +53,12 @@ function Ready() {
 
     //testL = new Fortis.Entity(new Fortis.LineShape(), new Fortis.ColorMaterial(null, new Fortis.Color("blue")));
     //testL = new Fortis.Entity(new Fortis.RectShape(),new Fortis.ColorMaterial(new Fortis.Color("blue")));
-    testL = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(new Fortis.Color("red")));
+    testL = new Fortis.Entity(new Fortis.EllipseShape(20,20), new Fortis.ColorMaterial(new Fortis.Color("red")));
     layer.add(testL);
     col1.link(testL)
 
     //let testRd = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(new Fortis.Color("green")));
-    testR = new Fortis.Entity(new Fortis.EllipseShape(), new Fortis.ColorMaterial(new Fortis.Color("green")));
+    testR = new Fortis.Entity(new Fortis.EllipseShape(50,50), new Fortis.ColorMaterial(new Fortis.Color("green")));
     //testR = new Fortis.Entity(new Fortis.RegPolygonShape(null,null,6), new Fortis.ColorMaterial(new Fortis.Color("blue")));
     //testR = new Fortis.Entity(new Fortis.RectShape(50),new Fortis.ColorMaterial(new Fortis.Color("blue")));
     //testR = new Fortis.Entity(new Fortis.RegPolygonShape(null,null,6),new Fortis.ColorMaterial(new Fortis.Color("blue")));
@@ -133,7 +133,7 @@ if(Fortis.util.checkLinesCollide(Fortis.util.getLineSegment(v[0],v[1]),Fortis.ut
     //console.log(col1.pos)
     testL.pos = Fortis.Game.mouse.pos;
     //testL.pos = new Fortis.Vector2(75,75)
-    //testL.angle = 30;
+    testR.angle+=0.6;
     testL.angle++;
     //testRVs[0].pos = testL.pos;
     //testRVs[1].pos = testR.pos;

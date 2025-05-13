@@ -290,6 +290,7 @@ Fortis.util.checkEllipseAndLineCollide = function (l, e) {//lはlineの略。e�
     if (e["radius"].x == e["radius"].y) return Fortis.util.checkCircleAndLineCollide(l, e);//eが円
 
     let newLSP = l["start"].copy().sub(e["pos"]);
+    newLSP.rotate(-e["angle"]);
     //console.log(newLSP.rotate(-e["angle"]));
     newLSP.y *= Fortis.util.cleanFloat(e["radius"].x / e["radius"].y, 7);
     let newLEP = l["end"].copy().sub(e["pos"]);
@@ -309,16 +310,29 @@ Fortis.util.checkCircleAndLineCollide = function (l, c) {//lはlineの略。cは
     let lSToC = c["pos"].copy().sub(l["start"]);
     let normLVec = l["direction"].copy().normalize();
     let minDis = Fortis.util.cleanFloat(lSToC.y * normLVec.x - lSToC.x * normLVec.y, 7);//円の中心と直線の最短距離
+    //console.log(Math.abs(minDis))
     if (c["radius"].x >= Math.abs(minDis)) {//最短距離が円の半径未満
-        let lEToC = c["pos"].copy().sub(l["end"])
-        if (c["radius"].x >= lEToC.mag() || c["radius"].x >= lSToC.mag()) return true;
 
+        let lEToC = c["pos"].copy().sub(l["end"]);
+        if (c["radius"].x >= lEToC.mag() || c["radius"].x >= lSToC.mag()) return true;
+        let dot;
+        if (lSToC.mag() >= lEToC.mag()) {//lSToCを使う
+            dot = lSToC.x * normLVec.x + lSToC.y * normLVec.y;
+        } else {
+            dot = lEToC.x * normLVec.x * (-1) + lEToC.y * normLVec.y * (-1);
+        }
+        //console.log(dot/l["direction"].mag())
+        return false
+        //if(dot/l.mag())
+
+        /*
         let nLSToC = lSToC.copy().normalize();
         let signS = Math.sign(Math.acos(nLSToC.x * normLVec.x + nLSToC.y * normLVec.y) - Math.PI * 0.5);
         let nLEToC = lEToC.copy().normalize();
         let signE = Math.sign(Math.acos(nLEToC.x * normLVec.x + nLEToC.y * normLVec.y) - Math.PI * 0.5);
-
+        console.log("aa")
         if (signS != signE) return true;
+        */
     }
     return false;
 }
@@ -396,10 +410,10 @@ Fortis.util.checkCirclesCollide = function (c1, c2) {//cはcircleの略。Circle
 Fortis.util.checkEllipsesCollide = function (e1, e2) {//eはellipseの略。CircleColliderのgetInfoから
     if (e1 == null || e2 == null) return Fortis.error.ArgNotExists();
     if (!Fortis.util.checkType(e1, "object") || !Fortis.util.checkType(e2, "object")) return Fortis.error.ArgTypeWrong();
-    let e = { "pos": new Fortis.Vector2(), "radius": e1["radius"], "angle": e1["angle"] };
+    let e = { "pos": e1["pos"], "radius": e1["radius"], "angle": e1["angle"] };
 
     //e2を線分で近似する
-    let e2d = e2["pos"].copy().sub(e1["pos"]);
+    //let e2d = e2["pos"].copy().sub(e1["pos"]);
     //e2d.rotate(e1["angle"])
     let vertexNum = 36;
     let angle_increment = 360 / vertexNum;
@@ -408,12 +422,13 @@ Fortis.util.checkEllipsesCollide = function (e1, e2) {//eはellipseの略。Circ
     for (let i = 0; i < vertexNum; i++) {
         let tmpVertice = Fortis.util.getPointOnCircle(new Fortis.Vector2(), e2["radius"].x, angle);
         tmpVertice.y *= e2["radius"].y / e2["radius"].x;
-        testRVs[i].pos = new Fortis.Vector2(100,100).add(e2d.copy().add(tmpVertice))//e1["pos"].copy().add(e2d.copy().add(tmpVertice))
         tmpVertice.rotate(e2["angle"])
-        vertices.push(e2d.copy().add(tmpVertice));
+        testRVs[i].pos = e2["pos"].copy().add(tmpVertice)
+
+        vertices.push(e2["pos"].copy().add(tmpVertice));
         //tmpVertice.rotate(Angle);
         //console.log(e2d)
-        
+
         angle += angle_increment;
     }
 
@@ -424,7 +439,7 @@ Fortis.util.checkEllipsesCollide = function (e1, e2) {//eはellipseの略。Circ
     }
     for (let line of lines) {
         if (Fortis.util.checkEllipseAndLineCollide(line, e)) {
-            console.log(true)
+            //console.log(e["angle"] % 360)
             return true;
         };
     }

@@ -135,11 +135,20 @@ Fortis.CollisionManager = {
                                 case "CircleCollider":
                                     let c1cInfo = c1c.getInfo(c1.pos, c1.angle, c1.scale);
                                     let c2cInfo = c2c.getInfo(c2.pos, c2.angle, c2.scale);
-                                    if(Fortis.util.checkEllipsesCollide(c1cInfo,c2cInfo)){
-                                        this.list[key]["result"] = true;
+                                    if (c1cInfo["radius"].x == c1cInfo["radius"].y && c2cInfo["radius"].x == c2cInfo["radius"].y) {
+                                        if (Fortis.util.checkCirclesCollide(c1cInfo, c2cInfo)) {
+                                            this.list[key]["result"] = true;
                                             judge = true;
                                             break;
+                                        }
+                                    } else {
+                                        if (Fortis.util.checkEllipsesCollide(c1cInfo, c2cInfo)) {
+                                            this.list[key]["result"] = true;
+                                            judge = true;
+                                            break;
+                                        }
                                     }
+
                                     //console.log("a")
                                     /*
                                     
