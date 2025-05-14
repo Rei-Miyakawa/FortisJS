@@ -27,17 +27,23 @@ Fortis.Game.draw = function (delta) {
     });
 
     //実際に表示されるキャンバスの処理
-    Fortis.Game.finalContext.clearRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
+    //Fortis.Game.finalContext.globalCompositeOperation = "source-over";
+    Fortis.Game.finalContext.clearRect(0, 0, Fortis.Game.canvasCfg.size.x*2, Fortis.Game.canvasCfg.size.y*2);
     Fortis.Game.finalContext.fillStyle = Fortis.Game.canvasCfg.BGColor.toHex();
     Fortis.Game.finalContext.fillRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
+    //console.log(Fortis.Game.canvasCfg.size.x)
     Fortis.Game.scene.layer.forEach(layer => {
-        //console.log(-layer.camera.canvas.width/2)
+        //console.log(layer.camera)
         Fortis.Game.finalContext.save();
         Fortis.Game.finalContext.translate(layer.camera.pos.x + layer.camera.centerPos.x, layer.camera.pos.y + layer.camera.centerPos.y);
         Fortis.Game.finalContext.rotate(Fortis.util.degreeToRadian(layer.camera.angle));
+        //console.log(layer.camera.displayRange.x, layer.camera.displayRange.y, -layer.camera.centerPos.x, -layer.camera.centerPos.y, layer.camera.size.x * layer.camera.scale.x, layer.camera.size.y * layer.camera.scale.y)
         Fortis.Game.finalContext.drawImage(layer.camera.canvas, 0, 0, layer.camera.displayRange.x, layer.camera.displayRange.y, -layer.camera.centerPos.x, -layer.camera.centerPos.y, layer.camera.size.x * layer.camera.scale.x, layer.camera.size.y * layer.camera.scale.y);
+        //console.log(layer.camera.size)
         Fortis.Game.finalContext.restore();
     });
+    //Fortis.Game.finalContext.globalCompositeOperation = "destination-in";
+    //Fortis.Game.finalContext.fillRect(0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
 
     //Fortis.Game.finalContext.drawImage(Fortis.Game.canvas.transferToImageBitmap(), 0, 0, Fortis.Game.canvasCfg.size.x, Fortis.Game.canvasCfg.size.y);
 

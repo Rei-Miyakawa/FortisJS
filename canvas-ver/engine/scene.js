@@ -213,8 +213,10 @@ Fortis.Camera = class{
         this.angle = 0;//最終的にキャンバスに描画するときの角度
         this.centerPos = new Fortis.Vector2();//最終的にキャンバスに描画するときの中心点
         this.startPos = new Fortis.Vector2();//切り取る基準となる座標
-        this.displayRange = Fortis.Game.canvasCfg.initialSize.copy();//切り取るサイズ
+        this.displayRange = Fortis.Game.canvasCfg.size.copy();//切り取るサイズ
         this.size = this.displayRange.copy();
+        this.keepSize = false;
+        this.keepDRange = true;
         this.id = Fortis.util.randomID();
         this.data = null;
         this.canvas = new OffscreenCanvas(this.displayRange.x,this.displayRange.y);
@@ -281,7 +283,6 @@ Fortis.Camera = class{
     setDisplayRange(vec){
         if(vec == null)return Fortis.error.ArgNotExists();
         if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
-        console.log(vec)
         this.displayRange = vec;
         this.canvas.width = vec.x;
         this.canvas.height = vec.y;
@@ -295,5 +296,23 @@ Fortis.Camera = class{
         if(!Fortis.util.checkType(vec,"object","Vector2"))return Fortis.error.ArgTypeWrong();
         this.size = vec;
         return vec;
+    }
+    getKeepSize(){//表示サイズを取得
+        return this.keepSize;
+    }
+    setKeepSize(boolean){
+        if(boolean == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(boolean,"boolean"))return Fortis.error.ArgTypeWrong();
+        this.keepSize = boolean;
+        return boolean;
+    }
+    getKeepDisplayRange(){//表示サイズを取得
+        return this.keepDRange;
+    }
+    setKeepDisplayRange(boolean){
+        if(boolean == null)return Fortis.error.ArgNotExists();
+        if(!Fortis.util.checkType(boolean,"boolean"))return Fortis.error.ArgTypeWrong();
+        this.keepDRange = boolean;
+        return boolean;
     }
 }

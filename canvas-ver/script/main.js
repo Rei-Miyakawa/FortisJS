@@ -3,6 +3,9 @@ let layer;
 
 function Init() {
     Fortis.Game.config.debug = true;
+    Fortis.Game.canvasCfg.aspect = new Fortis.Vector2(4,3)
+    Fortis.Game.canvasCfg.size = new Fortis.Vector2(1200,900);
+    Fortis.Game.canvasCfg.BGColor = new Fortis.Color("#252525")
     //Fortis.Game.canvasCfg.keepAspect = false;
     Fortis.FontLoader.addFonts({
         "test": 'https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap',
@@ -49,6 +52,8 @@ function Ready() {
     col1.addList([colL]);
 
     layer = new Fortis.Layer();
+    let bgl = new Fortis.Entity(new Fortis.RectShape(10000,10000),new Fortis.ColorMaterial(new Fortis.Color("orange")))
+    layer.add(bgl)
 
 
     //testL = new Fortis.Entity(new Fortis.LineShape(), new Fortis.ColorMaterial(null, new Fortis.Color("blue")));
@@ -94,7 +99,9 @@ function Ready() {
 }
 
 function Update(delta) {
+    //console.log(Fortis.Game.canvasCfg.size)
     mousePos.shape.text = "x:" + Fortis.Game.mouse.pos.x + ",y:" + Fortis.Game.mouse.pos.y
+    //mousePos.shape.text = "x:" + Fortis.Game.canvasCfg.size.x + ",y:" + Fortis.Game.canvasCfg.size.y
 
     col1.update();
     col2.update();
@@ -131,7 +138,8 @@ if(Fortis.util.checkLinesCollide(Fortis.util.getLineSegment(v[0],v[1]),Fortis.ut
 }*/
 
     //console.log(col1.pos)
-    testL.pos = Fortis.Game.mouse.pos;
+    testL.pos = Fortis.Game.mouse.pos.copy().mul(1/Fortis.Game.canvasCfg.displayScaleRatio.x,1/Fortis.Game.canvasCfg.displayScaleRatio.y);
+    //testL.pos
     //testL.pos = new Fortis.Vector2(75,75)
     testR.angle+=0.6;
     testL.angle++;

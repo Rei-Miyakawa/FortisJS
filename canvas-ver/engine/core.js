@@ -368,6 +368,7 @@ Fortis.Game = {
                     this.canvasCfg.size.x = winX;
                     this.canvasCfg.size.y = y;
                 } else {
+                    mousePos.shape.text = winY
                     this.canvasCfg.size.x = tmpx;
                     this.canvasCfg.size.y = winY;
                 }
@@ -384,8 +385,20 @@ Fortis.Game = {
         //this.canvas.height = this.canvasCfg.size.y;
         this.finalCanvas.width = this.canvasCfg.size.x;
         this.finalCanvas.height = this.canvasCfg.size.y;
+        for (let layer of Fortis.Game.scene.layer) {
+            if (!layer.camera.keepSize) {
+                layer.camera.size = this.canvasCfg.size;
+            }
+            if(!layer.camera.keepDRange){
+                layer.camera.displayRange = this.canvasCfg.size;
+            }
+
+            //layer.camera.canvas.width = this.canvasCfg.size.x;
+            //layer.camera.canvas.height = this.canvasCfg.size.y;
+        }
         //console.log("win:",this.winSize)
-        //console.log("canvas:",this.canvasCfg.size)
+        console.log("canvas:", this.canvasCfg.size)
+        //mousePos.shape.text = "x:" + this.canvasCfg.size.x + ",y:" + this.canvasCfg.size.y
     },
     setScene(scene) {//シーン設定
         if (scene == null) return Fortis.error.ArgNotExists();
