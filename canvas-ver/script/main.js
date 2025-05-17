@@ -4,7 +4,7 @@ let layer;
 function Init() {
     Fortis.Game.config.debug = true;
     Fortis.Game.canvasCfg.aspect = new Fortis.Vector2(4,3)
-    Fortis.Game.canvasCfg.size = new Fortis.Vector2(1200,900);
+    Fortis.Game.canvasCfg.size = new Fortis.Vector2(800,600);
     Fortis.Game.canvasCfg.BGColor = new Fortis.Color("#252525")
     //Fortis.Game.canvasCfg.keepAspect = false;
     Fortis.FontLoader.addFonts({
