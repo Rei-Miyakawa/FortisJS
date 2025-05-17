@@ -143,4 +143,7 @@ Fortis.TransitionManager = {
     getID(){//IDを取得
         return Object.keys(this.list);
     },
+    getList() {//取得
+        return this.list;
+    },
 }
