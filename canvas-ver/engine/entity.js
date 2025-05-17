@@ -176,4 +176,11 @@ Fortis.EntityContainer = class {
         this.ids[entity.id] = index;
         return this.entity;
     }
+    setPos(vec) {//入っているエンティティの座標を相対的に変更する
+        if (vec == null) return Fortis.error.ArgNotExists();
+        if (!Fortis.util.checkType(vec, "object", "Vector2")) return Fortis.error.ArgTypeWrong();
+        for(let entity of this.entity){
+            entity.pos.add(vec);
+        }
+    }
 }
