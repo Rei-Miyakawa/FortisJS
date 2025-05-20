@@ -210,7 +210,6 @@ Fortis.CollisionManager = {
                     break;
                 }
             }
-            return false;//衝突してない
         }
     }
 }
